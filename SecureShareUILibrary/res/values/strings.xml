@@ -1,0 +1,9 @@
+<resources>
+
+    <string name="app_name">SecureShareUILibrary</string>
+    
+    <string name="connect_account">Connect Account</string>
+    <string name="accounts_connected">Accounts Connected</string>
+    <string name="accounts_available">Available</string>
+
+</resources>

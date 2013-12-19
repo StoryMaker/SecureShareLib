@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ android:layout_width="fill_parent"
+ android:layout_height="fill_parent" 
+ android:orientation="vertical"
+ android:padding="10dp"
+ android:background="@color/light_gray">
+
+    <TextView
+        android:id="@+id/tv_accounts_label"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:textSize="20sp"
+        android:text="@string/connect_account" />
+    
+	<View
+		android:layout_width="match_parent"
+		android:layout_height="2dp"
+		android:background="@color/light_blue" 
+		android:padding="5dp"/>
+    
+	<TextView
+        android:id="@+id/tv_accounts_connected_label"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textSize="14sp"
+        android:text="@string/accounts_connected" 
+        android:textAllCaps="true"
+        android:textStyle="bold"/>
+	<ListView
+		 android:id="@+id/lv_accounts_connected"
+		 android:layout_width="match_parent"
+		 android:layout_height="fill_parent"
+		 android:layout_weight="1"
+		 android:background="@android:color/white" />
+
+	<TextView
+        android:id="@+id/tv_accounts_available_label"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textSize="14sp"
+        android:text="@string/accounts_available" 
+        android:textAllCaps="true"
+        android:textStyle="bold"/>
+	<ListView
+		 android:id="@+id/lv_accounts_available"
+		 android:layout_width="match_parent"
+		 android:layout_height="fill_parent"
+		 android:layout_weight="1" 
+		 android:background="@android:color/white" />
+	
+</LinearLayout>
