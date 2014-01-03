@@ -5,5 +5,11 @@
     <string name="connect_account">Connect Account</string>
     <string name="accounts_connected">Accounts Connected</string>
     <string name="accounts_available">Available</string>
+    <string name="account_logo_desc">Account Logo</string>
+    <string name="account_none_found">No Accounts Found</string>
 
+    <string name="dialog_account_message">Disconnect this Account?</string>
+    <string name="dialog_account_answer_positive">Yes</string>
+    <string name="dialog_account_answer_negative">Cancel</string>
+    
 </resources>

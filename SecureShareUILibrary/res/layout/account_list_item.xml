@@ -1,0 +1,24 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_account_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+	android:background="?android:selectableItemBackground">
+    
+    <ImageView
+        android:id="@+id/iv_account_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/snoopy" 
+        android:contentDescription="@string/account_logo_desc"/>
+
+    <TextView
+        android:id="@+id/tv_account_name"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:textSize="18sp" />
+
+</LinearLayout>
