@@ -1,98 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+   <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:background="@color/light_gray">
 
-    <!-- A vertical LinearLayout in a ScrollView. This emulates a ListView (and is lighter weight
-         than a ListView when there aren't many rows). -->
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/light_gray">
-
-        <!-- Note that this LinearLayout has the "animateLayoutChanges" property set to true.
-             This tells the framework to automatically animate child views (in this case, rows)
-             as they are added to and removed from the LinearLayout. -->
-		<LinearLayout
+	<LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:orientation="vertical" 
+           android:background="@color/light_gray"
+           android:padding="16dp">
+                       
+	    <TextView
+	        android:id="@+id/tv_accounts_label"     
+	        android:text="@string/connect_account" 
+	        style="@style/LabelHeader"/>
+	      
+		<View
+			style="@style/DividerHorizontal"/>
+	    
+		<TextView
+	        android:id="@+id/tv_accounts_connected_label"
+	        android:text="@string/accounts_connected" 
+			style="@style/LabelGeneral"
+			android:animateLayoutChanges="true"/>
+		
+        <LinearLayout android:id="@+id/accounts_connected_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" 
-            android:background="@color/light_gray"
-            android:padding="20dp">
-                        
-		    <TextView
-		        android:id="@+id/tv_accounts_label"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:padding="8dp"
-		        android:textSize="20sp"
-		        android:text="@string/connect_account" />
-    
-			<View
-				android:layout_width="match_parent"
-				android:layout_height="2dp"
-				android:background="@color/light_blue" 
-				android:padding="5dp"/>
-		    
-			<TextView
-		        android:id="@+id/tv_accounts_connected_label"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:padding="10dp"
-		        android:textSize="14sp"
-		        android:text="@string/accounts_connected" 
-		        android:textAllCaps="true"
-		        android:textStyle="bold" 
-		        android:animateLayoutChanges="true"/>
-			
-	        <LinearLayout android:id="@+id/accounts_connected_container"
-	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-	            android:orientation="vertical"
-	            android:animateLayoutChanges="true"
-	            android:paddingLeft="16dp"
-	            android:paddingRight="16dp"
-	            android:background="@android:color/white"
-	            android:showDividers="middle"
-            	android:divider="?android:dividerHorizontal"/>
-	        
-	        <TextView android:id="@+id/tv_accounts_connected_empty"
-		        android:layout_width="fill_parent"
-		        android:layout_height="fill_parent"
-		        android:gravity="center"
-		        android:padding="16dp"
-		        android:textSize="14sp"
-		        android:background="@android:color/white"
-		        android:text="@string/account_none_found"/>
-	        
-	        <TextView
-		        android:id="@+id/tv_accounts_available_label"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:padding="10dp"
-		        android:textSize="14sp"
-		        android:text="@string/accounts_available" 
-		        android:textAllCaps="true"
-		        android:textStyle="bold"/>
-			        
-	   		<LinearLayout android:id="@+id/accounts_available_container"
-	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-	            android:orientation="vertical"
-	            android:animateLayoutChanges="true"
-	            android:paddingLeft="16dp"
-	            android:paddingRight="16dp" 
-	            android:background="@android:color/white"
-	            android:showDividers="middle"
-            	android:divider="?android:dividerHorizontal"/>
-	   		
-	   		<TextView android:id="@+id/tv_accounts_available_empty"
-		        android:layout_width="fill_parent"
-		        android:layout_height="fill_parent"
-		        android:gravity="center"
-		        android:padding="16dp"
-		        android:textSize="14sp"
-		        android:background="@android:color/white"
-		        android:text="@string/account_none_found"/>
-	   		
-   		</LinearLayout>
-
-    </ScrollView>
+            android:orientation="vertical"
+            android:animateLayoutChanges="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:background="@android:color/white"
+            android:showDividers="middle"
+           	android:divider="?android:dividerHorizontal"/>
+        
+        <TextView android:id="@+id/tv_accounts_connected_empty"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:gravity="center"
+	        android:padding="16dp"
+	        android:textSize="14sp"
+	        android:background="@android:color/white"
+	        android:text="@string/account_none_found"/>
+        
+        <TextView
+	        android:id="@+id/tv_accounts_available_label"
+	        android:text="@string/accounts_available" 
+	        style="@style/LabelGeneral"
+	        android:animateLayoutChanges="true"/>
+		        
+   		<LinearLayout android:id="@+id/accounts_available_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:animateLayoutChanges="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp" 
+            android:background="@android:color/white"
+            android:showDividers="middle"
+           	android:divider="?android:dividerHorizontal"/>
+   		
+   		<TextView android:id="@+id/tv_accounts_available_empty"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:gravity="center"
+	        android:padding="16dp"
+	        android:textSize="14sp"
+	        android:background="@android:color/white"
+	        android:text="@string/account_none_found"/>
+   		
+  		</LinearLayout>
+   </ScrollView>

@@ -1,5 +1,6 @@
 package io.scal.secureshareui.lib;
 
+import io.scal.secureshareui.models.AccountItem;
 import io.scal.secureshareuilibrary.R;
 
 import java.util.ArrayList;
@@ -26,12 +27,8 @@ public class ChooseAccountFragment extends Fragment {
 	
 	List<AccountItem> mAlAccountItems = new ArrayList<AccountItem>();
 	
-	public ChooseAccountFragment(){
-		// TODO Auto-generated constructor stub
-	}
-	
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
 		mView = inflater.inflate(R.layout.choose_account_fragment, container, false);
 		
@@ -44,7 +41,7 @@ public class ChooseAccountFragment extends Fragment {
 		return mView;
 	}
 	
-	private void getAccountItems(){
+	private void getAccountItems() {
 		
 		int i = 0;
 		
@@ -62,36 +59,36 @@ public class ChooseAccountFragment extends Fragment {
     	if(getActivity() == null)
     		return;
 	
-        for(AccountItem account: mAlAccountItems){
+        for(AccountItem account: mAlAccountItems) {
         	
-        	if(account.IsConnected){
+        	if(account.getIsConnected()) {
         		addConnectedAccountItem(account);
         	} 	
-        	else{
+        	else {
         		addAvailableAccountItem(account);            
         	}
         }      
     }
 	
-	private void addConnectedAccountItem(AccountItem account){
+	private void addConnectedAccountItem(AccountItem account) {
 		
 		final ViewGroup vgConnectedAccounts = (ViewGroup) LayoutInflater.from(getActivity()).inflate(R.layout.account_list_item, mContainerConnectedAccountsView, false);	
-		((TextView) vgConnectedAccounts.findViewById(R.id.tv_account_name)).setText(account.Name);
+		((TextView) vgConnectedAccounts.findViewById(R.id.tv_account_name)).setText(account.getName());
 		final AccountItem currentAccount = account;
         		
         mContainerConnectedAccountsView.addView(vgConnectedAccounts, 0);
-        mView.findViewById(R.id.tv_accounts_connected_empty).setVisibility(View.INVISIBLE);
+        mView.findViewById(R.id.tv_accounts_connected_empty).setVisibility(View.GONE);
         
         //move AccountItem from Connected to Available
-        vgConnectedAccounts.setOnLongClickListener(new OnLongClickListener(){
+        vgConnectedAccounts.setOnLongClickListener(new OnLongClickListener() {
 
             @Override
-            public boolean onLongClick(View v){
+            public boolean onLongClick(View v) {
             	
             	AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             	builder.setMessage(R.string.dialog_account_message)
             	   .setCancelable(false)
-            	   .setPositiveButton(R.string.dialog_account_answer_positive, new DialogInterface.OnClickListener(){
+            	   .setPositiveButton(R.string.dialog_account_answer_positive, new DialogInterface.OnClickListener() {
             	       public void onClick(DialogInterface dialog, int id){
             	    	   addAvailableAccountItem(currentAccount);
             	    	   mContainerConnectedAccountsView.removeView(vgConnectedAccounts);
@@ -102,7 +99,7 @@ public class ChooseAccountFragment extends Fragment {
                            } 
             	       }
             	   })
-            	   .setNegativeButton(R.string.dialog_account_answer_negative, new DialogInterface.OnClickListener(){
+            	   .setNegativeButton(R.string.dialog_account_answer_negative, new DialogInterface.OnClickListener() {
             	       public void onClick(DialogInterface dialog, int id){
             	            dialog.cancel();
             	       }
@@ -113,81 +110,37 @@ public class ChooseAccountFragment extends Fragment {
         });
         
         //move AccountItem from Connected to Available
-        vgConnectedAccounts.setOnClickListener(new OnClickListener(){
+        vgConnectedAccounts.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(getActivity(), currentAccount.Name + " edit click", Toast.LENGTH_SHORT).show();		
+				Toast.makeText(getActivity(), currentAccount.getName() + " edit click", Toast.LENGTH_SHORT).show();		
 			} 
         });     
     }
 	
-	private void addAvailableAccountItem(AccountItem account){
+	private void addAvailableAccountItem(AccountItem account) {
     	
 		final ViewGroup vgAvailableAccounts = (ViewGroup) LayoutInflater.from(getActivity()).inflate(R.layout.account_list_item, mContainerAvailableAccountsView, false);
-		((TextView) vgAvailableAccounts.findViewById(R.id.tv_account_name)).setText(account.Name);
+		((TextView) vgAvailableAccounts.findViewById(R.id.tv_account_name)).setText(account.getName());
 		final AccountItem currentAccount = account;
 		
 		mContainerAvailableAccountsView.addView(vgAvailableAccounts, 0);		
-		mView.findViewById(R.id.tv_accounts_available_empty).setVisibility(View.INVISIBLE);
+		mView.findViewById(R.id.tv_accounts_available_empty).setVisibility(View.GONE);
 		
 		//move AccountItem from Available to Connected
         vgAvailableAccounts.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
             	
             	addConnectedAccountItem(currentAccount);
             	mContainerAvailableAccountsView.removeView(vgAvailableAccounts);        	
             	                   	
                 // If there are no rows remaining, show the empty view.
-                if (mContainerAvailableAccountsView.getChildCount() == 0){
+                if (mContainerAvailableAccountsView.getChildCount() == 0) {
                     mView.findViewById(R.id.tv_accounts_available_empty).setVisibility(View.VISIBLE);
                 }            
             }
         });
-    }
-	
-
-    private class AccountItem{
-    	
-    	private int Id;
-    	private String Name;
-    	private String IconUrl;
-    	private boolean IsConnected;
-    	
-    	AccountItem(int id, String name, String iconUrl, boolean isConnected){
-    		this.Id = id;
-    		this.Name = name;
-    		this.IconUrl = iconUrl;
-    		this.IsConnected = isConnected;
-    	}
-    	
-    	public int getId(){
-    	     return this.Id;
-    	}
-    	public void setId(int id){
-    	     this.Id = id;
-    	}
-    	
-    	public String getName(){
-    	     return this.Name;
-    	}
-    	public void setName(String name){
-    	     this.Name = name;
-    	}
-    	
-    	public String getIconUrl(){
-    	     return this.IconUrl;
-    	}
-    	public void setId(String iconUrl){
-    	     this.IconUrl = iconUrl;
-    	}
-    	
-    	public boolean getIsConnected(){
-   	     return this.IsConnected;
-	   	}
-	   	public void setIsConnected(boolean isConnected){
-	   	     this.IsConnected = isConnected;
-	   	} 	
     }
 }

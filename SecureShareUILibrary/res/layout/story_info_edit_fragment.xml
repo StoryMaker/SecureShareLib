@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@color/light_gray">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:padding="16dp">
+	    
+		<TextView
+	        android:text="@string/label_title" 
+			style="@style/LabelGeneral" />
+		
+		<EditText
+		    android:id="@+id/et_story_info_title"
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"
+		    android:inputType="text"
+		    android:hint="@string/hint_story_title"/>		
+
+		<TextView
+	        android:text="@string/label_description" 
+			style="@style/LabelGeneral" />
+		
+		<EditText 
+		    android:id="@+id/et_story_info_description"
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"
+		    android:inputType="textMultiLine"
+		    android:hint="@string/hint_story_description"
+		    android:singleLine="false"
+		    android:lines="2"/>
+		
+		<TextView
+	        android:text="@string/label_tags" 
+			style="@style/LabelGeneral" />
+		
+		
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal" >
+			
+			<EditText 
+			    android:id="@+id/et_story_info_tag"
+			    android:layout_width="fill_parent"
+			    android:layout_height="fill_parent"
+			    android:inputType="text"
+			    android:hint="@string/hint_story_tag"/>
+			
+			<Button
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:text="hello" />
+		
+		</LinearLayout>
+		
+		
+		
+		
+		
+		<TextView
+	        android:text="@string/label_category" 
+			style="@style/LabelGeneral" />
+		
+		<Spinner
+		    android:id="@+id/sp_story_category"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content" 
+		    android:entries="@array/array_story_categories"
+		    android:prompt="@string/label_category"
+		    android:spinnerMode="dialog"/>
+		
+		<TextView
+	        android:text="@string/label_location" 
+			style="@style/LabelGeneral" />
+		
+		<Spinner
+		    android:id="@+id/sp_story_location"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content" 
+		    android:entries="@array/array_story_locations"
+		    android:prompt="@string/label_location"
+		    android:spinnerMode="dialog"/>
+   		
+	</LinearLayout>
+</ScrollView>

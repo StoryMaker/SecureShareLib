@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
@@ -23,5 +23,27 @@
     <color name="light_gray">#EAEAEA</color>
 	<color name="light_blue">#10B2EF</color>
     
+    <!-- Custom Styles -->
+	<style name="LabelHeader" >
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+	
+	<style name="LabelGeneral" >
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
     
+	<style name="DividerHorizontal" >
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:background">@color/light_blue</item>
+    </style>
+	
 </resources>
