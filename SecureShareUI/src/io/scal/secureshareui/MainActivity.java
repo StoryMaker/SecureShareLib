@@ -4,11 +4,12 @@ import io.scal.secureshareui.lib.*;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +26,7 @@ public class MainActivity extends Activity {
     }
      
     public void addChooseAccountFragment() {
-    	FragmentManager fragManager = getFragmentManager();
+    	FragmentManager fragManager = getSupportFragmentManager();
     	FragmentTransaction fragTrans = fragManager.beginTransaction();
     	     
         ChooseAccountFragment caFragment = new ChooseAccountFragment();
@@ -43,7 +44,7 @@ public class MainActivity extends Activity {
     }
     
     public void addStoryInfoEditFragment() {
-    	FragmentManager fragManager = getFragmentManager();
+    	FragmentManager fragManager = getSupportFragmentManager();
     	FragmentTransaction fragTrans = fragManager.beginTransaction();
     	     
     	StoryInfoEditFragment sieFragment = new StoryInfoEditFragment();

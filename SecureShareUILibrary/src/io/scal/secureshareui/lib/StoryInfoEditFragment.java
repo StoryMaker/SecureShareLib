@@ -7,7 +7,7 @@ import java.util.List;
 import io.scal.secureshareui.models.PublishAccount;
 import io.scal.secureshareui.models.StoryTag;
 import io.scal.secureshareuilibrary.R;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.LayoutInflater;
