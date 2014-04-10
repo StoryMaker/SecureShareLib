@@ -1,6 +1,6 @@
 package io.scal.secureshareui.lib;
 
-import io.scal.secureshareui.models.AccountItem;
+import io.scal.secureshareui.models.PublishAccount;
 import io.scal.secureshareuilibrary.R;
 
 import java.util.ArrayList;
@@ -21,11 +21,11 @@ import android.widget.Toast;
 
 public class ChooseAccountFragment extends Fragment {
 
+	private View mView;
 	private ViewGroup mContainerConnectedAccountsView;
 	private ViewGroup mContainerAvailableAccountsView;
-	private View mView;
 	
-	List<AccountItem> mAlAccountItems = new ArrayList<AccountItem>();
+	List<PublishAccount> mAlPublishAccounts = new ArrayList<PublishAccount>();
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,51 +35,51 @@ public class ChooseAccountFragment extends Fragment {
 		mContainerConnectedAccountsView = (ViewGroup) mView.findViewById(R.id.accounts_connected_container);
 		mContainerAvailableAccountsView = (ViewGroup) mView.findViewById(R.id.accounts_available_container);
 		
-		getAccountItems();
-		addAccountItems();
+		getPublishAccounts();
+		addPublishAccounts();
 		
 		return mView;
 	}
 	
-	private void getAccountItems() {
+	private void getPublishAccounts() {
 		
 		int i = 0;
 		
-		mAlAccountItems.add(new AccountItem(i++, "Facebook", "snoopy", true));
-		mAlAccountItems.add(new AccountItem(i++, "Youtube", "snoopy", false));
-		mAlAccountItems.add(new AccountItem(i++, "SoundCloud", "ic_launcher", false));
-		mAlAccountItems.add(new AccountItem(i++, "Flickr", "ic_launcher", false));
-		mAlAccountItems.add(new AccountItem(i++, "Wordpress", "ic_launcher", false));
-		mAlAccountItems.add(new AccountItem(i++, "GlobalLeaks", "ic_launcher", false));
-		mAlAccountItems.add(new AccountItem(i++, "SSH", "ic_launcher", false));
+		mAlPublishAccounts.add(new PublishAccount(i++, "Facebook", "snoopy", true));
+		mAlPublishAccounts.add(new PublishAccount(i++, "Youtube", "snoopy", false));
+		mAlPublishAccounts.add(new PublishAccount(i++, "SoundCloud", "ic_launcher", false));
+		mAlPublishAccounts.add(new PublishAccount(i++, "Flickr", "ic_launcher", false));
+		mAlPublishAccounts.add(new PublishAccount(i++, "Wordpress", "ic_launcher", false));
+		mAlPublishAccounts.add(new PublishAccount(i++, "GlobalLeaks", "ic_launcher", false));
+		mAlPublishAccounts.add(new PublishAccount(i++, "SSH", "ic_launcher", false));
 	}
 	
-	private void addAccountItems(){ 
+	private void addPublishAccounts() { 
     	//ensure the fragment is attached to a context
     	if(getActivity() == null)
     		return;
 	
-        for(AccountItem account: mAlAccountItems) {
+        for(PublishAccount account: mAlPublishAccounts) {
         	
         	if(account.getIsConnected()) {
-        		addConnectedAccountItem(account);
+        		addConnectedPublishAccount(account);
         	} 	
         	else {
-        		addAvailableAccountItem(account);            
+        		addAvailablePublishAccount(account);            
         	}
         }      
     }
 	
-	private void addConnectedAccountItem(AccountItem account) {
+	private void addConnectedPublishAccount(PublishAccount account) {
 		
-		final ViewGroup vgConnectedAccounts = (ViewGroup) LayoutInflater.from(getActivity()).inflate(R.layout.account_list_item, mContainerConnectedAccountsView, false);	
+		final ViewGroup vgConnectedAccounts = (ViewGroup) LayoutInflater.from(getActivity()).inflate(R.layout.publish_account_item, mContainerConnectedAccountsView, false);	
 		((TextView) vgConnectedAccounts.findViewById(R.id.tv_account_name)).setText(account.getName());
-		final AccountItem currentAccount = account;
+		final PublishAccount currentAccount = account;
         		
         mContainerConnectedAccountsView.addView(vgConnectedAccounts, 0);
         mView.findViewById(R.id.tv_accounts_connected_empty).setVisibility(View.GONE);
         
-        //move AccountItem from Connected to Available
+        //move PublishAccount from Connected to Available
         vgConnectedAccounts.setOnLongClickListener(new OnLongClickListener() {
 
             @Override
@@ -90,7 +90,7 @@ public class ChooseAccountFragment extends Fragment {
             	   .setCancelable(false)
             	   .setPositiveButton(R.string.dialog_account_answer_positive, new DialogInterface.OnClickListener() {
             	       public void onClick(DialogInterface dialog, int id){
-            	    	   addAvailableAccountItem(currentAccount);
+            	    	   addAvailablePublishAccount(currentAccount);
             	    	   mContainerConnectedAccountsView.removeView(vgConnectedAccounts);
             	    	   
             	    	   // If there are no rows remaining, show the empty view.
@@ -109,7 +109,7 @@ public class ChooseAccountFragment extends Fragment {
             }
         });
         
-        //move AccountItem from Connected to Available
+        //move PublishAccount from Connected to Available
         vgConnectedAccounts.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -119,21 +119,21 @@ public class ChooseAccountFragment extends Fragment {
         });     
     }
 	
-	private void addAvailableAccountItem(AccountItem account) {
+	private void addAvailablePublishAccount(PublishAccount account) {
     	
-		final ViewGroup vgAvailableAccounts = (ViewGroup) LayoutInflater.from(getActivity()).inflate(R.layout.account_list_item, mContainerAvailableAccountsView, false);
+		final ViewGroup vgAvailableAccounts = (ViewGroup) LayoutInflater.from(getActivity()).inflate(R.layout.publish_account_item, mContainerAvailableAccountsView, false);
 		((TextView) vgAvailableAccounts.findViewById(R.id.tv_account_name)).setText(account.getName());
-		final AccountItem currentAccount = account;
+		final PublishAccount currentAccount = account;
 		
 		mContainerAvailableAccountsView.addView(vgAvailableAccounts, 0);		
 		mView.findViewById(R.id.tv_accounts_available_empty).setVisibility(View.GONE);
 		
-		//move AccountItem from Available to Connected
+		//move PublishAccount from Available to Connected
         vgAvailableAccounts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
             	
-            	addConnectedAccountItem(currentAccount);
+            	addConnectedPublishAccount(currentAccount);
             	mContainerAvailableAccountsView.removeView(vgAvailableAccounts);        	
             	                   	
                 // If there are no rows remaining, show the empty view.

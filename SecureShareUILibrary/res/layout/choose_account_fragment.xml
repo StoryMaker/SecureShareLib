@@ -12,8 +12,7 @@
            android:background="@color/light_gray"
            android:padding="16dp">
                        
-	    <TextView
-	        android:id="@+id/tv_accounts_label"     
+	    <TextView     
 	        android:text="@string/connect_account" 
 	        style="@style/LabelHeader"/>
 	      
@@ -21,7 +20,6 @@
 			style="@style/DividerHorizontal"/>
 	    
 		<TextView
-	        android:id="@+id/tv_accounts_connected_label"
 	        android:text="@string/accounts_connected" 
 			style="@style/LabelGeneral"
 			android:animateLayoutChanges="true"/>
@@ -47,7 +45,6 @@
 	        android:text="@string/account_none_found"/>
         
         <TextView
-	        android:id="@+id/tv_accounts_available_label"
 	        android:text="@string/accounts_available" 
 	        style="@style/LabelGeneral"
 	        android:animateLayoutChanges="true"/>

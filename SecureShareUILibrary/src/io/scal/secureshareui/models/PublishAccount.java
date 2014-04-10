@@ -1,13 +1,13 @@
 package io.scal.secureshareui.models;
 
-public class AccountItem{
+public class PublishAccount{
 	
 	private int Id;
 	private String Name;
 	private String IconUrl;
 	private boolean IsConnected;
 	
-	public AccountItem(int id, String name, String iconUrl, boolean isConnected){
+	public PublishAccount(int id, String name, String iconUrl, boolean isConnected){
 		this.Id = id;
 		this.Name = name;
 		this.IconUrl = iconUrl;

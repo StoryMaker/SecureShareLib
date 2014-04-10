@@ -12,16 +12,18 @@
     <string name="dialog_account_answer_positive">Yes</string>
     <string name="dialog_account_answer_negative">Cancel</string>
     
+    <string name="label_activity_log">Activity Log</string>
     <string name="label_title">Title</string>
     <string name="label_description">Description</string>
     <string name="label_tags">Tags</string>
+    <string name="label_add">Add</string>
     
     <string name="hint_story_title">Enter a Title</string>
-    <string name="hint_story_description">Describe your story...</string>
+    <string name="hint_story_description">Describe your story&#8230;</string>
     <string name="hint_story_tag">#addtags</string>
     
-    <string name="label_category">Category</string>
-    <string-array name="array_story_categories">
+    <string name="label_section">Section</string>
+    <string-array name="array_story_sections">
         <item>Politics</item>
         <item>Business</item>
         <item>Sports</item>
@@ -40,6 +42,17 @@
         <item>Iraq</item>
         <item>Morocco</item>
         <item>Tunisia</item> 
+    </string-array>
+    
+    <string-array name="array_autocomplete_tags">
+        <item>atesttag</item>
+        <item>btesttag</item>
+        <item>ctesttag</item>
+        <item>dtesttag</item>
+        <item>etesttag</item>
+        <item>ftesttag</item>
+        <item>gtesttag</item>
+        <item>htesttag</item>
     </string-array>
     
 </resources>

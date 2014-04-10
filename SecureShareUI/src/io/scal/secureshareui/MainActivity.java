@@ -1,7 +1,6 @@
 package io.scal.secureshareui;
 
-import io.scal.secureshareui.lib.ChooseAccountFragment;
-import io.scal.secureshareui.lib.StoryInfoEditFragment;
+import io.scal.secureshareui.lib.*;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -16,7 +15,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        addStoryInfoEditFragment();
+        addStoryInfoFragment();
     }
 
     @Override
@@ -31,7 +30,16 @@ public class MainActivity extends Activity {
     	     
         ChooseAccountFragment caFragment = new ChooseAccountFragment();
         fragTrans.add(R.id.fragmentLayout, caFragment);
-        fragTrans.commit();      
+        fragTrans.commit();
+    }
+    
+    public void addStoryInfoFragment() {
+    	FragmentManager fragManager = getFragmentManager();
+    	FragmentTransaction fragTrans = fragManager.beginTransaction();
+    	     
+    	StoryInfoFragment siFragment = new StoryInfoFragment();
+        fragTrans.add(R.id.fragmentLayout, siFragment);
+        fragTrans.commit();
     }
     
     public void addStoryInfoEditFragment() {
@@ -40,6 +48,6 @@ public class MainActivity extends Activity {
     	     
     	StoryInfoEditFragment sieFragment = new StoryInfoEditFragment();
         fragTrans.add(R.id.fragmentLayout, sieFragment);
-        fragTrans.commit();      
+        fragTrans.commit();
     }
 }

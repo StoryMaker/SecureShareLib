@@ -41,38 +41,42 @@
 		
 		
 		<LinearLayout
-			android:layout_width="wrap_content"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:orientation="horizontal" >
 			
-			<EditText 
-			    android:id="@+id/et_story_info_tag"
-			    android:layout_width="fill_parent"
+			<AutoCompleteTextView 
+			    android:id="@+id/act_story_info_tag"
+			    android:layout_width="0dp"
+			    android:layout_weight="1"
 			    android:layout_height="fill_parent"
 			    android:inputType="text"
 			    android:hint="@string/hint_story_tag"/>
 			
 			<Button
+			    android:id="@+id/btn_add_tag"
 			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:text="hello" />
+			    android:layout_height="wrap_content"	    			    
+			    android:text="@string/label_add" />
 		
-		</LinearLayout>
+		</LinearLayout>	
 		
-		
-		
-		
-		
+		<LinearLayout android:id="@+id/story_tag_container"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:animateLayoutChanges="true"/>
+			
 		<TextView
-	        android:text="@string/label_category" 
+	        android:text="@string/label_section" 
 			style="@style/LabelGeneral" />
 		
 		<Spinner
-		    android:id="@+id/sp_story_category"
+		    android:id="@+id/sp_story_section"
 		    android:layout_width="fill_parent"
 		    android:layout_height="wrap_content" 
-		    android:entries="@array/array_story_categories"
-		    android:prompt="@string/label_category"
+		    android:entries="@array/array_story_sections"
+		    android:prompt="@string/label_section"
 		    android:spinnerMode="dialog"/>
 		
 		<TextView
