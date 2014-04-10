@@ -16,7 +16,7 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        addStoryInfoFragment();
+        addStoryInfoEditFragment();
     }
 
     @Override
@@ -35,7 +35,7 @@ public class MainActivity extends FragmentActivity {
     }
     
     public void addStoryInfoFragment() {
-    	FragmentManager fragManager = getFragmentManager();
+    	FragmentManager fragManager = getSupportFragmentManager();
     	FragmentTransaction fragTrans = fragManager.beginTransaction();
     	     
     	StoryInfoFragment siFragment = new StoryInfoFragment();
