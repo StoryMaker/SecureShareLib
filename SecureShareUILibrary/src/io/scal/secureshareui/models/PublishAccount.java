@@ -2,23 +2,16 @@ package io.scal.secureshareui.models;
 
 public class PublishAccount{
 	
-	private int Id;
 	private String Name;
+	private String Site;
 	private String IconUrl;
 	private boolean IsConnected;
 	
-	public PublishAccount(int id, String name, String iconUrl, boolean isConnected){
-		this.Id = id;
+	public PublishAccount(String name, String site, String iconUrl, boolean isConnected){
 		this.Name = name;
+		this.Site = site;
 		this.IconUrl = iconUrl;
 		this.IsConnected = isConnected;
-	}
-	
-	public int getId(){
-	     return this.Id;
-	}
-	public void setId(int id){
-	     this.Id = id;
 	}
 	
 	public String getName(){
@@ -26,6 +19,13 @@ public class PublishAccount{
 	}
 	public void setName(String name){
 	     this.Name = name;
+	}
+	
+	public String getSite(){
+	     return this.Site;
+	}
+	public void setSite(String site){
+	     this.Site = site;
 	}
 	
 	public String getIconUrl(){

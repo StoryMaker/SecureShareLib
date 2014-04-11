@@ -42,16 +42,13 @@ public class ChooseAccountFragment extends Fragment {
 	}
 	
 	private void getPublishAccounts() {
-		
-		int i = 0;
-		
-		mAlPublishAccounts.add(new PublishAccount(i++, "Facebook", "snoopy", true));
-		mAlPublishAccounts.add(new PublishAccount(i++, "Youtube", "snoopy", false));
-		mAlPublishAccounts.add(new PublishAccount(i++, "SoundCloud", "ic_launcher", false));
-		mAlPublishAccounts.add(new PublishAccount(i++, "Flickr", "ic_launcher", false));
-		mAlPublishAccounts.add(new PublishAccount(i++, "Wordpress", "ic_launcher", false));
-		mAlPublishAccounts.add(new PublishAccount(i++, "GlobalLeaks", "ic_launcher", false));
-		mAlPublishAccounts.add(new PublishAccount(i++, "SSH", "ic_launcher", false));
+		mAlPublishAccounts.add(new PublishAccount("Facebook", "facebook", "snoopy", true));
+		mAlPublishAccounts.add(new PublishAccount("Youtube", "youtube", "snoopy", false));
+		mAlPublishAccounts.add(new PublishAccount("SoundCloud", "soundcloud", "ic_launcher", false));
+		mAlPublishAccounts.add(new PublishAccount("Flickr", "flickr", "ic_launcher", false));
+		mAlPublishAccounts.add(new PublishAccount("Wordpress", "wordpress", "ic_launcher", false));
+		mAlPublishAccounts.add(new PublishAccount("GlobalLeaks", "g_leaks", "ic_launcher", false));
+		mAlPublishAccounts.add(new PublishAccount("SSH", "ssh", "ic_launcher", false));
 	}
 	
 	private void addPublishAccounts() { 
