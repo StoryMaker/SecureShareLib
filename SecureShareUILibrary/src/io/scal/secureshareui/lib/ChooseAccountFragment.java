@@ -1,6 +1,8 @@
 package io.scal.secureshareui.lib;
 
-import io.scal.secureshareui.models.PublishAccount;
+import io.scal.secureshareui.controller.FacebookPublishController;
+import io.scal.secureshareui.controller.PublishController.OnPublishEventListener;
+import io.scal.secureshareui.model.PublishAccount;
 import io.scal.secureshareuilibrary.R;
 
 import java.util.ArrayList;
@@ -24,8 +26,9 @@ public class ChooseAccountFragment extends Fragment {
 	private View mView;
 	private ViewGroup mContainerConnectedAccountsView;
 	private ViewGroup mContainerAvailableAccountsView;
+	private FacebookPublishController facebookPublishController = new FacebookPublishController();
 	
-	List<PublishAccount> mAlPublishAccounts = new ArrayList<PublishAccount>();
+	private List<PublishAccount> mAlPublishAccounts = new ArrayList<PublishAccount>();
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,26 +37,24 @@ public class ChooseAccountFragment extends Fragment {
 		
 		mContainerConnectedAccountsView = (ViewGroup) mView.findViewById(R.id.accounts_connected_container);
 		mContainerAvailableAccountsView = (ViewGroup) mView.findViewById(R.id.accounts_available_container);
-		
-		getPublishAccounts();
+
 		addPublishAccounts();
 		
 		return mView;
 	}
 	
-	private void getPublishAccounts() {
-		mAlPublishAccounts.add(new PublishAccount("Facebook", "facebook", "snoopy", true));
-		mAlPublishAccounts.add(new PublishAccount("Youtube", "youtube", "snoopy", false));
-		mAlPublishAccounts.add(new PublishAccount("SoundCloud", "soundcloud", "ic_launcher", false));
-		mAlPublishAccounts.add(new PublishAccount("Flickr", "flickr", "ic_launcher", false));
-		mAlPublishAccounts.add(new PublishAccount("Wordpress", "wordpress", "ic_launcher", false));
-		mAlPublishAccounts.add(new PublishAccount("GlobalLeaks", "g_leaks", "ic_launcher", false));
-		mAlPublishAccounts.add(new PublishAccount("SSH", "ssh", "ic_launcher", false));
+	public void setPublishAccountsList(List<PublishAccount> publishAccounts) {
+		this.mAlPublishAccounts = publishAccounts;
+		addPublishAccounts();
+	}
+	
+	public void setOnPublishEventListener(OnPublishEventListener publishEventListener) {
+		facebookPublishController.setOnPublishEventListener(publishEventListener);
 	}
 	
 	private void addPublishAccounts() { 
     	//ensure the fragment is attached to a context
-    	if(getActivity() == null)
+    	if(getActivity() == null && mAlPublishAccounts != null)
     		return;
 	
         for(PublishAccount account: mAlPublishAccounts) {
@@ -106,7 +107,7 @@ public class ChooseAccountFragment extends Fragment {
             }
         });
         
-        //move PublishAccount from Connected to Available
+        //edit connected account
         vgConnectedAccounts.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -129,9 +130,10 @@ public class ChooseAccountFragment extends Fragment {
         vgAvailableAccounts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+            	facebookPublishController.startAuthentication(currentAccount);
             	
             	addConnectedPublishAccount(currentAccount);
-            	mContainerAvailableAccountsView.removeView(vgAvailableAccounts);        	
+            	mContainerAvailableAccountsView.removeView(vgAvailableAccounts);
             	                   	
                 // If there are no rows remaining, show the empty view.
                 if (mContainerAvailableAccountsView.getChildCount() == 0) {

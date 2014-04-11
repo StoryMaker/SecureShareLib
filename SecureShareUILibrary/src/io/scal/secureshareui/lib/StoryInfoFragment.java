@@ -1,6 +1,6 @@
 package io.scal.secureshareui.lib;
 
-import io.scal.secureshareui.models.StoryTag;
+import io.scal.secureshareui.model.StoryTag;
 import io.scal.secureshareuilibrary.R;
 
 import java.util.ArrayList;

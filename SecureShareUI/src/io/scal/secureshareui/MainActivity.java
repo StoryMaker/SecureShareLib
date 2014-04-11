@@ -1,13 +1,17 @@
 package io.scal.secureshareui;
 
-import io.scal.secureshareui.lib.*;
+import java.util.ArrayList;
+import java.util.List;
 
+import io.scal.secureshareui.controller.PublishController.OnPublishEventListener;
+import io.scal.secureshareui.lib.*;
+import io.scal.secureshareui.model.PublishAccount;
 import android.os.Bundle;
-import android.app.Activity;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
+import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity {
 
@@ -29,7 +33,29 @@ public class MainActivity extends FragmentActivity {
     	FragmentManager fragManager = getSupportFragmentManager();
     	FragmentTransaction fragTrans = fragManager.beginTransaction();
     	     
-        ChooseAccountFragment caFragment = new ChooseAccountFragment();
+        ChooseAccountFragment caFragment = new ChooseAccountFragment();	
+        List<PublishAccount> accounts = new ArrayList<PublishAccount>();
+        
+        accounts.add(new PublishAccount("1", "facebook", "site", "username", "credentials", true));
+        accounts.add(new PublishAccount("2", "soundcloud", "site", "username", "credentials", false));
+        accounts.add(new PublishAccount("3", "storymaker cc", "site", "username", "credentials", false));
+        accounts.add(new PublishAccount("4", "wordpress", "site", "username", "credentials", false));   
+        caFragment.setPublishAccountsList(accounts);
+        
+        
+        caFragment.setOnPublishEventListener(new OnPublishEventListener() {
+
+			@Override
+			public void onSuccess(PublishAccount publishAccount) {
+				Toast.makeText(getApplicationContext(), publishAccount.getName(), Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onFailure(PublishAccount publishAccount, String failureMessage) {
+				
+			}
+		});
+        
         fragTrans.add(R.id.fragmentLayout, caFragment);
         fragTrans.commit();
     }

@@ -4,8 +4,8 @@ package io.scal.secureshareui.lib;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.scal.secureshareui.models.PublishAccount;
-import io.scal.secureshareui.models.StoryTag;
+import io.scal.secureshareui.model.PublishAccount;
+import io.scal.secureshareui.model.StoryTag;
 import io.scal.secureshareuilibrary.R;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
