@@ -12,8 +12,8 @@ public class FacebookPublishController extends PublishController  {
 
 	@Override
 	public void startAuthentication(Context context, PublishAccount account) {
-		
-		if(account.getId() == "1") {
+	
+		if(account.getId().equals("0")) {
 			Intent intent = new Intent(context, FacebookActivity.class);
 			context.startActivity(intent);		
 		}
