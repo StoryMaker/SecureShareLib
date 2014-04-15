@@ -130,7 +130,7 @@ public class ChooseAccountFragment extends Fragment {
         vgAvailableAccounts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	facebookPublishController.startAuthentication(currentAccount);
+            	facebookPublishController.startAuthentication(getActivity(), currentAccount);
             	
             	addConnectedPublishAccount(currentAccount);
             	mContainerAvailableAccountsView.removeView(vgAvailableAccounts);

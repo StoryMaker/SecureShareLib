@@ -1,5 +1,6 @@
 package io.scal.secureshareui.controller;
 
+import android.content.Context;
 import io.scal.secureshareui.model.PublishAccount;
 
 public abstract class PublishController {
@@ -18,5 +19,5 @@ public abstract class PublishController {
 		return this.mPublishEventListener;
 	}
 	
-    abstract void startAuthentication(PublishAccount account);
+    abstract void startAuthentication(Context context, PublishAccount account);
 }
