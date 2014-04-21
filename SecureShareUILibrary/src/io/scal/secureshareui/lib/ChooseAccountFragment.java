@@ -1,6 +1,7 @@
 package io.scal.secureshareui.lib;
 
 import io.scal.secureshareui.controller.FacebookPublishController;
+import io.scal.secureshareui.controller.PublishController;
 import io.scal.secureshareui.controller.PublishController.OnPublishEventListener;
 import io.scal.secureshareui.model.PublishAccount;
 import io.scal.secureshareuilibrary.R;
@@ -11,6 +12,8 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.support.v4.app.Fragment;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,24 +23,24 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 public class ChooseAccountFragment extends Fragment {
 
 	private View mView;
 	private ViewGroup mContainerConnectedAccountsView;
 	private ViewGroup mContainerAvailableAccountsView;
-	private FacebookPublishController facebookPublishController = new FacebookPublishController();
-	
+	private OnPublishEventListener mPublishEventListener;
 	private List<PublishAccount> mAlPublishAccounts = new ArrayList<PublishAccount>();
+	private static boolean inConnectionMode = true;
+	
+	//used for storing state for the callback
+	private static ViewGroup mVgAvailableAccounts;
+	private static PublishAccount mPublishAccout;
 	
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		
-		mView = inflater.inflate(R.layout.choose_account_fragment, container, false);
-		
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {	
+		mView = inflater.inflate(R.layout.choose_account_fragment, container, false);		
 		mContainerConnectedAccountsView = (ViewGroup) mView.findViewById(R.id.accounts_connected_container);
-		mContainerAvailableAccountsView = (ViewGroup) mView.findViewById(R.id.accounts_available_container);
-
+		mContainerAvailableAccountsView = (ViewGroup) mView.findViewById(R.id.accounts_available_container);	
 		addPublishAccounts();
 		
 		return mView;
@@ -49,7 +52,7 @@ public class ChooseAccountFragment extends Fragment {
 	}
 	
 	public void setOnPublishEventListener(OnPublishEventListener publishEventListener) {
-		facebookPublishController.setOnPublishEventListener(publishEventListener);
+		this.mPublishEventListener = publishEventListener;
 	}
 	
 	private void addPublishAccounts() { 
@@ -57,9 +60,8 @@ public class ChooseAccountFragment extends Fragment {
     	if(getActivity() == null && mAlPublishAccounts != null)
     		return;
 	
-        for(PublishAccount account: mAlPublishAccounts) {
-        	
-        	if(account.getIsConnected()) {
+        for(PublishAccount account: mAlPublishAccounts) {     	
+        	if (account.getIsConnected()) {
         		addConnectedPublishAccount(account);
         	} 	
         	else {
@@ -68,9 +70,9 @@ public class ChooseAccountFragment extends Fragment {
         }      
     }
 	
-	private void addConnectedPublishAccount(PublishAccount account) {
-		
-		final ViewGroup vgConnectedAccounts = (ViewGroup) LayoutInflater.from(getActivity()).inflate(R.layout.publish_account_item, mContainerConnectedAccountsView, false);	
+	private void addConnectedPublishAccount(PublishAccount account) {	
+		final ViewGroup vgConnectedAccounts = (ViewGroup) LayoutInflater.from(getActivity())
+											   .inflate(R.layout.publish_account_item, mContainerConnectedAccountsView, false);	
 		((TextView) vgConnectedAccounts.findViewById(R.id.tv_account_name)).setText(account.getName());
 		final PublishAccount currentAccount = account;
         		
@@ -79,10 +81,8 @@ public class ChooseAccountFragment extends Fragment {
         
         //move PublishAccount from Connected to Available
         vgConnectedAccounts.setOnLongClickListener(new OnLongClickListener() {
-
             @Override
-            public boolean onLongClick(View v) {
-            	
+            public boolean onLongClick(View v) {           	
             	AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             	builder.setMessage(R.string.dialog_account_message)
             	   .setCancelable(false)
@@ -91,7 +91,7 @@ public class ChooseAccountFragment extends Fragment {
             	    	   addAvailablePublishAccount(currentAccount);
             	    	   mContainerConnectedAccountsView.removeView(vgConnectedAccounts);
             	    	   
-            	    	   // If there are no rows remaining, show the empty view.
+            	    	   //if there are no rows remaining, show the empty view.
                            if (mContainerConnectedAccountsView.getChildCount() == 0){
                                mView.findViewById(R.id.tv_accounts_connected_empty).setVisibility(View.VISIBLE);
                            } 
@@ -107,18 +107,23 @@ public class ChooseAccountFragment extends Fragment {
             }
         });
         
-        //edit connected account
+        
         vgConnectedAccounts.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(getActivity(), currentAccount.getName() + " edit click", Toast.LENGTH_SHORT).show();		
+				
+				if(inConnectionMode) {
+					Toast.makeText(getActivity(), currentAccount.getName() + " edit click", Toast.LENGTH_SHORT).show();	
+				}
+				else {
+					Toast.makeText(getActivity(), currentAccount.getName() + "  click", Toast.LENGTH_SHORT).show();	
+				}				
 			} 
         });     
     }
 	
 	private void addAvailablePublishAccount(PublishAccount account) {
-    	
+		
 		final ViewGroup vgAvailableAccounts = (ViewGroup) LayoutInflater.from(getActivity()).inflate(R.layout.publish_account_item, mContainerAvailableAccountsView, false);
 		((TextView) vgAvailableAccounts.findViewById(R.id.tv_account_name)).setText(account.getName());
 		final PublishAccount currentAccount = account;
@@ -129,17 +134,43 @@ public class ChooseAccountFragment extends Fragment {
 		//move PublishAccount from Available to Connected
         vgAvailableAccounts.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-            	facebookPublishController.startAuthentication(getActivity(), currentAccount);
+            public void onClick(View view) {          	
+            	FacebookPublishController fbPublishController = (FacebookPublishController) PublishController.getPublishController(currentAccount.getSite());
             	
-            	addConnectedPublishAccount(currentAccount);
-            	mContainerAvailableAccountsView.removeView(vgAvailableAccounts);
-            	                   	
-                // If there are no rows remaining, show the empty view.
-                if (mContainerAvailableAccountsView.getChildCount() == 0) {
-                    mView.findViewById(R.id.tv_accounts_available_empty).setVisibility(View.VISIBLE);
-                }            
+            	//ensure controller exists
+            	if(null == fbPublishController) {
+            		mPublishEventListener.onFailure(currentAccount, "Error Finding Controller" );
+            		return;
+            	}
+            	
+            	fbPublishController.setOnPublishEventListener(mPublishEventListener);
+            	fbPublishController.setContext(getActivity());
+            	fbPublishController.startAuthentication(currentAccount);
+            	
+            	mPublishAccout = currentAccount;
+            	mVgAvailableAccounts = vgAvailableAccounts;      
             }
         });
     }
+	
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	
+    	if(requestCode == PublishController.getControllerRequestCode()) { 	
+	    	if(resultCode == android.app.Activity.RESULT_OK) {
+	    		
+	    		addConnectedPublishAccount(mPublishAccout);
+	        	mContainerAvailableAccountsView.removeView(mVgAvailableAccounts);
+	        	                                      
+	        	// If there are no rows remaining, show the empty view.
+	        	if (mContainerAvailableAccountsView.getChildCount() == 0) {
+	        		mView.findViewById(R.id.tv_accounts_available_empty).setVisibility(View.VISIBLE);
+	        	}
+	    		
+	    		mPublishEventListener.onSuccess(mPublishAccout);
+	    	}
+	    	else {
+	    		mPublishEventListener.onFailure(mPublishAccout, "Error Loggging in");
+	    	}
+    	}
+    } 
 }

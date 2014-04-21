@@ -8,14 +8,16 @@ public class PublishAccount {
     private String userName;
     private String credentials;
     private boolean isConnected;
+    private boolean areCredentialsValid;
 	
-	public PublishAccount(String id, String name, String site, String userName, String credentials, boolean isConnected){
+	public PublishAccount(String id, String name, String site, String userName, String credentials, boolean isConnected, boolean areCredentialsValid){
 		this.id = id;
 		this.setName(name);
 		this.setSite(site);
 		this.setUserName(userName);
 		this.setCredentials(credentials);
 		this.setIsConnected(isConnected);
+		this.setAreCredentialsValid(areCredentialsValid);
 	}
 
 	public String getId() {
@@ -25,7 +27,6 @@ public class PublishAccount {
 	public String getName() {
 		return name;
 	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -33,7 +34,6 @@ public class PublishAccount {
 	public String getSite() {
 		return site;
 	}
-
 	public void setSite(String site) {
 		this.site = site;
 	}
@@ -41,7 +41,6 @@ public class PublishAccount {
 	public String getUserName() {
 		return userName;
 	}
-
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
@@ -49,7 +48,6 @@ public class PublishAccount {
 	public String getCredentials() {
 		return credentials;
 	}
-
 	public void setCredentials(String credentials) {
 		this.credentials = credentials;
 	}
@@ -57,9 +55,15 @@ public class PublishAccount {
 	public boolean getIsConnected() {
 		return isConnected;
 	}
-
 	public void setIsConnected(boolean isConnected) {
 		this.isConnected = isConnected;
+	}
+
+	public boolean getAreCredentialsValid() {
+		return areCredentialsValid;
+	}
+	public void setAreCredentialsValid(boolean areCredentialsValid) {
+		this.areCredentialsValid = areCredentialsValid;
 	}
 	
 }

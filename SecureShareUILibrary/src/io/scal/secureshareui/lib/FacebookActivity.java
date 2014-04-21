@@ -1,31 +1,36 @@
 package io.scal.secureshareui.lib;
 
 import io.scal.secureshareuilibrary.R;
+
+import java.util.Date;
+import java.util.List;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.location.Location;
 import android.os.Build;
-import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
-import com.facebook.*;
+
+import com.facebook.AppEventsLogger;
+import com.facebook.FacebookAuthorizationException;
+import com.facebook.FacebookOperationCanceledException;
+import com.facebook.FacebookRequestError;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphPlace;
 import com.facebook.model.GraphUser;
-import com.facebook.widget.*;
-import java.util.*;
+import com.facebook.widget.FacebookDialog;
+import com.facebook.widget.LoginButton;
 
 public class FacebookActivity extends FragmentActivity {
 	
@@ -33,13 +38,14 @@ public class FacebookActivity extends FragmentActivity {
 
     private final String PENDING_ACTION_BUNDLE_KEY = "com.facebook.samples.hellofacebook:PendingAction";
     private LoginButton loginButton;
-    private TextView greeting;
     private PendingAction pendingAction = PendingAction.NONE;
     private ViewGroup controlsContainer;
     private GraphUser user;
     private GraphPlace place;
     private List<GraphUser> tags;
     private boolean canPresentShareDialog;
+    private static int mFinalResult;
+    
 
     private enum PendingAction {
         NONE,
@@ -141,7 +147,14 @@ public class FacebookActivity extends FragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         
-        onBackPressed();
+        if(resultCode == RESULT_OK) { //successful login
+        	mFinalResult = RESULT_OK;
+        }
+        else if (resultCode == 0) { //failed login
+        	mFinalResult = 0;
+        }
+        
+        //onBackPressed();
         
         uiHelper.onActivityResult(requestCode, resultCode, data, dialogCallback);
     }
@@ -250,5 +263,16 @@ public class FacebookActivity extends FragmentActivity {
     private boolean hasPublishPermission() {
         Session session = Session.getActiveSession();
         return session != null && session.getPermissions().contains("publish_actions");
+    }
+    
+    @Override
+    public void finish() {
+      // Prepare data intent 
+      Intent data = new Intent();
+      data.putExtra("test", "from FB activity");
+      
+      // Activity finished ok, return the data
+      setResult(mFinalResult, data);
+      super.finish();
     }
 }
