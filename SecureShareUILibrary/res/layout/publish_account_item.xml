@@ -16,9 +16,19 @@
         android:id="@+id/tv_account_name"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_weight="5"
         android:gravity="center_vertical"
         android:paddingLeft="8dp"
         android:textSize="18sp" />
+    
+    <CheckBox
+        android:id="@+id/cbToPublish"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:focusable="false"
+        android:clickable="false"
+        android:enabled="false"
+        android:visibility="gone"/>
 
 </LinearLayout>

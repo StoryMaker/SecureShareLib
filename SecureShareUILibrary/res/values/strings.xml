@@ -3,7 +3,8 @@
 
     <string name="app_name">SecureShareUILibrary</string>
     <string name="connect_account">Connect Account</string>
-    <string name="accounts_connected">Accounts Connected</string>
+    <string name="select_account">Select Account</string>
+    <string name="accounts_connected">Connected</string>
     <string name="accounts_available">Available</string>
     <string name="account_logo_desc">Account Logo</string>
     <string name="account_none_found">No Accounts Found</string>
@@ -19,6 +20,7 @@
     <string name="ok">OK</string>
     <string name="hello_user">Hello %1$s!</string>
     <string name="success">Success</string>
+    <string name="lbl_continue">Continue</string>
     <string name="successfully_posted_post">Successfully posted \'%1$s\'.\nPost ID: %2$s</string>
     <string name="error">Error</string>
     <string name="status_update">Updating status for %1$s at %2$s</string>

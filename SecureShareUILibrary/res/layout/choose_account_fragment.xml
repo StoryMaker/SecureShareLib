@@ -12,7 +12,8 @@
            android:background="@color/light_gray"
            android:padding="16dp">
                        
-	    <TextView     
+	    <TextView
+	        android:id="@+id/tv_choose_account_header"     
 	        android:text="@string/connect_account" 
 	        style="@style/LabelHeader"/>
 	      
@@ -22,15 +23,15 @@
 		<TextView
 	        android:text="@string/accounts_connected" 
 			style="@style/LabelGeneral"
-			android:animateLayoutChanges="true"/>
+			android:animateLayoutChanges="true"
+			android:paddingTop="8dp"
+	        android:paddingBottom="4dp"/>
 		
         <LinearLayout android:id="@+id/accounts_connected_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:animateLayoutChanges="true"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
             android:background="@android:color/white"
             android:showDividers="middle"
            	android:divider="?android:dividerHorizontal"/>
@@ -47,15 +48,15 @@
         <TextView
 	        android:text="@string/accounts_available" 
 	        style="@style/LabelGeneral"
-	        android:animateLayoutChanges="true"/>
+	        android:animateLayoutChanges="true"
+	        android:paddingTop="8dp"
+	        android:paddingBottom="4dp"/>
 		        
    		<LinearLayout android:id="@+id/accounts_available_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:animateLayoutChanges="true"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp" 
             android:background="@android:color/white"
             android:showDividers="middle"
            	android:divider="?android:dividerHorizontal"/>
@@ -69,5 +70,13 @@
 	        android:background="@android:color/white"
 	        android:text="@string/account_none_found"/>
    		
+   		 <Button
+   		     android:id="@+id/btnContinue"
+		     android:layout_width="fill_parent"
+		     android:layout_height="wrap_content"
+		     android:text="@string/lbl_continue"
+		     android:layout_marginTop="16dp"
+		     android:visibility="gone"/>
+   		 
   		</LinearLayout>
    </ScrollView>

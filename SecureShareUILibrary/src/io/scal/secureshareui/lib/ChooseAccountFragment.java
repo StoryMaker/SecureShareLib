@@ -9,6 +9,7 @@ import io.scal.secureshareuilibrary.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.accounts.AccountAuthenticatorActivity;
 import android.app.AlertDialog;
 import android.support.v4.app.Fragment;
 import android.content.DialogInterface;
@@ -20,6 +21,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,17 +33,48 @@ public class ChooseAccountFragment extends Fragment {
 	private ViewGroup mContainerAvailableAccountsView;
 	private OnPublishEventListener mPublishEventListener;
 	private List<PublishAccount> mAlPublishAccounts = new ArrayList<PublishAccount>();
-	private static boolean inConnectionMode = true;
+	private static boolean mInSelectionMode = false;
+	private static boolean mAttemptingLoginRetry = false;
+	
+	//return the ids of selected items
+	ArrayList<String> mSelectedAccountIds = new ArrayList<String>();
 	
 	//used for storing state for the callback
-	private static ViewGroup mVgAvailableAccounts;
+	private static ViewGroup mVgAccounts;
 	private static PublishAccount mPublishAccout;
 	
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {	
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mView = inflater.inflate(R.layout.choose_account_fragment, container, false);		
 		mContainerConnectedAccountsView = (ViewGroup) mView.findViewById(R.id.accounts_connected_container);
 		mContainerAvailableAccountsView = (ViewGroup) mView.findViewById(R.id.accounts_available_container);	
+
+		
+		if (getArguments() != null) {
+			//if fragment should display as Dialog
+			boolean isThemeDialog = getArguments().getBoolean("isDialog", false);
+			if(isThemeDialog)		
+				getActivity().setTheme(android.R.style.Theme_Dialog);
+			
+			//if fragment is in connection or selection mode
+			mInSelectionMode = getArguments().getBoolean("inSelectionMode", false);		
+			if(mInSelectionMode) {
+				((TextView) mView.findViewById(R.id.tv_choose_account_header)).setText(this.getString(R.string.select_account));
+				
+				 Button btnContinue = (Button) mView.findViewById(R.id.btnContinue);
+				 btnContinue.setVisibility(View.VISIBLE);
+				 btnContinue.setOnClickListener(new View.OnClickListener() {
+		             public void onClick(View v) {
+		            	 Toast.makeText(getActivity(), "Continue button click", Toast.LENGTH_SHORT).show();
+		            	 
+		            	 Intent intent = new Intent(getActivity(), AccountAuthenticatorActivity.class);
+		            	 intent.putStringArrayListExtra("accountIds", mSelectedAccountIds);
+		            	 //getActivity().startActivity(intent);
+		             }
+		         });
+			}
+		}
+
 		addPublishAccounts();
 		
 		return mView;
@@ -62,7 +96,7 @@ public class ChooseAccountFragment extends Fragment {
 	
         for(PublishAccount account: mAlPublishAccounts) {     	
         	if (account.getIsConnected()) {
-        		addConnectedPublishAccount(account);
+        		addConnectedPublishAccount(account, false);
         	} 	
         	else {
         		addAvailablePublishAccount(account);            
@@ -70,14 +104,29 @@ public class ChooseAccountFragment extends Fragment {
         }      
     }
 	
-	private void addConnectedPublishAccount(PublishAccount account) {	
+	private void addConnectedPublishAccount(PublishAccount account, boolean isDynamicallyAdded) {	
 		final ViewGroup vgConnectedAccounts = (ViewGroup) LayoutInflater.from(getActivity())
 											   .inflate(R.layout.publish_account_item, mContainerConnectedAccountsView, false);	
 		((TextView) vgConnectedAccounts.findViewById(R.id.tv_account_name)).setText(account.getName());
+		final CheckBox cbToPublish = (CheckBox) vgConnectedAccounts.findViewById(R.id.cbToPublish);
 		final PublishAccount currentAccount = account;
-        		
+		
         mContainerConnectedAccountsView.addView(vgConnectedAccounts, 0);
         mView.findViewById(R.id.tv_accounts_connected_empty).setVisibility(View.GONE);
+        
+        if(!currentAccount.getAreCredentialsValid()) {
+        	vgConnectedAccounts.setBackgroundColor(Color.RED);
+		}
+        else if(mInSelectionMode) {
+        	cbToPublish.setVisibility(View.VISIBLE);
+        	
+        	//is added after activity load
+        	if(isDynamicallyAdded) {
+        		cbToPublish.setChecked(true);
+        		mSelectedAccountIds.add(currentAccount.getSite());
+        	}
+        		
+        }
         
         //move PublishAccount from Connected to Available
         vgConnectedAccounts.setOnLongClickListener(new OnLongClickListener() {
@@ -110,13 +159,25 @@ public class ChooseAccountFragment extends Fragment {
         
         vgConnectedAccounts.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				
-				if(inConnectionMode) {
-					Toast.makeText(getActivity(), currentAccount.getName() + " edit click", Toast.LENGTH_SHORT).show();	
-				}
-				else {
-					Toast.makeText(getActivity(), currentAccount.getName() + "  click", Toast.LENGTH_SHORT).show();	
+			public void onClick(View v) {			
+				if(!currentAccount.getAreCredentialsValid()) {
+					mAttemptingLoginRetry = true;
+					launchAuthentication(currentAccount, vgConnectedAccounts); 
+				} else {
+					
+					if(mInSelectionMode) {
+						if(cbToPublish.isChecked()) {
+							cbToPublish.setChecked(false);
+							mSelectedAccountIds.remove(currentAccount.getSite());
+						}
+						else {
+							cbToPublish.setChecked(true);
+							mSelectedAccountIds.add(currentAccount.getSite());
+						}				
+					}
+					else {
+						Toast.makeText(getActivity(), currentAccount.getName() + " edit click", Toast.LENGTH_SHORT).show();	
+					}		
 				}				
 			} 
         });     
@@ -134,42 +195,55 @@ public class ChooseAccountFragment extends Fragment {
 		//move PublishAccount from Available to Connected
         vgAvailableAccounts.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {          	
-            	FacebookPublishController fbPublishController = (FacebookPublishController) PublishController.getPublishController(currentAccount.getSite());
-            	
-            	//ensure controller exists
-            	if(null == fbPublishController) {
-            		mPublishEventListener.onFailure(currentAccount, "Error Finding Controller" );
-            		return;
-            	}
-            	
-            	fbPublishController.setOnPublishEventListener(mPublishEventListener);
-            	fbPublishController.setContext(getActivity());
-            	fbPublishController.startAuthentication(currentAccount);
-            	
-            	mPublishAccout = currentAccount;
-            	mVgAvailableAccounts = vgAvailableAccounts;      
+            public void onClick(View view) {
+            	mAttemptingLoginRetry = false;
+            	launchAuthentication(currentAccount, vgAvailableAccounts);     
             }
         });
     }
 	
+	private void launchAuthentication(PublishAccount currentAccount, ViewGroup vgAccounts) {
+    	FacebookPublishController fbPublishController = (FacebookPublishController) PublishController.getPublishController(currentAccount.getSite());
+    	
+    	//ensure controller exists
+    	if(null == fbPublishController) {
+    		mPublishEventListener.onFailure(currentAccount, "Error Finding Controller" );
+    		return;
+    	}
+    	
+    	fbPublishController.setOnPublishEventListener(mPublishEventListener);
+    	fbPublishController.setContext(getActivity());
+    	fbPublishController.startAuthentication(currentAccount);
+    	
+    	mPublishAccout = currentAccount;
+    	mVgAccounts = vgAccounts; 
+	}
+	
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
     	
-    	if(requestCode == PublishController.getControllerRequestCode()) { 	
-	    	if(resultCode == android.app.Activity.RESULT_OK) {
-	    		
-	    		addConnectedPublishAccount(mPublishAccout);
-	        	mContainerAvailableAccountsView.removeView(mVgAvailableAccounts);
+    	if(requestCode == PublishController.getControllerRequestCode()) {	
+    		
+	    	if(resultCode == android.app.Activity.RESULT_OK) {		
+	    		mPublishEventListener.onSuccess(mPublishAccout);
+	    		mPublishAccout.setAreCredentialsValid(true);
+	    	}
+	    	else {
+	    		mPublishEventListener.onFailure(mPublishAccout, "Error Loggging in");
+	    		mPublishAccout.setAreCredentialsValid(false);
+	    	}
+	    	
+	    	if(mAttemptingLoginRetry) {
+	    		mContainerConnectedAccountsView.removeView(mVgAccounts);
+	    		addConnectedPublishAccount(mPublishAccout, true);
+	    	}
+	    	else {
+	    		addConnectedPublishAccount(mPublishAccout, true);
+	        	mContainerAvailableAccountsView.removeView(mVgAccounts);
 	        	                                      
 	        	// If there are no rows remaining, show the empty view.
 	        	if (mContainerAvailableAccountsView.getChildCount() == 0) {
 	        		mView.findViewById(R.id.tv_accounts_available_empty).setVisibility(View.VISIBLE);
-	        	}
-	    		
-	    		mPublishEventListener.onSuccess(mPublishAccout);
-	    	}
-	    	else {
-	    		mPublishEventListener.onFailure(mPublishAccout, "Error Loggging in");
+	        	}  
 	    	}
     	}
     } 

@@ -153,10 +153,9 @@ public class FacebookActivity extends FragmentActivity {
         else if (resultCode == 0) { //failed login
         	mFinalResult = 0;
         }
-        
-        //onBackPressed();
-        
+                
         uiHelper.onActivityResult(requestCode, resultCode, data, dialogCallback);
+        finish();
     }
 
     @Override
@@ -269,7 +268,6 @@ public class FacebookActivity extends FragmentActivity {
     public void finish() {
       // Prepare data intent 
       Intent data = new Intent();
-      data.putExtra("test", "from FB activity");
       
       // Activity finished ok, return the data
       setResult(mFinalResult, data);
