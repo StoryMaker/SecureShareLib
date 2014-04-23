@@ -33,244 +33,252 @@ import com.facebook.widget.FacebookDialog;
 import com.facebook.widget.LoginButton;
 
 public class FacebookActivity extends FragmentActivity {
-	
+
 	private static final String PERMISSION = "publish_actions";
 
-    private final String PENDING_ACTION_BUNDLE_KEY = "com.facebook.samples.hellofacebook:PendingAction";
-    private LoginButton loginButton;
-    private PendingAction pendingAction = PendingAction.NONE;
-    private ViewGroup controlsContainer;
-    private GraphUser user;
-    private GraphPlace place;
-    private List<GraphUser> tags;
-    private boolean canPresentShareDialog;
-    private static int mFinalResult;
-    
+	private final String PENDING_ACTION_BUNDLE_KEY = "com.facebook.samples.hellofacebook:PendingAction";
+	private LoginButton loginButton;
+	private PendingAction pendingAction = PendingAction.NONE;
+	private ViewGroup controlsContainer;
+	private GraphUser user;
+	private GraphPlace place;
+	private List<GraphUser> tags;
+	private boolean canPresentShareDialog;
+	private static int mFinalResult;
 
-    private enum PendingAction {
-        NONE,
-        POST_PHOTO,
-        POST_STATUS_UPDATE
-    }
-    private UiLifecycleHelper uiHelper;
+	private enum PendingAction {
+		NONE, POST_PHOTO, POST_STATUS_UPDATE
+	}
 
-    private Session.StatusCallback callback = new Session.StatusCallback() {
-        @Override
-        public void call(Session session, SessionState state, Exception exception) {
-            onSessionStateChange(session, state, exception);
-        }
-    };
+	private UiLifecycleHelper uiHelper;
 
-    private FacebookDialog.Callback dialogCallback = new FacebookDialog.Callback() {
-        @Override
-        public void onError(FacebookDialog.PendingCall pendingCall, Exception error, Bundle data) {
-            Log.d("HelloFacebook", String.format("Error: %s", error.toString()));
-        }
+	private Session.StatusCallback callback = new Session.StatusCallback() {
+		@Override
+		public void call(Session session, SessionState state,
+				Exception exception) {
+			onSessionStateChange(session, state, exception);
+		}
+	};
 
-        @Override
-        public void onComplete(FacebookDialog.PendingCall pendingCall, Bundle data) {
-            Log.d("HelloFacebook", "Success!");
-        }
-    };
+	private FacebookDialog.Callback dialogCallback = new FacebookDialog.Callback() {
+		@Override
+		public void onError(FacebookDialog.PendingCall pendingCall,
+				Exception error, Bundle data) {
+			Log.d("HelloFacebook", String.format("Error: %s", error.toString()));
+		}
 
-    @SuppressLint("NewApi")
+		@Override
+		public void onComplete(FacebookDialog.PendingCall pendingCall,
+				Bundle data) {
+			Log.d("HelloFacebook", "Success!");
+		}
+	};
+
+	@SuppressLint("NewApi")
 	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        uiHelper = new UiLifecycleHelper(this, callback);
-        uiHelper.onCreate(savedInstanceState);
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		uiHelper = new UiLifecycleHelper(this, callback);
+		uiHelper.onCreate(savedInstanceState);
 
-        if (savedInstanceState != null) {
-            String name = savedInstanceState.getString(PENDING_ACTION_BUNDLE_KEY);
-            pendingAction = PendingAction.valueOf(name);
-        }
+		if (savedInstanceState != null) {
+			String name = savedInstanceState
+					.getString(PENDING_ACTION_BUNDLE_KEY);
+			pendingAction = PendingAction.valueOf(name);
+		}
 
-        setContentView(R.layout.activity_facebook);
+		setContentView(R.layout.activity_facebook);
 
-        loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
-            @Override
-            public void onUserInfoFetched(GraphUser user) {
-                FacebookActivity.this.user = user;
-                handlePendingAction();
-            }
-        });
+		loginButton = (LoginButton) findViewById(R.id.login_button);
+		loginButton
+				.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
+					@Override
+					public void onUserInfoFetched(GraphUser user) {
+						FacebookActivity.this.user = user;
+						handlePendingAction();
+					}
+				});
 
-        controlsContainer = (ViewGroup) findViewById(R.id.main_ui_container);
+		controlsContainer = (ViewGroup) findViewById(R.id.main_ui_container);
 
-        final FragmentManager fm = getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.fragment_container);
-        if (fragment != null) {
-            // If we're being re-created and have a fragment, we need to a) hide the main UI controls and
-            // b) hook up its listeners again.
-            controlsContainer.setVisibility(View.GONE);
-        }
+		final FragmentManager fm = getSupportFragmentManager();
+		Fragment fragment = fm.findFragmentById(R.id.fragment_container);
+		if (fragment != null) {
+			// If we're being re-created and have a fragment, we need to a) hide
+			// the main UI controls and
+			// b) hook up its listeners again.
+			controlsContainer.setVisibility(View.GONE);
+		}
 
-        // Listen for changes in the back stack so we know if a fragment got popped off because the user
-        // clicked the back button.
-        fm.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-            @Override
-            public void onBackStackChanged() {
-                if (fm.getBackStackEntryCount() == 0) {
-                    // We need to re-show our UI.
-                    controlsContainer.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+		// Listen for changes in the back stack so we know if a fragment got
+		// popped off because the user
+		// clicked the back button.
+		fm.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+			@Override
+			public void onBackStackChanged() {
+				if (fm.getBackStackEntryCount() == 0) {
+					// We need to re-show our UI.
+					controlsContainer.setVisibility(View.VISIBLE);
+				}
+			}
+		});
 
-        canPresentShareDialog = FacebookDialog.canPresentShareDialog(this,
-                FacebookDialog.ShareDialogFeature.SHARE_DIALOG);
-        
-        if(Build.VERSION.SDK_INT > 15)
-        	loginButton.callOnClick();
-    }
+		canPresentShareDialog = FacebookDialog.canPresentShareDialog(this,
+				FacebookDialog.ShareDialogFeature.SHARE_DIALOG);
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        uiHelper.onResume();
+		if (Build.VERSION.SDK_INT > 15)
+			loginButton.callOnClick();
+	}
 
-        // Call the 'activateApp' method to log an app event for use in analytics and advertising reporting.  Do so in
-        // the onResume methods of the primary Activities that an app may be launched into.
-        AppEventsLogger.activateApp(this);
-    }
+	@Override
+	protected void onResume() {
+		super.onResume();
+		uiHelper.onResume();
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        uiHelper.onSaveInstanceState(outState);
+		// Call the 'activateApp' method to log an app event for use in
+		// analytics and advertising reporting. Do so in
+		// the onResume methods of the primary Activities that an app may be
+		// launched into.
+		AppEventsLogger.activateApp(this);
+	}
 
-        outState.putString(PENDING_ACTION_BUNDLE_KEY, pendingAction.name());
-    }
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		uiHelper.onSaveInstanceState(outState);
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        
-        if(resultCode == RESULT_OK) { //successful login
-        	mFinalResult = RESULT_OK;
-        }
-        else if (resultCode == 0) { //failed login
-        	mFinalResult = 0;
-        }
-                
-        uiHelper.onActivityResult(requestCode, resultCode, data, dialogCallback);
-        finish();
-    }
+		outState.putString(PENDING_ACTION_BUNDLE_KEY, pendingAction.name());
+	}
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        uiHelper.onPause();
-    }
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        uiHelper.onDestroy();
-    }
+		if (resultCode == RESULT_OK) { // successful login
+			mFinalResult = RESULT_OK;
+		} else if (resultCode == 0) { // failed login
+			mFinalResult = 0;
+		}
 
-    private void onSessionStateChange(Session session, SessionState state, Exception exception) {
-        if (pendingAction != PendingAction.NONE &&
-                (exception instanceof FacebookOperationCanceledException ||
-                exception instanceof FacebookAuthorizationException)) {
-                new AlertDialog.Builder(FacebookActivity.this)
-                    .setTitle(R.string.cancelled)
-                    .setMessage(R.string.permission_not_granted)
-                    .setPositiveButton(R.string.ok, null)
-                    .show();
-            pendingAction = PendingAction.NONE;
-        } else if (state == SessionState.OPENED_TOKEN_UPDATED) {
-            handlePendingAction();
-        }
-    }
+		uiHelper.onActivityResult(requestCode, resultCode, data, dialogCallback);
+		finish();
+	}
 
-    @SuppressWarnings("incomplete-switch")
-    private void handlePendingAction() {
-        PendingAction previouslyPendingAction = pendingAction;
-        // These actions may re-set pendingAction if they are still pending, but we assume they
-        // will succeed.
-        pendingAction = PendingAction.NONE;
+	@Override
+	public void onPause() {
+		super.onPause();
+		uiHelper.onPause();
+	}
 
-        switch (previouslyPendingAction) {
-            case POST_PHOTO:
-                
-                break;
-            case POST_STATUS_UPDATE:
-                
-                break;
-        }
-    }
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		uiHelper.onDestroy();
+	}
 
-    private interface GraphObjectWithId extends GraphObject {
-        String getId();
-    }
+	private void onSessionStateChange(Session session, SessionState state,
+			Exception exception) {
+		if (pendingAction != PendingAction.NONE
+				&& (exception instanceof FacebookOperationCanceledException || exception instanceof FacebookAuthorizationException)) {
+			new AlertDialog.Builder(FacebookActivity.this)
+					.setTitle(R.string.cancelled)
+					.setMessage(R.string.permission_not_granted)
+					.setPositiveButton(R.string.ok, null).show();
+			pendingAction = PendingAction.NONE;
+		} else if (state == SessionState.OPENED_TOKEN_UPDATED) {
+			handlePendingAction();
+		}
+	}
 
-    private void showPublishResult(String message, GraphObject result, FacebookRequestError error) {
-        String title = null;
-        String alertMessage = null;
-        if (error == null) {
-            title = getString(R.string.success);
-            String id = result.cast(GraphObjectWithId.class).getId();
-            alertMessage = getString(R.string.successfully_posted_post, message, id);
-        } else {
-            title = getString(R.string.error);
-            alertMessage = error.getErrorMessage();
-        }
+	@SuppressWarnings("incomplete-switch")
+	private void handlePendingAction() {
+		PendingAction previouslyPendingAction = pendingAction;
+		// These actions may re-set pendingAction if they are still pending, but
+		// we assume they
+		// will succeed.
+		pendingAction = PendingAction.NONE;
 
-        new AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(alertMessage)
-                .setPositiveButton(R.string.ok, null)
-                .show();
-    }
+		switch (previouslyPendingAction) {
+		case POST_PHOTO:
 
-    private FacebookDialog.ShareDialogBuilder createShareDialogBuilder() {
-        return new FacebookDialog.ShareDialogBuilder(this)
-                .setName("Hello Facebook")
-                .setDescription("The 'Hello Facebook' sample application showcases simple Facebook integration")
-                .setLink("http://developers.facebook.com/android");
-    }
+			break;
+		case POST_STATUS_UPDATE:
 
-    private void postStatusUpdate() {
-        if (canPresentShareDialog) {
-            FacebookDialog shareDialog = createShareDialogBuilder().build();
-            uiHelper.trackPendingDialogCall(shareDialog.present());
-        } else if (user != null && hasPublishPermission()) {
-            final String message = getString(R.string.status_update, user.getFirstName(), (new Date().toString()));
-            Request request = Request
-                    .newStatusUpdateRequest(Session.getActiveSession(), message, place, tags, new Request.Callback() {
-                        @Override
-                        public void onCompleted(Response response) {
-                            showPublishResult(message, response.getGraphObject(), response.getError());
-                        }
-                    });
-            request.executeAsync();
-        } else {
-            pendingAction = PendingAction.POST_STATUS_UPDATE;
-        }
-    }
+			break;
+		}
+	}
 
-    private void showAlert(String title, String message) {
-        new AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(message)
-                .setPositiveButton(R.string.ok, null)
-                .show();
-    }
+	private interface GraphObjectWithId extends GraphObject {
+		String getId();
+	}
 
-    private boolean hasPublishPermission() {
-        Session session = Session.getActiveSession();
-        return session != null && session.getPermissions().contains("publish_actions");
-    }
-    
-    @Override
-    public void finish() {
-      // Prepare data intent 
-      Intent data = new Intent();
-      
-      // Activity finished ok, return the data
-      setResult(mFinalResult, data);
-      super.finish();
-    }
+	private void showPublishResult(String message, GraphObject result,
+			FacebookRequestError error) {
+		String title = null;
+		String alertMessage = null;
+		if (error == null) {
+			title = getString(R.string.success);
+			String id = result.cast(GraphObjectWithId.class).getId();
+			alertMessage = getString(R.string.successfully_posted_post,
+					message, id);
+		} else {
+			title = getString(R.string.error);
+			alertMessage = error.getErrorMessage();
+		}
+
+		new AlertDialog.Builder(this).setTitle(title).setMessage(alertMessage)
+				.setPositiveButton(R.string.ok, null).show();
+	}
+
+	private FacebookDialog.ShareDialogBuilder createShareDialogBuilder() {
+		return new FacebookDialog.ShareDialogBuilder(this)
+				.setName("Hello Facebook")
+				.setDescription(
+						"The 'Hello Facebook' sample application showcases simple Facebook integration")
+				.setLink("http://developers.facebook.com/android");
+	}
+
+	private void postStatusUpdate() {
+		if (canPresentShareDialog) {
+			FacebookDialog shareDialog = createShareDialogBuilder().build();
+			uiHelper.trackPendingDialogCall(shareDialog.present());
+		} else if (user != null && hasPublishPermission()) {
+			final String message = getString(R.string.status_update,
+					user.getFirstName(), (new Date().toString()));
+			Request request = Request.newStatusUpdateRequest(
+					Session.getActiveSession(), message, place, tags,
+					new Request.Callback() {
+						@Override
+						public void onCompleted(Response response) {
+							showPublishResult(message,
+									response.getGraphObject(),
+									response.getError());
+						}
+					});
+			request.executeAsync();
+		} else {
+			pendingAction = PendingAction.POST_STATUS_UPDATE;
+		}
+	}
+
+	private void showAlert(String title, String message) {
+		new AlertDialog.Builder(this).setTitle(title).setMessage(message)
+				.setPositiveButton(R.string.ok, null).show();
+	}
+
+	private boolean hasPublishPermission() {
+		Session session = Session.getActiveSession();
+		return session != null
+				&& session.getPermissions().contains("publish_actions");
+	}
+
+	@Override
+	public void finish() {
+		// Prepare data intent
+		Intent data = new Intent();
+
+		// Activity finished ok, return the data
+		setResult(mFinalResult, data);
+		super.finish();
+	}
 }

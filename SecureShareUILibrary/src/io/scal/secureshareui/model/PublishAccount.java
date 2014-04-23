@@ -16,8 +16,8 @@ public class PublishAccount {
 		this.setSite(site);
 		this.setUserName(userName);
 		this.setCredentials(credentials);
-		this.setIsConnected(isConnected);
-		this.setAreCredentialsValid(areCredentialsValid);
+		this.setIsConnected(false);
+		this.setAreCredentialsValid(false);
 	}
 
 	public String getId() {
