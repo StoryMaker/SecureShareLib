@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 public class ChooseAccountFragment extends Fragment {
@@ -108,10 +109,13 @@ public class ChooseAccountFragment extends Fragment {
 	
 	private void addConnectedPublishAccount(PublishAccount account, boolean isDynamicallyAdded) {	
 		final ViewGroup vgConnectedAccounts = (ViewGroup) LayoutInflater.from(getActivity())
-											   .inflate(R.layout.publish_account_item, mContainerConnectedAccountsView, false);	
-		((TextView) vgConnectedAccounts.findViewById(R.id.tv_account_name)).setText(account.getName());
+											   .inflate(R.layout.publish_account_item, mContainerConnectedAccountsView, false);
 		final CheckBox cbToPublish = (CheckBox) vgConnectedAccounts.findViewById(R.id.cbToPublish);
 		final PublishAccount currentAccount = account;
+		((TextView) vgConnectedAccounts.findViewById(R.id.tv_account_name)).setText(account.getName());
+		((ImageView) vgConnectedAccounts.findViewById(R.id.iv_account_icon)).setImageResource(getAccountIcon(account.getSite(), true));
+		
+		
 		
 		mContainerConnectedAccountsView.addView(vgConnectedAccounts, 0);
 		mView.findViewById(R.id.tv_accounts_connected_empty).setVisibility(View.GONE);
@@ -187,8 +191,11 @@ public class ChooseAccountFragment extends Fragment {
 	private void addAvailablePublishAccount(PublishAccount account) {
 		
 		final ViewGroup vgAvailableAccounts = (ViewGroup) LayoutInflater.from(getActivity()).inflate(R.layout.publish_account_item, mContainerAvailableAccountsView, false);
-		((TextView) vgAvailableAccounts.findViewById(R.id.tv_account_name)).setText(account.getName());
 		final PublishAccount currentAccount = account;
+		((TextView) vgAvailableAccounts.findViewById(R.id.tv_account_name)).setText(account.getName());
+		((ImageView) vgAvailableAccounts.findViewById(R.id.iv_account_icon)).setImageResource(getAccountIcon(account.getSite(), false));
+		
+		
 		
 		mContainerAvailableAccountsView.addView(vgAvailableAccounts, 0);		
 		mView.findViewById(R.id.tv_accounts_available_empty).setVisibility(View.GONE);
@@ -250,5 +257,18 @@ public class ChooseAccountFragment extends Fragment {
 	
 	public static int getAccountRequestCode() {
 		return ACCOUNT_REQUEST_CODE;
+	}
+	
+	private int getAccountIcon(String siteKey, boolean isConnected) {	
+		if(siteKey.equals("facebook.com")) {
+			return isConnected ? R.drawable.ic_context_facebook_on : R.drawable.ic_context_facebook; 
+		}
+		else if(siteKey.equals("soundcloud.com")) {
+			return isConnected ? R.drawable.ic_context_soundcloud_on : R.drawable.ic_context_soundcloud; 
+		}
+		else if(siteKey.equals("youtube.com")) {
+			return isConnected ? R.drawable.ic_context_youtube_on : R.drawable.ic_context_youtube; 
+		}
+		return R.drawable.snoopy;
 	}
 }
