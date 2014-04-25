@@ -38,6 +38,7 @@ public class ChooseAccountFragment extends Fragment {
 	private static boolean mInSelectionMode = false;
 	private static boolean mAttemptingLoginRetry = false;
 	public static final int ACCOUNT_REQUEST_CODE = 102;
+	public static final String EXTRAS_ACCOUNT_KEYS = "accountIds";
 	
 	//return the ids of selected items
 	ArrayList<String> mSelectedAccountIds = new ArrayList<String>();
@@ -64,8 +65,7 @@ public class ChooseAccountFragment extends Fragment {
 				btnContinue.setOnClickListener(new View.OnClickListener() {
 					public void onClick(View v) {
 						Intent data = new Intent();
-						data.putStringArrayListExtra("accountIds", mSelectedAccountIds);
-						
+						data.putStringArrayListExtra(EXTRAS_ACCOUNT_KEYS, mSelectedAccountIds);
 						getActivity().setResult(Activity.RESULT_OK, data);
 						getActivity().finish();
 					}

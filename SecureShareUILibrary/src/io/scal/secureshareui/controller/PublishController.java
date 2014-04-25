@@ -20,7 +20,7 @@ public abstract class PublishController {
 	abstract void startAuthentication(PublishAccount account);
     
     public static PublishController getPublishController(String key) {	
-    	if(key.equals("facebook.com")) {			
+    	if(key.equals("facebook")) {			
     		return new FacebookPublishController();
 		}	
     	
