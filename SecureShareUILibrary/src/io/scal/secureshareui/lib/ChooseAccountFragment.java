@@ -37,14 +37,14 @@ public class ChooseAccountFragment extends Fragment {
 	private List<PublishAccount> mAlPublishAccounts = new ArrayList<PublishAccount>();
 	private static boolean mInSelectionMode = false;
 	private static boolean mAttemptingLoginRetry = false;
-	private static final int ACCOUNT_REQUEST_CODE = 102;
+	public static final int ACCOUNT_REQUEST_CODE = 102;
 	
 	//return the ids of selected items
 	ArrayList<String> mSelectedAccountIds = new ArrayList<String>();
 	
 	//used for storing state for the callback
 	private static ViewGroup mVgAccounts;
-	private static PublishAccount mPublishAccout;
+	private static PublishAccount mPublishAccount;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -223,28 +223,28 @@ public class ChooseAccountFragment extends Fragment {
 		fbPublishController.setContext(getActivity());
 		fbPublishController.startAuthentication(currentAccount);
 		
-		mPublishAccout = currentAccount;
+		mPublishAccount = currentAccount;
 		mVgAccounts = vgAccounts; 
 	}
 	
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode == PublishController.getControllerRequestCode()) {	
+		if(requestCode == PublishController.CONTROLLER_REQUEST_CODE) {	
 			
-			if(resultCode == android.app.Activity.RESULT_OK) {		
-				mPublishEventListener.onSuccess(mPublishAccout);
-				mPublishAccout.setAreCredentialsValid(true);
+			if(resultCode == android.app.Activity.RESULT_OK) {
+				mPublishAccount.setAreCredentialsValid(true);
+				mPublishEventListener.onSuccess(mPublishAccount);
 			}
 			else {
-				mPublishEventListener.onFailure(mPublishAccout, "Error Loggging in");
-				mPublishAccout.setAreCredentialsValid(false);
+				mPublishAccount.setAreCredentialsValid(false);
+				mPublishEventListener.onFailure(mPublishAccount, "Error Loggging in");		
 			}
 			
 			if(mAttemptingLoginRetry) {
 				mContainerConnectedAccountsView.removeView(mVgAccounts);
-				addConnectedPublishAccount(mPublishAccout, true);
+				addConnectedPublishAccount(mPublishAccount, true);
 			}
 			else {
-				addConnectedPublishAccount(mPublishAccout, true);
+				addConnectedPublishAccount(mPublishAccount, true);
 				mContainerAvailableAccountsView.removeView(mVgAccounts);
 				                                      
 				// If there are no rows remaining, show the empty view.
@@ -255,20 +255,20 @@ public class ChooseAccountFragment extends Fragment {
 		}
 	}
 	
-	public static int getAccountRequestCode() {
-		return ACCOUNT_REQUEST_CODE;
-	}
-	
 	private int getAccountIcon(String siteKey, boolean isConnected) {	
 		if(siteKey.equals("facebook.com")) {
 			return isConnected ? R.drawable.ic_context_facebook_on : R.drawable.ic_context_facebook; 
 		}
-		else if(siteKey.equals("soundcloud.com")) {
-			return isConnected ? R.drawable.ic_context_soundcloud_on : R.drawable.ic_context_soundcloud; 
-		}
 		else if(siteKey.equals("youtube.com")) {
 			return isConnected ? R.drawable.ic_context_youtube_on : R.drawable.ic_context_youtube; 
 		}
+		else if(siteKey.equals("soundcloud.com")) {
+			return isConnected ? R.drawable.ic_context_soundcloud_on : R.drawable.ic_context_soundcloud; 
+		}
+		else if(siteKey.equals("flickr.com")) {
+			return isConnected ? R.drawable.ic_context_vimeo_on : R.drawable.ic_context_vimeo; 
+		}
+		
 		return R.drawable.snoopy;
 	}
 }

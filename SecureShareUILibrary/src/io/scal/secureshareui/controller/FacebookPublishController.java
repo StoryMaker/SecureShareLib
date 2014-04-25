@@ -15,6 +15,6 @@ public class FacebookPublishController extends PublishController  {
 	
 		Context currentContext = super.getContext();
 		Intent intent = new Intent(currentContext, FacebookActivity.class);
-		((Activity) currentContext).startActivityForResult(intent, super.getControllerRequestCode());
+		((Activity) currentContext).startActivityForResult(intent, PublishController.CONTROLLER_REQUEST_CODE);
 	}	
 }

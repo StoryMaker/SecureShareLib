@@ -154,6 +154,8 @@ public class FacebookActivity extends FragmentActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
+		GraphUser u = user;
+		
 		if (resultCode == RESULT_OK) { // successful login
 			mFinalResult = RESULT_OK;
 		} else if (resultCode == 0) { // failed login
@@ -161,7 +163,7 @@ public class FacebookActivity extends FragmentActivity {
 		}
 
 		uiHelper.onActivityResult(requestCode, resultCode, data, dialogCallback);
-		finish();
+		//finish();
 	}
 
 	@Override
