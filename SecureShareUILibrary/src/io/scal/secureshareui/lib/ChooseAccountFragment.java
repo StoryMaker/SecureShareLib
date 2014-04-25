@@ -54,11 +54,6 @@ public class ChooseAccountFragment extends Fragment {
 
 		
 		if (getArguments() != null) {
-			//if fragment should display as Dialog
-			boolean isThemeDialog = getArguments().getBoolean("isDialog", false);
-			if(isThemeDialog)		
-				getActivity().setTheme(android.R.style.Theme_Dialog);
-			
 			//if fragment is in connection or selection mode
 			mInSelectionMode = getArguments().getBoolean("inSelectionMode", false);
 			if(mInSelectionMode) {

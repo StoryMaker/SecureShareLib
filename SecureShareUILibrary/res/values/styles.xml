@@ -18,10 +18,6 @@
        
         
     </style>
-
-    <!-- Custom Colors -->
-    <color name="light_gray">#EAEAEA</color>
-	<color name="light_blue">#10B2EF</color>
     
     <!-- Custom Styles -->
 	<style name="LabelHeader" >
