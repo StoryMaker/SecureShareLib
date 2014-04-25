@@ -19,8 +19,8 @@ public abstract class PublishController {
 	
 	abstract void startAuthentication(PublishAccount account);
     
-    public static PublishController getPublishController(String key) {	
-    	if(key.equals("facebook")) {			
+    public static PublishController getPublishController(String site) {	
+    	if(site.equals("facebook")) {			
     		return new FacebookPublishController();
 		}	
     	

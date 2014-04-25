@@ -9,6 +9,7 @@ public class PublishAccount {
     private String credentials;
     private boolean isConnected;
     private boolean areCredentialsValid;
+	public static final String[] CONTROLLER_ACCOUNT_SITES = {"facebook", "youtube", "soundcloud", "flickr"};
 	
 	public PublishAccount(String id, String name, String site, String userName, String credentials, boolean isConnected, boolean areCredentialsValid){
 		this.id = id;
