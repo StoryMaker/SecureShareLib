@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
-import android.accounts.AccountAuthenticatorActivity;
 import android.app.AlertDialog;
 import android.support.v4.app.Fragment;
 import android.content.DialogInterface;
@@ -250,17 +249,17 @@ public class ChooseAccountFragment extends Fragment {
 		}
 	}
 	
-	private int getAccountIcon(String siteKey, boolean isConnected) {	
-		if(siteKey.equals("facebook.com")) {
+	private int getAccountIcon(String site, boolean isConnected) {	
+		if(site.equals("facebook.com")) {
 			return isConnected ? R.drawable.ic_context_facebook_on : R.drawable.ic_context_facebook; 
 		}
-		else if(siteKey.equals("youtube.com")) {
+		else if(site.equals("youtube.com")) {
 			return isConnected ? R.drawable.ic_context_youtube_on : R.drawable.ic_context_youtube; 
 		}
-		else if(siteKey.equals("soundcloud.com")) {
+		else if(site.equals("soundcloud.com")) {
 			return isConnected ? R.drawable.ic_context_soundcloud_on : R.drawable.ic_context_soundcloud; 
 		}
-		else if(siteKey.equals("flickr.com")) {
+		else if(site.equals("flickr.com")) {
 			return isConnected ? R.drawable.ic_context_vimeo_on : R.drawable.ic_context_vimeo; 
 		}
 		

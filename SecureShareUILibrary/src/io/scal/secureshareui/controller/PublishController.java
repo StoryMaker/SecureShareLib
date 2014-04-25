@@ -9,8 +9,6 @@ public abstract class PublishController {
 	private OnPublishEventListener mPublishEventListener;
 	private Context mContext;
 	public static final int CONTROLLER_REQUEST_CODE = 101;
-	public static final String[] CONTROLLER_ACCOUNT_SITES = {"facebook.com", "youtube.com", "soundcloud.com", "flickr.com"};
-	
 	
 	public interface OnPublishEventListener {
 		public void onSuccess(PublishAccount publishAccount);
@@ -19,8 +17,8 @@ public abstract class PublishController {
 	
 	abstract void startAuthentication(PublishAccount account);
     
-    public static PublishController getPublishController(String key) {	
-    	if(key.equals("facebook.com")) {			
+    public static PublishController getPublishController(String site) {	
+    	if(site.equals("facebook")) {			
     		return new FacebookPublishController();
 		}	
     	
