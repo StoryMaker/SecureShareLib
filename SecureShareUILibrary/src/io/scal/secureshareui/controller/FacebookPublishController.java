@@ -7,7 +7,7 @@ import io.scal.secureshareui.lib.FacebookActivity;
 import io.scal.secureshareui.model.PublishAccount;
  
 public class FacebookPublishController extends PublishController  {
-	
+	public static final String SITE_KEY = "facebook"; 
 	public FacebookPublishController() {}
 
 	@Override

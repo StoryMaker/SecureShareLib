@@ -1,5 +1,10 @@
 package io.scal.secureshareui.model;
 
+import io.scal.secureshareui.controller.FacebookPublishController;
+import io.scal.secureshareui.controller.FlickrPublishController;
+import io.scal.secureshareui.controller.SoundCloudPublishController;
+import io.scal.secureshareui.controller.YoutubePublishController;
+
 public class PublishAccount {
 	
 	private String id;
@@ -9,7 +14,12 @@ public class PublishAccount {
     private String credentials;
     private boolean isConnected;
     private boolean areCredentialsValid;
-	public static final String[] CONTROLLER_ACCOUNT_SITES = {"facebook", "youtube", "soundcloud", "flickr"};
+    public static final String[] CONTROLLER_ACCOUNT_SITES = { 
+        FacebookPublishController.SITE_KEY, 
+        YoutubePublishController.SITE_KEY, 
+        SoundCloudPublishController.SITE_KEY,
+        FlickrPublishController.SITE_KEY
+    };
 	
 	public PublishAccount(String id, String name, String site, String userName, String credentials, boolean isConnected, boolean areCredentialsValid){
 		this.id = id;

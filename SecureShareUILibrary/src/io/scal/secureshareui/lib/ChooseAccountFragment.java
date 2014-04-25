@@ -1,8 +1,11 @@
 package io.scal.secureshareui.lib;
 
 import io.scal.secureshareui.controller.FacebookPublishController;
+import io.scal.secureshareui.controller.FlickrPublishController;
 import io.scal.secureshareui.controller.PublishController;
 import io.scal.secureshareui.controller.PublishController.OnPublishEventListener;
+import io.scal.secureshareui.controller.SoundCloudPublishController;
+import io.scal.secureshareui.controller.YoutubePublishController;
 import io.scal.secureshareui.model.PublishAccount;
 import io.scal.secureshareuilibrary.R;
 
@@ -250,16 +253,16 @@ public class ChooseAccountFragment extends Fragment {
 	}
 	
 	private int getAccountIcon(String site, boolean isConnected) {	
-		if(site.equals("facebook.com")) {
+		if(site.equals(FacebookPublishController.SITE_KEY)) {
 			return isConnected ? R.drawable.ic_context_facebook_on : R.drawable.ic_context_facebook; 
 		}
-		else if(site.equals("youtube.com")) {
+		else if(site.equals(YoutubePublishController.SITE_KEY)) {
 			return isConnected ? R.drawable.ic_context_youtube_on : R.drawable.ic_context_youtube; 
 		}
-		else if(site.equals("soundcloud.com")) {
+		else if(site.equals(SoundCloudPublishController.SITE_KEY)) {
 			return isConnected ? R.drawable.ic_context_soundcloud_on : R.drawable.ic_context_soundcloud; 
 		}
-		else if(site.equals("flickr.com")) {
+		else if(site.equals(FlickrPublishController.SITE_KEY)) {
 			return isConnected ? R.drawable.ic_context_vimeo_on : R.drawable.ic_context_vimeo; 
 		}
 		
