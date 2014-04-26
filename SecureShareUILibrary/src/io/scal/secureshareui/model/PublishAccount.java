@@ -14,7 +14,13 @@ public class PublishAccount {
     private String credentials;
     private boolean isConnected;
     private boolean areCredentialsValid;
-    public static final String[] CONTROLLER_ACCOUNT_SITES = { 
+    public static final String[] CONTROLLER_SITE_NAMES = { 
+        FacebookPublishController.SITE_NAME, 
+        YoutubePublishController.SITE_NAME, 
+        SoundCloudPublishController.SITE_NAME,
+        FlickrPublishController.SITE_NAME
+    };
+    public static final String[] CONTROLLER_SITE_KEYS = { 
         FacebookPublishController.SITE_KEY, 
         YoutubePublishController.SITE_KEY, 
         SoundCloudPublishController.SITE_KEY,

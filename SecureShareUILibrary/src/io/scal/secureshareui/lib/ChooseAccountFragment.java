@@ -111,9 +111,7 @@ public class ChooseAccountFragment extends Fragment {
 		final PublishAccount currentAccount = account;
 		((TextView) vgConnectedAccounts.findViewById(R.id.tv_account_name)).setText(account.getName());
 		((ImageView) vgConnectedAccounts.findViewById(R.id.iv_account_icon)).setImageResource(getAccountIcon(account.getSite(), true));
-		
-		
-		
+			
 		mContainerConnectedAccountsView.addView(vgConnectedAccounts, 0);
 		mView.findViewById(R.id.tv_accounts_connected_empty).setVisibility(View.GONE);
 		
@@ -192,8 +190,7 @@ public class ChooseAccountFragment extends Fragment {
 		((TextView) vgAvailableAccounts.findViewById(R.id.tv_account_name)).setText(account.getName());
 		((ImageView) vgAvailableAccounts.findViewById(R.id.iv_account_icon)).setImageResource(getAccountIcon(account.getSite(), false));
 		
-		
-		
+			
 		mContainerAvailableAccountsView.addView(vgAvailableAccounts, 0);		
 		mView.findViewById(R.id.tv_accounts_available_empty).setVisibility(View.GONE);
 		
@@ -212,6 +209,7 @@ public class ChooseAccountFragment extends Fragment {
 		
 		//ensure controller exists
 		if(null == fbPublishController) {
+			Toast.makeText(getActivity(), "Error Finding Controller (try Facebook!)", Toast.LENGTH_SHORT).show();
 			mPublishEventListener.onFailure(currentAccount, "Error Finding Controller" );
 			return;
 		}
@@ -229,10 +227,12 @@ public class ChooseAccountFragment extends Fragment {
 			
 			if(resultCode == android.app.Activity.RESULT_OK) {
 				mPublishAccount.setAreCredentialsValid(true);
+				mPublishAccount.setCredentials("TODO");
 				mPublishEventListener.onSuccess(mPublishAccount);
 			}
 			else {
 				mPublishAccount.setAreCredentialsValid(false);
+				mPublishAccount.setCredentials("TODO");
 				mPublishEventListener.onFailure(mPublishAccount, "Error Loggging in");		
 			}
 			
