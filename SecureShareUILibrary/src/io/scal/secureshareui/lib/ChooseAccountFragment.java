@@ -205,18 +205,18 @@ public class ChooseAccountFragment extends Fragment {
 	}
 	
 	private void launchAuthentication(PublishAccount currentAccount, ViewGroup vgAccounts) {
-		FacebookPublishController fbPublishController = (FacebookPublishController) PublishController.getPublishController(currentAccount.getSite());
+		PublishController publishController = PublishController.getPublishController(currentAccount.getSite());
 		
 		//ensure controller exists
-		if(null == fbPublishController) {
+		if(null == publishController) {
 			Toast.makeText(getActivity(), "Error Finding Controller (try Facebook!)", Toast.LENGTH_SHORT).show();
 			mPublishEventListener.onFailure(currentAccount, "Error Finding Controller" );
 			return;
 		}
 		
-		fbPublishController.setOnPublishEventListener(mPublishEventListener);
-		fbPublishController.setContext(getActivity());
-		fbPublishController.startAuthentication(currentAccount);
+		publishController.setOnPublishEventListener(mPublishEventListener);
+		publishController.setContext(getActivity());
+		publishController.startAuthentication(currentAccount);
 		
 		mPublishAccount = currentAccount;
 		mVgAccounts = vgAccounts; 

@@ -15,7 +15,7 @@ public abstract class PublishController {
 		public void onFailure(PublishAccount publishAccount, String failureMessage);
 	}
 	
-	abstract void startAuthentication(PublishAccount account);
+	public abstract void startAuthentication(PublishAccount account);
     
     public static PublishController getPublishController(String site) {	
     	if(site.equals(FacebookPublishController.SITE_KEY)) {
