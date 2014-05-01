@@ -7,16 +7,11 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-import com.facebook.Request;
-import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 
@@ -83,7 +78,7 @@ public class FacebookActivity extends Activity {
 		}
 		
 		handlePublish();
-		publishImage(session);
+		finish();
 	}
 
 	@Override
@@ -157,44 +152,8 @@ public class FacebookActivity extends Activity {
 	                setRequestCode(REAUTH_ACTIVITY_CODE);
 	        session.requestNewPublishPermissions(newPermissionsRequest);
 	    }
-	    
+
 	    mAccessToken = session.getAccessToken();
-	}
-	
-	private void publishImage(Session session) {
-		final String fbPhotoAddress;
-
-		// Part 1: create callback to get URL of uploaded photo
-		Request.Callback uploadPhotoRequestCallback = new Request.Callback() {
-			@Override
-			public void onCompleted(Response response) {
-				// safety check
-				if (isFinishing()) {
-					return;
-				}
-				if (response.getError() != null) { // [IF Failed Posting]
-					Log.d("testtest",
-							"photo upload problem. Error="
-									+ response.getError());
-				} // [ENDIF Failed Posting]
-
-				Object graphResponse = response.getGraphObject().getProperty(
-						"id");
-				if (graphResponse == null || !(graphResponse instanceof String)
-						|| TextUtils.isEmpty((String) graphResponse)) { // [IF
-																		// Failed
-																		// upload/no
-																		// results]
-					Log.d("testest", "failed photo upload/no response");
-				} else { // [ELSEIF successful upload]
-					String s = "https://www.facebook.com/photo.php?fbid=" + graphResponse;
-				} // [ENDIF successful posting or not]
-			} // [END onCompleted]
-		};
-
-		// Part 2: upload the photo
-		Request request = Request.newUploadPhotoRequest(session, BitmapFactory.decodeResource(getResources(), R.drawable.snoopy), uploadPhotoRequestCallback);
-		request.executeAsync();
 	}
 	
 	@Override

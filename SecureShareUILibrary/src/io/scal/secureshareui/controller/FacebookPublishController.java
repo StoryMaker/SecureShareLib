@@ -1,5 +1,8 @@
 package io.scal.secureshareui.controller;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
@@ -7,16 +10,17 @@ import com.facebook.Session;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.Log;
 import io.scal.secureshareui.lib.FacebookActivity;
+
 import io.scal.secureshareui.model.PublishAccount;
-import io.scal.secureshareuilibrary.R;
  
 public class FacebookPublishController extends PublishController  {
 	public static final String SITE_NAME = "Facebook";
-	public static final String SITE_KEY = "facebook"; 
+	public static final String SITE_KEY = "facebook";
+	private static final String TAG = "FacebookPublishController";
+	
 	public FacebookPublishController() {}
 
 	@Override
@@ -27,43 +31,43 @@ public class FacebookPublishController extends PublishController  {
 		((Activity) currentContext).startActivityForResult(intent, PublishController.CONTROLLER_REQUEST_CODE);
 	}
 	
-	@Override
-	public void upload(String title, String body, String videoPath) {
-		
-	}
-	
-	private void publishImage() {
-		
-		Session session = Session.getActiveSession();
-		final String fbPhotoAddress;
+	public void upload(String title, String body, String filepath) {
 
-		// Part 1: create callback to get URL of uploaded photo
-		Request.Callback uploadPhotoRequestCallback = new Request.Callback() {
+		Session session = Session.openActiveSessionFromCache(super.getContext());
+			
+		//setup callback
+		Request.Callback uploadVideoRequestCallback = new Request.Callback() {
 			@Override
 			public void onCompleted(Response response) {
 
-				if (response.getError() != null) { // [IF Failed Posting]
-					Log.d("testtest",
-							"photo upload problem. Error="
-									+ response.getError());
-				} // [ENDIF Failed Posting]
+				// post fail
+				if (response.getError() != null) {
+					Log.d(TAG, "photo upload problem. Error= "+ response.getError());
+				}
 
-				Object graphResponse = response.getGraphObject().getProperty(
-						"id");
+				Object graphResponse = response.getGraphObject().getProperty("id");
+
+				// upload fail
 				if (graphResponse == null || !(graphResponse instanceof String)
-						|| TextUtils.isEmpty((String) graphResponse)) { // [IF
-																		// Failed
-																		// upload/no
-																		// results]
-					Log.d("testest", "failed photo upload/no response");
-				} else { // [ELSEIF successful upload]
-					String s = "https://www.facebook.com/photo.php?fbid=" + graphResponse;
-				} // [ENDIF successful posting or not]
-			} // [END onCompleted]
+						|| TextUtils.isEmpty((String) graphResponse)) {
+					Log.d(TAG, "failed video upload/no response");
+				}
+				// upload success
+				else {
+					Log.d(TAG, "sucees video upload: "+ graphResponse);
+				}
+			}
 		};
 
-		// Part 2: upload the photo
-		//Request request = Request.newUploadPhotoRequest(session, BitmapFactory.decodeResource(getResources(), R.drawable.snoopy), uploadPhotoRequestCallback);
-		//request.executeAsync();
-	}
+		//upload File
+		File videoFile = new File(filepath);
+		Request request = null;
+		try {
+			request = Request.newUploadVideoRequest(session, videoFile, uploadVideoRequestCallback);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		request.executeAsync();
+	}		
 }

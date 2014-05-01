@@ -54,7 +54,7 @@ public class ChooseAccountFragment extends Fragment {
 		mView = inflater.inflate(R.layout.choose_account_fragment, container, false);		
 		mContainerConnectedAccountsView = (ViewGroup) mView.findViewById(R.id.accounts_connected_container);
 		mContainerAvailableAccountsView = (ViewGroup) mView.findViewById(R.id.accounts_available_container);	
-		
+	
 		if (getArguments() != null) {
 			//if fragment is in connection or selection mode
 			mInSelectionMode = getArguments().getBoolean("inSelectionMode", false);
@@ -174,7 +174,7 @@ public class ChooseAccountFragment extends Fragment {
 							mSelectedAccountIds.add(currentAccount.getSite());
 						}				
 					}
-					else {
+					else {						
 						Toast.makeText(getActivity(), currentAccount.getName() + " edit click", Toast.LENGTH_SHORT).show();	
 					}		
 				}				
@@ -224,8 +224,8 @@ public class ChooseAccountFragment extends Fragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == PublishController.CONTROLLER_REQUEST_CODE) {
 			
-			String credentials = data.getStringExtra("credenials");
-			mPublishAccount.setCredentials(credentials != null ? credentials : "TODO");
+			String credentials = data.getStringExtra("credentials");
+			mPublishAccount.setCredentials(credentials != null ? credentials : "");
 			
 			if(resultCode == android.app.Activity.RESULT_OK) {
 				mPublishAccount.setAreCredentialsValid(true);
