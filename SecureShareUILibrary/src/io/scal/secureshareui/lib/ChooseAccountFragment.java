@@ -54,7 +54,6 @@ public class ChooseAccountFragment extends Fragment {
 		mView = inflater.inflate(R.layout.choose_account_fragment, container, false);		
 		mContainerConnectedAccountsView = (ViewGroup) mView.findViewById(R.id.accounts_connected_container);
 		mContainerAvailableAccountsView = (ViewGroup) mView.findViewById(R.id.accounts_available_container);	
-
 		
 		if (getArguments() != null) {
 			//if fragment is in connection or selection mode
@@ -223,16 +222,17 @@ public class ChooseAccountFragment extends Fragment {
 	}
 	
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode == PublishController.CONTROLLER_REQUEST_CODE) {	
+		if(requestCode == PublishController.CONTROLLER_REQUEST_CODE) {
+			
+			String credentials = data.getStringExtra("credenials");
+			mPublishAccount.setCredentials(credentials != null ? credentials : "TODO");
 			
 			if(resultCode == android.app.Activity.RESULT_OK) {
 				mPublishAccount.setAreCredentialsValid(true);
-				mPublishAccount.setCredentials("TODO");
 				mPublishEventListener.onSuccess(mPublishAccount);
 			}
 			else {
 				mPublishAccount.setAreCredentialsValid(false);
-				mPublishAccount.setCredentials("TODO");
 				mPublishEventListener.onFailure(mPublishAccount, "Error Loggging in");		
 			}
 			

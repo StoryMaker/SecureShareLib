@@ -7,11 +7,16 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import com.facebook.Request;
+import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 
@@ -30,6 +35,11 @@ public class FacebookActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_facebook);
 		buttonLoginLogout = (Button) findViewById(R.id.login_button);
+		
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			mAccessToken = extras.getString("credentials");
+		}
 
 		Session session = Session.getActiveSession();
 		if (session == null) {
@@ -63,7 +73,8 @@ public class FacebookActivity extends Activity {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+		Session session = Session.getActiveSession();
+		session.onActivityResult(this, requestCode, resultCode, data);
 		
 		if (resultCode == RESULT_OK) { // successful login
 			mAccessResult = RESULT_OK;
@@ -72,6 +83,7 @@ public class FacebookActivity extends Activity {
 		}
 		
 		handlePublish();
+		publishImage(session);
 	}
 
 	@Override
@@ -83,10 +95,8 @@ public class FacebookActivity extends Activity {
 
 	private void updateView() {
 		Session session = Session.getActiveSession();
-		String s = session.getAccessToken();
-		
-		if (session.isOpened()) {
-			
+
+		if (session.isOpened()) {		
 			buttonLoginLogout.setOnClickListener(new OnClickListener() {
 				public void onClick(View view) {
 					onClickLogout();
@@ -151,10 +161,46 @@ public class FacebookActivity extends Activity {
 	    mAccessToken = session.getAccessToken();
 	}
 	
+	private void publishImage(Session session) {
+		final String fbPhotoAddress;
+
+		// Part 1: create callback to get URL of uploaded photo
+		Request.Callback uploadPhotoRequestCallback = new Request.Callback() {
+			@Override
+			public void onCompleted(Response response) {
+				// safety check
+				if (isFinishing()) {
+					return;
+				}
+				if (response.getError() != null) { // [IF Failed Posting]
+					Log.d("testtest",
+							"photo upload problem. Error="
+									+ response.getError());
+				} // [ENDIF Failed Posting]
+
+				Object graphResponse = response.getGraphObject().getProperty(
+						"id");
+				if (graphResponse == null || !(graphResponse instanceof String)
+						|| TextUtils.isEmpty((String) graphResponse)) { // [IF
+																		// Failed
+																		// upload/no
+																		// results]
+					Log.d("testest", "failed photo upload/no response");
+				} else { // [ELSEIF successful upload]
+					String s = "https://www.facebook.com/photo.php?fbid=" + graphResponse;
+				} // [ENDIF successful posting or not]
+			} // [END onCompleted]
+		};
+
+		// Part 2: upload the photo
+		Request request = Request.newUploadPhotoRequest(session, BitmapFactory.decodeResource(getResources(), R.drawable.snoopy), uploadPhotoRequestCallback);
+		request.executeAsync();
+	}
+	
 	@Override
 	public void finish() {
 		Intent data = new Intent();
-		data.putExtra("fbAccessToken", mAccessToken);
+		data.putExtra("credentials", mAccessToken);
 		
 		setResult(mAccessResult, data);
 		super.finish();
