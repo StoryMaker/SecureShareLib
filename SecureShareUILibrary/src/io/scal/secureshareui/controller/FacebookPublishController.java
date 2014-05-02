@@ -31,6 +31,7 @@ public class FacebookPublishController extends PublishController  {
 		((Activity) currentContext).startActivityForResult(intent, PublishController.CONTROLLER_REQUEST_CODE);
 	}
 	
+	@Override
 	public void upload(String title, String body, String filepath) {
 
 		Session session = Session.openActiveSessionFromCache(super.getContext());

@@ -21,8 +21,11 @@ public abstract class PublishController {
     public static PublishController getPublishController(String site) {	
     	if(site.equals(FacebookPublishController.SITE_KEY)) {
     		return new FacebookPublishController();
-		}	
-    	
+		}
+    	else if(site.equals(SoundCloudPublishController.SITE_KEY)) {
+    		return new SoundCloudPublishController();
+		}
+    	 	
     	return null;
     }
 	
