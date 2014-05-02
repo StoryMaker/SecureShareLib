@@ -35,6 +35,8 @@ public class FacebookActivity extends Activity {
 		if (extras != null) {
 			mAccessToken = extras.getString("credentials");
 		}
+		//added to 
+		Session.setActiveSession(null);
 
 		Session session = Session.getActiveSession();
 		if (session == null) {
@@ -57,6 +59,7 @@ public class FacebookActivity extends Activity {
 	public void onStart() {
 		super.onStart();
 		Session.getActiveSession().addCallback(statusCallback);
+		buttonLoginLogout.performClick();
 	}
 
 	@Override
@@ -77,7 +80,7 @@ public class FacebookActivity extends Activity {
 			mAccessResult = 0;
 		}
 		
-		handlePublish();
+		mAccessToken = session.getAccessToken();
 		finish();
 	}
 
@@ -109,12 +112,18 @@ public class FacebookActivity extends Activity {
 	private void onClickLogin() {
 		Session session = Session.getActiveSession();
 		if (!session.isOpened() && !session.isClosed()) {
+			session.openForPublish(new Session.OpenRequest(this).setPermissions(PERMISSIONS).setCallback(statusCallback));
+			
+			/*
 			session.openForRead(new Session.OpenRequest(this)
 					.setPermissions(Arrays.asList("basic_info"))
-					.setCallback(statusCallback));		
+					.setCallback(statusCallback));*/
+			
+			//session.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, PERMISSIONS));
 		} else {
 			Session.openActiveSession(this, true, statusCallback);
 		}
+		
 	}
 
 	private void onClickLogout() {
@@ -151,9 +160,7 @@ public class FacebookActivity extends Activity {
 	            new Session.NewPermissionsRequest(this, PERMISSIONS).
 	                setRequestCode(REAUTH_ACTIVITY_CODE);
 	        session.requestNewPublishPermissions(newPermissionsRequest);
-	    }
-
-	    mAccessToken = session.getAccessToken();
+	    }    
 	}
 	
 	@Override

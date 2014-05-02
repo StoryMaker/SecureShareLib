@@ -12,6 +12,8 @@ import io.scal.secureshareuilibrary.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.facebook.Session;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.support.v4.app.Fragment;
@@ -174,7 +176,10 @@ public class ChooseAccountFragment extends Fragment {
 							mSelectedAccountIds.add(currentAccount.getSite());
 						}				
 					}
-					else {						
+					else {
+						PublishController publishController = PublishController.getPublishController(currentAccount.getSite());
+						publishController.setContext(getActivity());
+						publishController.upload("test", "body", "/storage/emulated/0/DCIM/Camera/short.mp4");
 						Toast.makeText(getActivity(), currentAccount.getName() + " edit click", Toast.LENGTH_SHORT).show();	
 					}		
 				}				
