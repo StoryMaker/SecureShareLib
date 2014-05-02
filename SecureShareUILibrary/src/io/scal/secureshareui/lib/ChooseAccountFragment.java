@@ -177,9 +177,6 @@ public class ChooseAccountFragment extends Fragment {
 						}				
 					}
 					else {
-						PublishController publishController = PublishController.getPublishController(currentAccount.getSite());
-						publishController.setContext(getActivity());
-						publishController.upload("test", "body", "/storage/emulated/0/DCIM/Camera/short.mp4");
 						Toast.makeText(getActivity(), currentAccount.getName() + " edit click", Toast.LENGTH_SHORT).show();	
 					}		
 				}				
