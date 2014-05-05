@@ -1,6 +1,6 @@
 package io.scal.secureshareui.controller;
 
-import io.scal.secureshareui.lib.FacebookActivity;
+import io.scal.secureshareui.login.SoundcloudLoginActivity;
 import io.scal.secureshareui.model.PublishAccount;
 
 import java.io.File;
@@ -39,10 +39,7 @@ public class SoundCloudPublishController extends PublishController{
     
 	@Override
 	public void startAuthentication(PublishAccount account) {	
-		Context currentContext = super.getContext();
-		Intent intent = new Intent(currentContext, FacebookActivity.class);
-		intent.putExtra("credentials", account.getCredentials());
-		((Activity) currentContext).startActivityForResult(intent, PublishController.CONTROLLER_REQUEST_CODE);
+
 	}
 	
 	@Override

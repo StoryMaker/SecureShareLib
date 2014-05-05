@@ -2,7 +2,7 @@ package io.scal.secureshareui.controller;
 
 import android.content.Context;
 import android.content.Intent;
-import io.scal.secureshareui.lib.FacebookActivity;
+import io.scal.secureshareui.login.FacebookLoginActivity;
 import io.scal.secureshareui.model.PublishAccount;
 
 public abstract class PublishController {
