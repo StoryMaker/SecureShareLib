@@ -177,9 +177,6 @@ public class ChooseAccountFragment extends Fragment {
 						}				
 					}
 					else {
-						PublishController publishController = PublishController.getPublishController(currentAccount.getSite());
-						publishController.setContext(getActivity());
-						publishController.upload("title", "body", "/null/");
 						Toast.makeText(getActivity(), currentAccount.getName() + " edit click", Toast.LENGTH_SHORT).show();	
 					}		
 				}				
