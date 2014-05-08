@@ -32,7 +32,7 @@ public class FacebookPublishController extends PublishController  {
 	}
 	
 	@Override
-	public void upload(String title, String body, String mediaPath, String credentials) {
+	public void upload(String title, String body, String mediaPath, String username, String credentials) {
 
 		Session session = Session.openActiveSessionFromCache(super.getContext());
 			
