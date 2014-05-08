@@ -2,7 +2,7 @@ package io.scal.secureshareui.controller;
 
 import android.content.Context;
 import android.content.Intent;
-import io.scal.secureshareui.lib.FacebookActivity;
+import io.scal.secureshareui.login.FacebookLoginActivity;
 import io.scal.secureshareui.model.PublishAccount;
 
 public abstract class PublishController {
@@ -16,13 +16,16 @@ public abstract class PublishController {
 	}
 	
 	public abstract void startAuthentication(PublishAccount account);
-	public abstract void upload(String title, String body, String videoPath);
+	public abstract void upload(String title, String body, String mediaPath, String username, String credentials);
     
     public static PublishController getPublishController(String site) {	
     	if(site.equals(FacebookPublishController.SITE_KEY)) {
     		return new FacebookPublishController();
-		}	
-    	
+		}
+    	else if(site.equals(SoundCloudPublishController.SITE_KEY)) {
+    		return new SoundCloudPublishController();
+		}
+    	 	
     	return null;
     }
 	

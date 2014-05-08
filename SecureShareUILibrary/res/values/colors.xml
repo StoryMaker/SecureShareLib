@@ -4,4 +4,5 @@
     <color name="light_grey_super">#D4D4D4</color>
     <color name="dark_gray">#848484</color>
 	<color name="light_blue">#10B2EF</color>
+	<color name="transparent_black">#33333333</color>
 </resources>

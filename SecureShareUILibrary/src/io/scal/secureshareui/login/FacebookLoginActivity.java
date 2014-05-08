@@ -1,4 +1,4 @@
-package io.scal.secureshareui.lib;
+package io.scal.secureshareui.login;
 
 import io.scal.secureshareuilibrary.R;
 
@@ -15,7 +15,7 @@ import android.widget.Button;
 import com.facebook.Session;
 import com.facebook.SessionState;
 
-public class FacebookActivity extends Activity {
+public class FacebookLoginActivity extends Activity {
 
 	private static int mAccessResult;
 	private static String mAccessToken;
@@ -28,7 +28,7 @@ public class FacebookActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_facebook);
+		setContentView(R.layout.activity_facebook_login);
 		buttonLoginLogout = (Button) findViewById(R.id.login_button);
 		
 		Bundle extras = getIntent().getExtras();

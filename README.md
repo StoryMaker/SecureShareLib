@@ -25,6 +25,19 @@ Some services such as Youtube or Rsync allow us to resume after an interrupted t
 
 We intend to add the ability to lower the rate of trasnfer so as to not saturation your mobile data link
 
+###Issues
+You may get the following errors when trying to build the project:
+- Unable to execute dex: Multiple dex files define Lorg/json/JSONArray;
+- Conversion to Dalvik format failed: Unable to execute dex: Multiple dex files define Lorg/json/JSONArray;
+
+These are caused when there are two duplicate jar files seen from the main project.  To fix this issue, follow the steps below:
+- remove the conflicting jar from the sub-project (delete the soundcloud-api-wrapper.jar from the libs folder in SecureShareLib)
+- right click the project name
+- go to properties
+- select 'Java Build Path' on left menu, then the 'Libraries' tab
+- click 'Add JARs' button on right and point it to the soundcloud-api-wrapper.jar (located in secureshareuilibrary/external/)
+- clean and rebuild
+
 ###Credits
 
 SecureShareLib was developed by [Scal.io](http://scal.io) and [Small World News](http://smallworldnews.tv/) as part of the [StoryMaker](http://storymaker.cc/) project with the generous support of [Open Technology Fund](https://www.opentechfund.org/).

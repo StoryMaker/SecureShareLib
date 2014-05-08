@@ -13,7 +13,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import io.scal.secureshareui.lib.FacebookActivity;
+import io.scal.secureshareui.login.FacebookLoginActivity;
 import io.scal.secureshareui.model.PublishAccount;
  
 public class FacebookPublishController extends PublishController  {
@@ -26,12 +26,13 @@ public class FacebookPublishController extends PublishController  {
 	@Override
 	public void startAuthentication(PublishAccount account) {	
 		Context currentContext = super.getContext();
-		Intent intent = new Intent(currentContext, FacebookActivity.class);
+		Intent intent = new Intent(currentContext, FacebookLoginActivity.class);
 		intent.putExtra("credentials", account.getCredentials());
 		((Activity) currentContext).startActivityForResult(intent, PublishController.CONTROLLER_REQUEST_CODE);
 	}
 	
-	public void upload(String title, String body, String filepath) {
+	@Override
+	public void upload(String title, String body, String mediaPath, String username, String credentials) {
 
 		Session session = Session.openActiveSessionFromCache(super.getContext());
 			
@@ -60,18 +61,12 @@ public class FacebookPublishController extends PublishController  {
 		};
 
 		//upload File
-		File videoFile = new File(filepath);
+		File videoFile = new File(mediaPath);
 		Request request = null;
 		try {
 			request = Request.newUploadVideoRequest(session, videoFile, uploadVideoRequestCallback);
 			Bundle parameters = request.getParameters();
-			//parameters.putString("name", "name22");
-			//parameters.putString("body", "body22");
-			//parameters.putString("message", "message22");
-			//parameters.putString("title", "title22");
 			parameters.putString("description", body);
-			//parameters.putString("caption", "caption22");
-			//parameters.putString("link", "link22");
 					
 			request.setParameters(parameters);
 		} catch (FileNotFoundException e) {
