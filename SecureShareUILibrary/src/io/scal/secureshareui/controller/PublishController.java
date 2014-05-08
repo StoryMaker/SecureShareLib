@@ -16,7 +16,7 @@ public abstract class PublishController {
 	}
 	
 	public abstract void startAuthentication(PublishAccount account);
-	public abstract void upload(String title, String body, String videoPath);
+	public abstract void upload(String title, String body, String mediaPath, String credentials);
     
     public static PublishController getPublishController(String site) {	
     	if(site.equals(FacebookPublishController.SITE_KEY)) {

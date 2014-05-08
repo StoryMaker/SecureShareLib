@@ -32,7 +32,7 @@ public class FacebookPublishController extends PublishController  {
 	}
 	
 	@Override
-	public void upload(String title, String body, String filepath) {
+	public void upload(String title, String body, String mediaPath, String credentials) {
 
 		Session session = Session.openActiveSessionFromCache(super.getContext());
 			
@@ -61,7 +61,7 @@ public class FacebookPublishController extends PublishController  {
 		};
 
 		//upload File
-		File videoFile = new File(filepath);
+		File videoFile = new File(mediaPath);
 		Request request = null;
 		try {
 			request = Request.newUploadVideoRequest(session, videoFile, uploadVideoRequestCallback);

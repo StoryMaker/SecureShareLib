@@ -41,25 +41,25 @@ public class SoundCloudPublishController extends PublishController{
 	}
 	
 	@Override
-	public void upload(String title, String body, String filepath) {
-		new UploadAsync().execute(title, body, filepath);
+	public void upload(String title, String body, String mediaPath, String credentials) {
+		new UploadAsync().execute(title, body, mediaPath, credentials);
 	}
 
 	private class UploadAsync extends AsyncTask<String, Void, String> {
 
 		@Override
 		protected String doInBackground(String... params) {
-			uploadFile(params[0], params[1], params[2]);
+			uploadFile(params[0], params[1], params[2], params[3]);
 			return "success";
 		}
 	}
 	
-	private void uploadFile(String title, String body, String filepath) {
+	private void uploadFile(String title, String body, String mediaPath, String credentials) {
 		
 		final ApiWrapper wrapper = new ApiWrapper(APP_CLIENT_ID, // client_id
 				APP_CLIENT_SECRET, // client_secret
 				null, // redirect URI
-				new Token("1-71007-81779213-2fbaf543ffb8578", "0"));// token
+				new Token(credentials, "0"));// token
 
 		if(Util.isOrbotInstalledAndRunning(super.getContext())) {
 			URI uri = null;
@@ -74,7 +74,7 @@ public class SoundCloudPublishController extends PublishController{
 			wrapper.setProxy(uri);
 		}
 		
-	    File audioFile = new File(filepath);
+	    File audioFile = new File(mediaPath);
 		
 	    if(audioFile.exists()) {    	
 	    	try {
