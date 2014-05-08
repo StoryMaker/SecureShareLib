@@ -1,5 +1,6 @@
 package io.scal.secureshareui.controller;
 
+import io.scal.secureshareui.lib.Util;
 import io.scal.secureshareui.login.SoundcloudLoginActivity;
 import io.scal.secureshareui.model.PublishAccount;
 import io.scal.secureshareui.soundcloud.ApiWrapper;
@@ -22,25 +23,14 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
-
-
 public class SoundCloudPublishController extends PublishController{
-	public static final String SITE_NAME = "SoundCloud"; 
-    public static final String SITE_KEY = "soundcloud";
-    private static final String TAG = "SoundCloudPublishController";
+	public static final String SITE_NAME = "SoundCloud";
+	public static final String SITE_KEY = "soundcloud";
+	private static final String TAG = "SoundCloudPublishController";
     
-    //soundcloud
-    private static final String APP_CLIENT_ID = "e2d4d40b81830314350f0154bc88977a";
-    private static final String APP_CLIENT_SECRET = "00aea4c562e3561614f1d177f1e672a7";
-    
-	// netcipher
-	private static final String ORBOT_HOST = "127.0.0.1";
-	private static final int ORBOT_HTTP_PORT = 8118;
-	private static final int ORBOT_SOCKS_PORT = 9050;
-	
-    
-    //NEED to change to test local audio file
-    private static File mAudioFile = new File (Environment.getExternalStorageDirectory().getPath() + "/DCIM/ink.mp3");
+    //soundcloud SM credentials
+    public static final String APP_CLIENT_ID = "e2d4d40b81830314350f0154bc88977a";
+    public static final String APP_CLIENT_SECRET = "00aea4c562e3561614f1d177f1e672a7";
     
 	@Override
 	public void startAuthentication(PublishAccount account) {	
@@ -52,62 +42,52 @@ public class SoundCloudPublishController extends PublishController{
 	
 	@Override
 	public void upload(String title, String body, String filepath) {
-		new UploadAsync().execute("");
+		new UploadAsync().execute(title, body, filepath);
 	}
 
 	private class UploadAsync extends AsyncTask<String, Void, String> {
 
 		@Override
 		protected String doInBackground(String... params) {
-			uploadFile();
+			uploadFile(params[0], params[1], params[2]);
 			return "success";
 		}
-
-		@Override
-		protected void onPostExecute(String result) {
-		}
-
-		@Override
-		protected void onPreExecute() {
-		}
-
-		@Override
-		protected void onProgressUpdate(Void... values) {
-		}
 	}
-
-	private void uploadFile() {
-
-		String userName = "milucas22";
-		String userPass = "bama1986";
-
+	
+	private void uploadFile(String title, String body, String filepath) {
+		
 		final ApiWrapper wrapper = new ApiWrapper(APP_CLIENT_ID, // client_id
 				APP_CLIENT_SECRET, // client_secret
 				null, // redirect URI
-				null);// token
+				new Token("1-71007-81779213-2fbaf543ffb8578", "0"));// token
 
-		URI uri = null;
-		try {
-			uri = new URI("http", null, ORBOT_HOST, ORBOT_HTTP_PORT, null,
-					null, null);
+		if(Util.isOrbotInstalledAndRunning(super.getContext())) {
+			URI uri = null;
+			try {
+				uri = new URI("http", null, Util.ORBOT_HOST, Util.ORBOT_HTTP_PORT, null,
+						null, null);
 
-		} catch (URISyntaxException e) {
-			Log.v(TAG, "URISyntaxException: " + e.toString());
+			} catch (URISyntaxException e) {
+				Log.v(TAG, "URISyntaxException: " + e.toString());
+			}
+
+			wrapper.setProxy(uri);
 		}
+		
+	    File audioFile = new File(filepath);
+		
+	    if(audioFile.exists()) {    	
+	    	try {
+				HttpResponse response = wrapper.post(Request.to(Endpoints.TRACKS)
+						.add(Params.Track.TITLE, title)
+						.add(Params.Track.TAG_LIST, "storymaker upload")
+						.withFile(Params.Track.ASSET_DATA, audioFile));
 
-		//wrapper.setProxy(uri);
-
-		try {
-			Token token = wrapper.login(userName, userPass);
-
-			HttpResponse resp2 = wrapper.post(Request.to(Endpoints.TRACKS)
-					.add(Params.Track.TITLE, mAudioFile.getName())
-					.add(Params.Track.TAG_LIST, "storymaker upload")
-					.withFile(Params.Track.ASSET_DATA, mAudioFile));
-
-		} catch (IOException e) {
-			Log.v(TAG, "IOException: " + e.toString());
-		}
+			} catch (IOException e) {
+				Log.v(TAG, "IOException: " + e.toString());
+			}
+	    }
+		
 	}
 }
 

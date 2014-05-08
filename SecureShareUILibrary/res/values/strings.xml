@@ -27,7 +27,8 @@
     <string name="no_place_selected">&lt;No place selected&gt;</string>
     <string name="pick_seattle_place">Pick a Seattle Place</string>
     <string name="exception">Exception: %1$s</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="title_activity_soundcloud_login">SoundcloudLoginActivity</string>
+    <string name="password">Password</string>
+    <string name="username">User Name</string>
+    <string name="sign_in">Sign In</string>
 
 </resources>
