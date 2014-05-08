@@ -66,13 +66,7 @@ public class FacebookPublishController extends PublishController  {
 		try {
 			request = Request.newUploadVideoRequest(session, videoFile, uploadVideoRequestCallback);
 			Bundle parameters = request.getParameters();
-			//parameters.putString("name", "name22");
-			//parameters.putString("body", "body22");
-			//parameters.putString("message", "message22");
-			//parameters.putString("title", "title22");
 			parameters.putString("description", body);
-			//parameters.putString("caption", "caption22");
-			//parameters.putString("link", "link22");
 					
 			request.setParameters(parameters);
 		} catch (FileNotFoundException e) {
