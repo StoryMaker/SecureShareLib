@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="@strings/username" >
+        android:hint="@string/username" >
 
         <requestFocus />
     </EditText>
@@ -21,13 +21,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="@strings/password"
+        android:hint="@string/password"
         android:inputType="textPassword" />
 
     <Button
         android:id="@+id/btnSignIn"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@strings/sign_in" />
+        android:text="@string/sign_in" />
 
 </LinearLayout>
