@@ -50,6 +50,7 @@ public class ChooseAccountFragment extends Fragment {
 	//used for storing state for the callback
 	private static ViewGroup mVgAccounts;
 	private static PublishAccount mPublishAccount;
+	private Button mBtnContinue;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,10 +64,11 @@ public class ChooseAccountFragment extends Fragment {
 			if(mInSelectionMode) {
 				((TextView) mView.findViewById(R.id.tv_choose_account_header)).setText(this.getString(R.string.select_account));
 				
-				Button btnContinue = (Button) mView.findViewById(R.id.btnContinue);
-				btnContinue.setVisibility(View.VISIBLE);
-				btnContinue.setOnClickListener(new View.OnClickListener() {
+				mBtnContinue = (Button) mView.findViewById(R.id.btnContinue);
+				mBtnContinue.setVisibility(View.VISIBLE);
+				mBtnContinue.setOnClickListener(new View.OnClickListener() {
 					public void onClick(View v) {
+					    // TODO only do this if the user has selected something?  maybe button shouldn't be enabled until you select an item
 						Intent data = new Intent();
 						data.putStringArrayListExtra(EXTRAS_ACCOUNT_KEYS, mSelectedAccountIds);
 						getActivity().setResult(Activity.RESULT_OK, data);
@@ -126,6 +128,7 @@ public class ChooseAccountFragment extends Fragment {
 			if(isDynamicallyAdded) {
 				cbToPublish.setChecked(true);
 				mSelectedAccountIds.add(currentAccount.getSite());
+				setContinueEnabledState();
 			}
 				
 		}
@@ -174,7 +177,8 @@ public class ChooseAccountFragment extends Fragment {
 						else {
 							cbToPublish.setChecked(true);
 							mSelectedAccountIds.add(currentAccount.getSite());
-						}				
+						}
+						setContinueEnabledState();
 					}
 					else {
 						PublishController publishController = PublishController.getPublishController(currentAccount.getSite());
@@ -186,6 +190,10 @@ public class ChooseAccountFragment extends Fragment {
 			} 
         });
 	}
+    
+    private void setContinueEnabledState() {
+        mBtnContinue.setEnabled(!mSelectedAccountIds.isEmpty());
+    }
 	
 	private void addAvailablePublishAccount(PublishAccount account) {
 		

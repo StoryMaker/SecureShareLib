@@ -76,6 +76,7 @@
 		     android:layout_height="wrap_content"
 		     android:text="@string/lbl_continue"
 		     android:layout_marginTop="16dp"
+		     android:enabled="false"
 		     android:visibility="gone"/>
    		 
   		</LinearLayout>
