@@ -25,6 +25,9 @@ public abstract class PublishController {
     	else if(site.equals(SoundCloudPublishController.SITE_KEY)) {
     		return new SoundCloudPublishController();
 		}
+    	else if(site.equals(FlickrPublishController.SITE_KEY)) {
+            return new FlickrPublishController();
+        }
     	 	
     	return null;
     }
