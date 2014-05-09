@@ -23,6 +23,15 @@
         android:ems="10"
         android:hint="@string/password"
         android:inputType="textPassword" />
+    
+    <TextView
+        android:id="@+id/tvLoginError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/inavalid_credentials" 
+        android:visibility="gone"
+        android:padding="8dp"
+        android:textColor="@color/holo_red_dark"/>
 
     <Button
         android:id="@+id/btnSignIn"

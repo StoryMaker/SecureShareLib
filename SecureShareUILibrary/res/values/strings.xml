@@ -30,5 +30,6 @@
     <string name="password">Password</string>
     <string name="username">User Name</string>
     <string name="sign_in">Sign In</string>
+    <string name="inavalid_credentials">*Invalid Login Credentials</string>
 
 </resources>

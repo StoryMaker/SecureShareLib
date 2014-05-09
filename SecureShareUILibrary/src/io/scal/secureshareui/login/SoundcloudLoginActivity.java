@@ -15,12 +15,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class SoundcloudLoginActivity extends Activity {
 
-	private static int mAccessResult;
-	private static String mAccessToken = null;
+	private int mAccessResult = Activity.RESULT_CANCELED;
+	private String mAccessToken = null;
+	
+	private Button btnSignIn;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +38,7 @@ public class SoundcloudLoginActivity extends Activity {
 	private void init() {
 		final EditText etUsername = (EditText) findViewById(R.id.etUsername);
 		final EditText etPassword = (EditText) findViewById(R.id.etPassword);
-		Button btnSignIn = (Button) findViewById(R.id.btnSignIn);
+		btnSignIn = (Button) findViewById(R.id.btnSignIn);
 	
 		btnSignIn.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -73,21 +76,21 @@ public class SoundcloudLoginActivity extends Activity {
 			
 			return "0";
 		}
-		
-		@Override 
-		protected void onPreExecute() {
-
-		}
 
 		@Override
 		protected void onPostExecute(String resultStr) {		
 			int result = Integer.parseInt(resultStr);
 			
+			btnSignIn.setEnabled(true);
+			TextView tvLoginError = (TextView) findViewById(R.id.tvLoginError);
+			
 			if (result == 0) {
-				mAccessResult = Activity.RESULT_CANCELED;
+				mAccessResult = Activity.RESULT_CANCELED;			
+				tvLoginError.setVisibility(View.VISIBLE);				
 			}
 			else {
 				mAccessResult = Activity.RESULT_OK;
+				tvLoginError.setVisibility(View.GONE);
 				finish();
 			}		
 		}

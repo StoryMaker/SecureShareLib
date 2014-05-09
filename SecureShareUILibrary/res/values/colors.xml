@@ -5,4 +5,6 @@
     <color name="dark_gray">#848484</color>
 	<color name="light_blue">#10B2EF</color>
 	<color name="transparent_black">#33333333</color>
+	<color name="holo_red_light">#ffff4444</color>
+	<color name="holo_red_dark">#ffcc0000</color>
 </resources>
