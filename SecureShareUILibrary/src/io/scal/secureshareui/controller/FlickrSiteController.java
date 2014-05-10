@@ -21,20 +21,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import info.guardianproject.onionkit.ui.OrbotHelper;
 import io.scal.secureshareui.login.FlickrLoginActivity;
-import io.scal.secureshareui.model.PublishAccount;
+import io.scal.secureshareui.model.Account;
 
-public class FlickrPublishController extends PublishController 
-{
-	public static final String SITE_NAME = "Flickr"; 
+public class FlickrSiteController extends SiteController {
+    public static final String SITE_NAME = "Flickr"; 
     public static final String SITE_KEY = "flickr"; 
     private static final String TAG = "FlickrPublishController";
     
     Flickr f = null;
     
  // AUTH SETTINGS - DO NOT COMMIT
+    // TODO move these into xml
     String key = "";
     String secret = "";
     
@@ -42,21 +43,21 @@ public class FlickrPublishController extends PublishController
     private static final String ORBOT_HOST = "127.0.0.1";
     private static final int ORBOT_HTTP_PORT = 8118;
     
-    public FlickrPublishController() 
-    {
-        // ???
+    public FlickrSiteController(Context context, Handler handler, String jobId) {
+        super(context, handler, jobId);
+        // TODO Auto-generated constructor stub
     }
-
+    
     @Override
-    public void startAuthentication(PublishAccount account) 
+    public void startAuthentication(Account account) 
     {   
-        Context currentContext = super.getContext();
+        Context currentContext = mContext;
         
         Log.d(TAG, "startAuthentication()");
         
         Intent intent = new Intent(currentContext, FlickrLoginActivity.class);
         intent.putExtra("credentials", account.getCredentials());
-        ((Activity)currentContext).startActivityForResult(intent, PublishController.CONTROLLER_REQUEST_CODE);
+        ((Activity)currentContext).startActivityForResult(intent, SiteController.CONTROLLER_REQUEST_CODE);
     }
     
     @Override
@@ -74,7 +75,7 @@ public class FlickrPublishController extends PublishController
                        "delete",                     // permissions ("delete" permission allows read/write/delete)
                        fProps);                      // properties
 
-        OrbotHelper orbotHelper = new OrbotHelper(super.getContext());
+        OrbotHelper orbotHelper = new OrbotHelper(mContext);
         if(orbotHelper.isOrbotRunning()) 
         {    
             Log.d(TAG, "orbot running, setting proxy");
@@ -95,9 +96,9 @@ public class FlickrPublishController extends PublishController
     
     class UploadFileTask extends AsyncTask<String, String, String> 
     {
-        private FlickrPublishController fpc;
+        private FlickrSiteController fpc;
         
-        public UploadFileTask(FlickrPublishController fpc)
+        public UploadFileTask(FlickrSiteController fpc)
         {
             this.fpc = fpc;
         }

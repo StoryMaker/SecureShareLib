@@ -1,11 +1,11 @@
 package io.scal.secureshareui.model;
 
-import io.scal.secureshareui.controller.FacebookPublishController;
-import io.scal.secureshareui.controller.FlickrPublishController;
-import io.scal.secureshareui.controller.SoundCloudPublishController;
-import io.scal.secureshareui.controller.YoutubePublishController;
+import io.scal.secureshareui.controller.FacebookSiteController;
+import io.scal.secureshareui.controller.FlickrSiteController;
+import io.scal.secureshareui.controller.SoundCloudSiteController;
+import io.scal.secureshareui.controller.YoutubeSiteController;
 
-public class PublishAccount {
+public class Account {
 	
 	private String id;
 	private String name;
@@ -15,19 +15,19 @@ public class PublishAccount {
     private boolean isConnected;
     private boolean areCredentialsValid;
     public static final String[] CONTROLLER_SITE_NAMES = { 
-        FacebookPublishController.SITE_NAME, 
-        YoutubePublishController.SITE_NAME, 
-        SoundCloudPublishController.SITE_NAME,
-        FlickrPublishController.SITE_NAME
+        FacebookSiteController.SITE_NAME, 
+        YoutubeSiteController.SITE_NAME, 
+        SoundCloudSiteController.SITE_NAME,
+        FlickrSiteController.SITE_NAME
     };
     public static final String[] CONTROLLER_SITE_KEYS = { 
-        FacebookPublishController.SITE_KEY, 
-        YoutubePublishController.SITE_KEY, 
-        SoundCloudPublishController.SITE_KEY,
-        FlickrPublishController.SITE_KEY
+        FacebookSiteController.SITE_KEY, 
+        YoutubeSiteController.SITE_KEY, 
+        SoundCloudSiteController.SITE_KEY,
+        FlickrSiteController.SITE_KEY
     };
 	
-	public PublishAccount(String id, String name, String site, String userName, String credentials, boolean isConnected, boolean areCredentialsValid){
+	public Account(String id, String name, String site, String userName, String credentials, boolean isConnected, boolean areCredentialsValid){
 		this.id = id;
 		this.setName(name);
 		this.setSite(site);

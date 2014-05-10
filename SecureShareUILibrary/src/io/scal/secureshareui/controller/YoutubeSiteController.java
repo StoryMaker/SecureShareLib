@@ -1,6 +1,6 @@
 package io.scal.secureshareui.controller;
 
-public class YoutubePublishController {
+public class YoutubeSiteController {
 	public static final String SITE_NAME = "YouTube";
     public static final String SITE_KEY = "youtube"; 
 }

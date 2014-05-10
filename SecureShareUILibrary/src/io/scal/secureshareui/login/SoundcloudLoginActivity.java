@@ -2,7 +2,7 @@ package io.scal.secureshareui.login;
 
 import java.io.IOException;
 
-import io.scal.secureshareui.controller.SoundCloudPublishController;
+import io.scal.secureshareui.controller.SoundCloudSiteController;
 import io.scal.secureshareui.soundcloud.ApiWrapper;
 import io.scal.secureshareui.soundcloud.Token;
 import io.scal.secureshareuilibrary.R;
@@ -58,8 +58,8 @@ public class SoundcloudLoginActivity extends Activity {
 		@Override
 		protected String doInBackground(String... params) {
 			
-			final ApiWrapper wrapper = new ApiWrapper(SoundCloudPublishController.APP_CLIENT_ID, 
-														SoundCloudPublishController.APP_CLIENT_SECRET, 
+			final ApiWrapper wrapper = new ApiWrapper(SoundCloudSiteController.APP_CLIENT_ID, 
+														SoundCloudSiteController.APP_CLIENT_SECRET, 
 														null, 
 														null);
 			Token token = null;

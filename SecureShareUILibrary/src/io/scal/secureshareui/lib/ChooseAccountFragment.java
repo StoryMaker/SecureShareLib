@@ -1,12 +1,12 @@
 package io.scal.secureshareui.lib;
 
-import io.scal.secureshareui.controller.FacebookPublishController;
-import io.scal.secureshareui.controller.FlickrPublishController;
-import io.scal.secureshareui.controller.PublishController;
-import io.scal.secureshareui.controller.PublishController.OnPublishEventListener;
-import io.scal.secureshareui.controller.SoundCloudPublishController;
-import io.scal.secureshareui.controller.YoutubePublishController;
-import io.scal.secureshareui.model.PublishAccount;
+import io.scal.secureshareui.controller.FacebookSiteController;
+import io.scal.secureshareui.controller.FlickrSiteController;
+import io.scal.secureshareui.controller.SiteController;
+import io.scal.secureshareui.controller.SiteController.OnPublishEventListener;
+import io.scal.secureshareui.controller.SoundCloudSiteController;
+import io.scal.secureshareui.controller.YoutubeSiteController;
+import io.scal.secureshareui.model.Account;
 import io.scal.secureshareuilibrary.R;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class ChooseAccountFragment extends Fragment {
 	private ViewGroup mContainerConnectedAccountsView;
 	private ViewGroup mContainerAvailableAccountsView;
 	private OnPublishEventListener mPublishEventListener;
-	private List<PublishAccount> mAlPublishAccounts = new ArrayList<PublishAccount>();
+	private List<Account> mAlPublishAccounts = new ArrayList<Account>();
 	private static boolean mInSelectionMode = false;
 	private static boolean mAttemptingLoginRetry = false;
 	public static final int ACCOUNT_REQUEST_CODE = 102;
@@ -49,7 +49,7 @@ public class ChooseAccountFragment extends Fragment {
 	
 	//used for storing state for the callback
 	private static ViewGroup mVgAccounts;
-	private static PublishAccount mPublishAccount;
+	private static Account mPublishAccount;
 	private Button mBtnContinue;
 	
 	@Override
@@ -83,7 +83,7 @@ public class ChooseAccountFragment extends Fragment {
 		return mView;
 	}
 	
-	public void setPublishAccountsList(List<PublishAccount> publishAccounts) {
+	public void setPublishAccountsList(List<Account> publishAccounts) {
 		this.mAlPublishAccounts = publishAccounts;
 		addPublishAccounts();
 	}
@@ -97,7 +97,7 @@ public class ChooseAccountFragment extends Fragment {
 		if(getActivity() == null && mAlPublishAccounts != null)
 			return;
 	
-		for(PublishAccount account: mAlPublishAccounts) {     	
+		for(Account account: mAlPublishAccounts) {     	
 			if (account.getIsConnected()) {
 				addConnectedPublishAccount(account, false);
 			} 	
@@ -107,11 +107,11 @@ public class ChooseAccountFragment extends Fragment {
 		}
 	}
 	
-	private void addConnectedPublishAccount(PublishAccount account, boolean isDynamicallyAdded) {	
+	private void addConnectedPublishAccount(Account account, boolean isDynamicallyAdded) {	
 		final ViewGroup vgConnectedAccounts = (ViewGroup) LayoutInflater.from(getActivity())
 											   .inflate(R.layout.publish_account_item, mContainerConnectedAccountsView, false);
 		final CheckBox cbToPublish = (CheckBox) vgConnectedAccounts.findViewById(R.id.cbToPublish);
-		final PublishAccount currentAccount = account;
+		final Account currentAccount = account;
 		((TextView) vgConnectedAccounts.findViewById(R.id.tv_account_name)).setText(account.getName());
 		((ImageView) vgConnectedAccounts.findViewById(R.id.iv_account_icon)).setImageResource(getAccountIcon(account.getSite(), true));
 			
@@ -192,10 +192,10 @@ public class ChooseAccountFragment extends Fragment {
         mBtnContinue.setEnabled(!mSelectedAccountIds.isEmpty());
     }
 	
-	private void addAvailablePublishAccount(PublishAccount account) {
+	private void addAvailablePublishAccount(Account account) {
 		
 		final ViewGroup vgAvailableAccounts = (ViewGroup) LayoutInflater.from(getActivity()).inflate(R.layout.publish_account_item, mContainerAvailableAccountsView, false);
-		final PublishAccount currentAccount = account;
+		final Account currentAccount = account;
 		((TextView) vgAvailableAccounts.findViewById(R.id.tv_account_name)).setText(account.getName());
 		((ImageView) vgAvailableAccounts.findViewById(R.id.iv_account_icon)).setImageResource(getAccountIcon(account.getSite(), false));
 		
@@ -213,8 +213,8 @@ public class ChooseAccountFragment extends Fragment {
 		});
 	}
 	
-	private void launchAuthentication(PublishAccount currentAccount, ViewGroup vgAccounts) {
-		PublishController publishController = PublishController.getPublishController(currentAccount.getSite());
+	private void launchAuthentication(Account currentAccount, ViewGroup vgAccounts) {
+		SiteController publishController = SiteController.getPublishController(currentAccount.getSite(), getActivity(), null, null);
 		
 		//ensure controller exists
 		if(null == publishController) {
@@ -224,7 +224,6 @@ public class ChooseAccountFragment extends Fragment {
 		}
 		
 		publishController.setOnPublishEventListener(mPublishEventListener);
-		publishController.setContext(getActivity());
 		publishController.startAuthentication(currentAccount);
 		
 		mPublishAccount = currentAccount;
@@ -232,7 +231,7 @@ public class ChooseAccountFragment extends Fragment {
 	}
 	
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode == PublishController.CONTROLLER_REQUEST_CODE) {
+		if(requestCode == SiteController.CONTROLLER_REQUEST_CODE) {
 			
 			String credentials = data.getStringExtra("credentials");
 			mPublishAccount.setCredentials(credentials != null ? credentials : "");
@@ -263,16 +262,16 @@ public class ChooseAccountFragment extends Fragment {
 	}
 	
 	private int getAccountIcon(String site, boolean isConnected) {	
-		if(site.equals(FacebookPublishController.SITE_KEY)) {
+		if(site.equals(FacebookSiteController.SITE_KEY)) {
 			return isConnected ? R.drawable.ic_context_facebook_on : R.drawable.ic_context_facebook; 
 		}
-		else if(site.equals(YoutubePublishController.SITE_KEY)) {
+		else if(site.equals(YoutubeSiteController.SITE_KEY)) {
 			return isConnected ? R.drawable.ic_context_youtube_on : R.drawable.ic_context_youtube; 
 		}
-		else if(site.equals(SoundCloudPublishController.SITE_KEY)) {
+		else if(site.equals(SoundCloudSiteController.SITE_KEY)) {
 			return isConnected ? R.drawable.ic_context_soundcloud_on : R.drawable.ic_context_soundcloud; 
 		}
-		else if(site.equals(FlickrPublishController.SITE_KEY)) {
+		else if(site.equals(FlickrSiteController.SITE_KEY)) {
 			return isConnected ? R.drawable.ic_context_vimeo_on : R.drawable.ic_context_vimeo; 
 		}
 		

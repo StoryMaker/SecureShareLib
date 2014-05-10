@@ -11,30 +11,33 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import io.scal.secureshareui.login.FacebookLoginActivity;
-import io.scal.secureshareui.model.PublishAccount;
+import io.scal.secureshareui.model.Account;
  
-public class FacebookPublishController extends PublishController  {
-	public static final String SITE_NAME = "Facebook";
+public class FacebookSiteController extends SiteController  {
+    public static final String SITE_NAME = "Facebook";
 	public static final String SITE_KEY = "facebook";
 	private static final String TAG = "FacebookPublishController";
 	
-	public FacebookPublishController() {}
-
+    public FacebookSiteController(Context context, Handler handler, String jobId) {
+        super(context, handler, jobId);
+        // TODO Auto-generated constructor stub
+    }
+	
 	@Override
-	public void startAuthentication(PublishAccount account) {	
-		Context currentContext = super.getContext();
-		Intent intent = new Intent(currentContext, FacebookLoginActivity.class);
+	public void startAuthentication(Account account) {	
+		Intent intent = new Intent(mContext, FacebookLoginActivity.class);
 		intent.putExtra("credentials", account.getCredentials());
-		((Activity) currentContext).startActivityForResult(intent, PublishController.CONTROLLER_REQUEST_CODE);
+		((Activity) mContext).startActivityForResult(intent, SiteController.CONTROLLER_REQUEST_CODE); // FIXME not a safe cast, context might be a service
 	}
 	
 	@Override
 	public void upload(String title, String body, String mediaPath, String username, String credentials) {
 
-		Session session = Session.openActiveSessionFromCache(super.getContext());
+		Session session = Session.openActiveSessionFromCache(mContext);
 			
 		//setup callback
 		Request.Callback uploadVideoRequestCallback = new Request.Callback() {
@@ -44,6 +47,8 @@ public class FacebookPublishController extends PublishController  {
 				// post fail
 				if (response.getError() != null) {
 					Log.d(TAG, "photo upload problem. Error= "+ response.getError());
+					jobFailed(1, response.getError().toString());
+					return;
 				}
 
 				Object graphResponse = response.getGraphObject().getProperty("id");
@@ -52,9 +57,12 @@ public class FacebookPublishController extends PublishController  {
 				if (graphResponse == null || !(graphResponse instanceof String)
 						|| TextUtils.isEmpty((String) graphResponse)) {
 					Log.d(TAG, "failed video upload/no response");
+					
+					jobFailed(0, "failed video upload/no response");
 				}
 				// upload success
 				else {
+				    jobSucceeded(""+graphResponse);
 					Log.d(TAG, "successful video upload: "+ graphResponse);
 				}
 			}
