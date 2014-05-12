@@ -5,6 +5,10 @@ SecureShareLib is an Android Library that allows apps to integrate a transfer ma
 
 This package was originally forked from the AOSP Download Provider package.  We extended it's classes to allow for both Downloads and Uploads in its database and content provider.
 
+###Building
+
+- Make sure you replace the dummy Flickr keys in res/values/flickr.xml with your own from Flickr's [create site page](https://www.flickr.com/services/apps/create/apply/)
+
 ###What's next?
 
 

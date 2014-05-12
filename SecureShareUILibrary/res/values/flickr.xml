@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- insert your own keys from: https://www.flickr.com/services/apps/create/apply/ -->
+    <item name="flickr_key" type="flickr">REPLACE_WITH_YOURS</item>
+    <item name="flickr_secret" type="flickr">REPLACE_WITH_YOURS</item>
+</resources>

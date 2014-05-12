@@ -26,8 +26,8 @@ public class FlickrLoginActivity extends Activity
     String verifier = null;
     
  // AUTH SETTINGS - DO NOT COMMIT
-    String key = "";
-    String secret = "";
+    String key = getString(R.flickr.flickr_key);
+    String secret = getString(R.flickr.flickr_secret);
     
  // TOR PROXY SETTINGS
     private static final String ORBOT_HOST = "127.0.0.1";
