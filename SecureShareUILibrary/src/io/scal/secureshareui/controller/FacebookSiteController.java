@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
+import com.facebook.android.Facebook;
 
 import android.app.Activity;
 import android.content.Context;
@@ -40,7 +41,7 @@ public class FacebookSiteController extends SiteController  {
 		Session session = Session.openActiveSessionFromCache(mContext);
 			
 		//setup callback
-		Request.Callback uploadVideoRequestCallback = new Request.Callback() {
+		Request.Callback uploadVideoRequestCallback = new Request.OnProgressCallback() {
 			@Override
 			public void onCompleted(Response response) {
 
@@ -66,6 +67,12 @@ public class FacebookSiteController extends SiteController  {
 					Log.d(TAG, "successful video upload: "+ graphResponse);
 				}
 			}
+
+            @Override
+            public void onProgress(long current, long max) {
+                float percent = ((float) current) / ((float) max);
+                jobProgress(percent, "Facebook uploading...");
+            }
 		};
 
 		//upload File

@@ -86,13 +86,13 @@ public abstract class SiteController {
         mHandler.sendMessage(msg);
     }
     
-    public void jobProgress(int progress, String message) {
+    public void jobProgress(float progress, String message) {
         Message msg = new Message();
         Bundle data = new Bundle();
         data.putInt(MESSAGE_KEY_TYPE, MESSAGE_TYPE_PROGRESS);
         data.putString(MESSAGE_KEY_JOB_ID, mJobId);
-        data.putInt(MESSAGE_KEY_PROGRESS, progress);
-        data.putString(MESSAGE_KEY_RESULT, message);
+        data.putFloat(MESSAGE_KEY_PROGRESS, progress);
+        data.putString(MESSAGE_KEY_MESSAGE, message);
         msg.setData(data);
         mHandler.sendMessage(msg);
     }
