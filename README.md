@@ -7,7 +7,16 @@ This package was originally forked from the AOSP Download Provider package.  We 
 
 ###Building
 
-- Make sure you replace the dummy Flickr keys in res/values/flickr.xml with your own from Flickr's [create site page](https://www.flickr.com/services/apps/create/apply/)
+- You need to place your Flickr keys in res/values/flickr.xml with your own from Flickr's [create site page](https://www.flickr.com/services/apps/create/apply/)
+
+Example:
+    <?xml version="1.0" encoding="utf-8"?>
+    <resources>
+        <!-- insert your own keys from: https://www.flickr.com/services/apps/create/apply/ -->
+        <item name="flickr_key" type="flickr">REPLACE_WITH_YOUR_KEY</item>
+        <item name="flickr_secret" type="flickr">REPLACE_WITH_YOUR_KEY</item>
+    </resources>
+
 
 ###What's next?
 
