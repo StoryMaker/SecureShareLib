@@ -61,7 +61,7 @@ public class FlickrSiteController extends SiteController {
     @Override
     public void upload(String title, String body, String mediaPath, String username, String credentials)
     {
-        String path = Environment.getExternalStorageDirectory() + File.separator + "flickr.conf";
+        String path = Environment.getExternalStorageDirectory() + File.separator + "flickr.conf"; // FIXME this should probably be stored on protected internal storage... or perhaps IOCipher
         
         Log.d(TAG, "upload() path: " + path);
         
