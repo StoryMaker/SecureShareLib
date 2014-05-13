@@ -24,10 +24,8 @@ public class FlickrLoginActivity extends Activity
     String url = null;
     String token = null;
     String verifier = null;
-    
- // AUTH SETTINGS - DO NOT COMMIT
-    String key = getString(R.flickr.flickr_key);
-    String secret = getString(R.flickr.flickr_secret);
+    String key;
+    String secret;
     
  // TOR PROXY SETTINGS
     private static final String ORBOT_HOST = "127.0.0.1";
@@ -43,7 +41,8 @@ public class FlickrLoginActivity extends Activity
         super.onCreate(savedInstanceState);
         
         Log.d(TAG, "onCreate()");
-        
+        key = getString(R.string.flickr_key);
+        secret = getString(R.string.flickr_secret);
         setContentView(R.layout.activity_flickr_login);
         GetAuthorizationUrlTask gauTask = new GetAuthorizationUrlTask(this);
         gauTask.execute();
