@@ -26,18 +26,15 @@ import android.util.Log;
 import info.guardianproject.onionkit.ui.OrbotHelper;
 import io.scal.secureshareui.login.FlickrLoginActivity;
 import io.scal.secureshareui.model.Account;
+import io.scal.secureshareuilibrary.R;
 
 public class FlickrSiteController extends SiteController {
     public static final String SITE_NAME = "Flickr"; 
     public static final String SITE_KEY = "flickr"; 
-    private static final String TAG = "FlickrPublishController";
-    
+    private static final String TAG = "FlickrSiteController";
     Flickr f = null;
-    
- // AUTH SETTINGS - DO NOT COMMIT
-    // TODO move these into xml
-    String key = "";
-    String secret = "";
+    String key;
+    String secret;
     
  // TOR PROXY SETTINGS
     private static final String ORBOT_HOST = "127.0.0.1";
@@ -45,7 +42,8 @@ public class FlickrSiteController extends SiteController {
     
     public FlickrSiteController(Context context, Handler handler, String jobId) {
         super(context, handler, jobId);
-        // TODO Auto-generated constructor stub
+        key = mContext.getString(R.string.flickr_key);
+        secret = mContext.getString(R.string.flickr_secret);
     }
     
     @Override
@@ -106,12 +104,18 @@ public class FlickrSiteController extends SiteController {
         @Override
         protected String doInBackground(String... params) 
         {
-            fpc.uploadFile(params[0], params[1], params[2], params[3]);
-            return "success";
+            String result = fpc.uploadFile(params[0], params[1], params[2], params[3]);
+            if ((result != null) && !result.equals("")) {
+                jobSucceeded(result);
+                return "success";
+            } else {
+                jobFailed(2938732, "Null or empty result from Flickr upload."); // FIXME error code?
+                return "fail";
+            }
         }
     }
 
-    public void uploadFile(String title, String body, String mediaPath, String credentials) 
+    public String uploadFile(String title, String body, String mediaPath, String credentials) 
     {
         try
         {
@@ -119,11 +123,13 @@ public class FlickrSiteController extends SiteController {
             
             File photoFile = new File(mediaPath);
             UploadService us = f.getUploadService();
-            us.uploadPhoto(photoFile, title, body); // IS THIS THE CORRECT USE OF "body"?
+            return us.uploadPhoto(photoFile, title, body); // IS THIS THE CORRECT USE OF "body"?
         }
         catch (FlickrException fe)
         {
             Log.e(TAG, "upload failed: " + fe.getMessage());
+            jobFailed(3233232, "upload failed: " + fe.getMessage()); // FIXME error code?
         }
+        return null;
     }
 }

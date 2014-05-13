@@ -214,7 +214,7 @@ public class ChooseAccountFragment extends Fragment {
 	}
 	
 	private void launchAuthentication(Account currentAccount, ViewGroup vgAccounts) {
-		SiteController publishController = SiteController.getPublishController(currentAccount.getSite(), getActivity(), null, null);
+		SiteController publishController = SiteController.getSiteController(currentAccount.getSite(), getActivity(), null, null);
 		
 		//ensure controller exists
 		if(null == publishController) {

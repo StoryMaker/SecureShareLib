@@ -39,7 +39,7 @@ public abstract class SiteController {
 	public abstract void startAuthentication(Account account);
 	public abstract void upload(String title, String body, String mediaPath, String username, String credentials);
     
-    public static SiteController getPublishController(String site, Context context, Handler handler, String jobId) {
+    public static SiteController getSiteController(String site, Context context, Handler handler, String jobId) {
     	if(site.equals(FacebookSiteController.SITE_KEY)) {
     		return new FacebookSiteController(context, handler, jobId);
 		}
