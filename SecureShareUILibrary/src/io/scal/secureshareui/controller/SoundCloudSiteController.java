@@ -28,7 +28,7 @@ import android.os.Handler;
 import android.util.Log;
 
 public class SoundCloudSiteController extends SiteController {
-    private static final String TAG = "SoundCloudPublishController";
+    private static final String TAG = "SoundCloudSiteController";
     public static final String SITE_NAME = "SoundCloud";
     public static final String SITE_KEY = "soundcloud";
 
@@ -99,6 +99,7 @@ public class SoundCloudSiteController extends SiteController {
                 }
             } catch (IOException e) {
                 Log.v(TAG, "IOException: " + e.toString());
+                jobFailed(98239723, e.toString()); // FIXME error code
             }
         }
     }

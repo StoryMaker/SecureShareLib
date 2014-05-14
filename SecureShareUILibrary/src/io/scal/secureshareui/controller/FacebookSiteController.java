@@ -21,7 +21,7 @@ import io.scal.secureshareui.model.Account;
 public class FacebookSiteController extends SiteController {
     public static final String SITE_NAME = "Facebook";
     public static final String SITE_KEY = "facebook";
-    private static final String TAG = "FacebookPublishController";
+    private static final String TAG = "FacebookSiteController";
 
     public FacebookSiteController(Context context, Handler handler, String jobId) {
         super(context, handler, jobId);
