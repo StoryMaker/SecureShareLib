@@ -15,7 +15,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -86,7 +88,15 @@ public class SoundCloudSiteController extends SiteController {
                         .add(Params.Track.TITLE, title)
                         .add(Params.Track.TAG_LIST, "storymaker upload")
                         .withFile(Params.Track.ASSET_DATA, audioFile));
-
+                int code = response.getStatusLine().getStatusCode();
+                if ((code >= 200) && (code < 300)) {
+                    HttpEntity entity = response.getEntity();
+                    String responseString = EntityUtils.toString(entity, "UTF-8");
+                    jobSucceeded(responseString);
+                } else {
+                    Log.d(TAG, "upload failed: " + response.getStatusLine().toString());
+                    jobFailed(response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
+                }
             } catch (IOException e) {
                 Log.v(TAG, "IOException: " + e.toString());
             }
