@@ -2,7 +2,7 @@
 package io.scal.secureshareui.controller;
 
 import io.scal.secureshareui.lib.Util;
-import io.scal.secureshareui.login.SoundcloudLoginActivity;
+import io.scal.secureshareui.login.SoundCloudLoginActivity;
 import io.scal.secureshareui.model.Account;
 import io.scal.secureshareui.soundcloud.ApiWrapper;
 import io.scal.secureshareui.soundcloud.Endpoints;
@@ -42,7 +42,7 @@ public class SoundCloudSiteController extends SiteController {
 
     @Override
     public void startAuthentication(Account account) {
-        Intent intent = new Intent(mContext, SoundcloudLoginActivity.class);
+        Intent intent = new Intent(mContext, SoundCloudLoginActivity.class);
         intent.putExtra("credentials", account.getCredentials());
         ((Activity) mContext).startActivityForResult(intent, SiteController.CONTROLLER_REQUEST_CODE); // FIXME not a safe cast, context might be a service  
     }

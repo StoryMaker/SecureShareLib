@@ -3,6 +3,7 @@ package io.scal.secureshareui.login;
 
 import java.io.IOException;
 
+import io.scal.secureshareui.controller.SSHSiteController;
 import io.scal.secureshareui.controller.SoundCloudSiteController;
 import io.scal.secureshareui.soundcloud.ApiWrapper;
 import io.scal.secureshareui.soundcloud.Token;
@@ -19,11 +20,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SoundcloudLoginActivity extends Activity {
+public class SSHLoginActivity extends Activity {
+    private static final String TAG = "SFTPLoginActivity";
 
     private int mAccessResult = Activity.RESULT_CANCELED;
-    private String mAccessToken = null;
-
+    EditText mUsername;
+    EditText mPassword;
+    
     private Button btnSignIn;
 
     @Override
@@ -37,8 +40,8 @@ public class SoundcloudLoginActivity extends Activity {
     }
 
     private void init() {
-        final EditText etUsername = (EditText) findViewById(R.id.etUsername);
-        final EditText etPassword = (EditText) findViewById(R.id.etPassword);
+        mUsername = (EditText) findViewById(R.id.etUsername);
+        mPassword = (EditText) findViewById(R.id.etPassword);
         btnSignIn = (Button) findViewById(R.id.btnSignIn);
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
@@ -46,8 +49,8 @@ public class SoundcloudLoginActivity extends Activity {
             public void onClick(View view) {
                 view.setEnabled(false);
 
-                String username = etUsername.getText().toString();
-                String password = etPassword.getText().toString();
+                String username = mUsername.getText().toString();
+                String password = mPassword.getText().toString();
 
                 new CheckCredentialsAsync().execute(username, password);
             }
@@ -58,20 +61,9 @@ public class SoundcloudLoginActivity extends Activity {
 
         @Override
         protected String doInBackground(String... params) {
-            final ApiWrapper wrapper = new ApiWrapper(SoundCloudSiteController.APP_CLIENT_ID,
-                    SoundCloudSiteController.APP_CLIENT_SECRET,
-                    null,
-                    null);
-            Token token = null;
-            try {
-                token = wrapper.login(params[0], params[1], Token.SCOPE_NON_EXPIRING);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            if (token != null) { // success
-                mAccessToken = token.access;
-                return "-1";
+            
+            if (SSHSiteController.SSH.checkCredentials(params[0], params[1])) { // success
+                return "-1"; // FIXME this is ugly as sin
             }
 
             return "0";
@@ -84,7 +76,7 @@ public class SoundcloudLoginActivity extends Activity {
             btnSignIn.setEnabled(true);
             TextView tvLoginError = (TextView) findViewById(R.id.tvLoginError);
 
-            if (result == 0) {
+            if (result == Activity.RESULT_CANCELED) {
                 mAccessResult = Activity.RESULT_CANCELED;
                 tvLoginError.setVisibility(View.VISIBLE);
             }
@@ -98,8 +90,12 @@ public class SoundcloudLoginActivity extends Activity {
 
     @Override
     public void finish() {
+        String username = mUsername.getText().toString();
+        String password = mPassword.getText().toString();
+        
         Intent data = new Intent();
-        data.putExtra("credentials", mAccessToken);
+        data.putExtra("username", username);
+        data.putExtra("credentials", password);
 
         setResult(mAccessResult, data);
         super.finish();

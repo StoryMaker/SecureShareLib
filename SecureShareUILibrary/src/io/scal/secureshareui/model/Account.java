@@ -3,6 +3,7 @@ package io.scal.secureshareui.model;
 
 import io.scal.secureshareui.controller.FacebookSiteController;
 import io.scal.secureshareui.controller.FlickrSiteController;
+import io.scal.secureshareui.controller.SSHSiteController;
 import io.scal.secureshareui.controller.SoundCloudSiteController;
 import io.scal.secureshareui.controller.YoutubeSiteController;
 
@@ -19,13 +20,15 @@ public class Account {
             FacebookSiteController.SITE_NAME,
             YoutubeSiteController.SITE_NAME,
             SoundCloudSiteController.SITE_NAME,
-            FlickrSiteController.SITE_NAME
+            FlickrSiteController.SITE_NAME,
+            SSHSiteController.SITE_NAME
     };
     public static final String[] CONTROLLER_SITE_KEYS = {
             FacebookSiteController.SITE_KEY,
             YoutubeSiteController.SITE_KEY,
             SoundCloudSiteController.SITE_KEY,
-            FlickrSiteController.SITE_KEY
+            FlickrSiteController.SITE_KEY,
+            SSHSiteController.SITE_KEY
     };
 
     public Account(String id, String name, String site, String userName, String credentials, boolean isConnected, boolean areCredentialsValid) {

@@ -11,7 +11,7 @@ import io.scal.secureshareui.login.FacebookLoginActivity;
 import io.scal.secureshareui.model.Account;
 
 public abstract class SiteController {
-    private OnPublishEventListener mPublishEventListener;
+    private OnEventListener mPublishEventListener;
     protected Context mContext;
     protected Handler mHandler;
     protected String mJobId; // this is whatever the app wants it to be, we'll pass it back with our callbacks
@@ -26,7 +26,7 @@ public abstract class SiteController {
     public static final String MESSAGE_KEY_RESULT = "result";
     public static final String MESSAGE_KEY_PROGRESS = "progress";
 
-    public interface OnPublishEventListener {
+    public interface OnEventListener {
         public void onSuccess(Account publishAccount);
 
         public void onFailure(Account publishAccount, String failureMessage);
@@ -49,18 +49,24 @@ public abstract class SiteController {
         else if (site.equals(SoundCloudSiteController.SITE_KEY)) {
             return new SoundCloudSiteController(context, handler, jobId);
         }
+        else if (site.equals(YoutubeSiteController.SITE_KEY)) {
+            return new YoutubeSiteController(context, handler, jobId);
+        }
         else if (site.equals(FlickrSiteController.SITE_KEY)) {
             return new FlickrSiteController(context, handler, jobId);
+        }
+        else if (site.equals(SSHSiteController.SITE_KEY)) {
+            return new SSHSiteController(context, handler, jobId);
         }
 
         return null;
     }
 
-    public OnPublishEventListener getOnPublishEventListener() {
+    public OnEventListener getOnPublishEventListener() {
         return this.mPublishEventListener;
     }
 
-    public void setOnPublishEventListener(OnPublishEventListener publishEventListener) {
+    public void setOnEventListener(OnEventListener publishEventListener) {
         this.mPublishEventListener = publishEventListener;
     }
 
