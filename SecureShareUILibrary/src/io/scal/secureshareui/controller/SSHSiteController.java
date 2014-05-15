@@ -10,7 +10,6 @@ import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
-import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
 
 import io.scal.secureshareui.login.SSHLoginActivity;
@@ -22,7 +21,7 @@ import android.os.Handler;
 
 public class SSHSiteController extends SiteController {
     private static final String TAG = "SSHSiteController";
-    public static final String SITE_NAME = "SSH"; 
+    public static final String SITE_NAME = "Private Server (SSH)"; 
     public static final String SITE_KEY = "ssh"; 
 
     public SSHSiteController(Context context, Handler handler, String jobId) {

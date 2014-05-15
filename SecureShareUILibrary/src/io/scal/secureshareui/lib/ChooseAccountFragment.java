@@ -281,6 +281,6 @@ public class ChooseAccountFragment extends Fragment {
             return isConnected ? R.drawable.ic_context_vimeo_on : R.drawable.ic_context_vimeo;
         }
 
-        return R.drawable.snoopy;
+        return R.drawable.ssh;
     }
 }

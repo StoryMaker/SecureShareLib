@@ -29,7 +29,7 @@ public class SoundCloudLoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(android.R.style.Theme_Holo_Light_Dialog_NoActionBar_MinWidth);
+//        setTheme(android.R.style.Theme_Holo_Light_Dialog_NoActionBar_MinWidth);
         this.setFinishOnTouchOutside(false);
         setContentView(R.layout.activity_soundcloud_login);
 
