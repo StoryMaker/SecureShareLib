@@ -31,12 +31,13 @@ public class FacebookSiteController extends SiteController {
     @Override
     public void startAuthentication(Account account) {
         Intent intent = new Intent(mContext, FacebookLoginActivity.class);
-        intent.putExtra("credentials", account.getCredentials());
+        intent.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, account.getCredentials());
         ((Activity) mContext).startActivityForResult(intent, SiteController.CONTROLLER_REQUEST_CODE); // FIXME not a safe cast, context might be a service
     }
 
     @Override
-    public void upload(String title, String body, String mediaPath, String username, String credentials) {
+    public void upload(String title, String body, String mediaPath, Account account) { 
+        // FIXME this doesn't use the credentials we pass in at all...
         Session session = Session.openActiveSessionFromCache(mContext);
 
         // setup callback

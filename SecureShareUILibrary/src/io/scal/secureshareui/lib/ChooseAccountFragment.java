@@ -233,14 +233,17 @@ public class ChooseAccountFragment extends Fragment {
         mVgAccounts = vgAccounts;
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == SiteController.CONTROLLER_REQUEST_CODE) {
 
-            String credentials = data.getStringExtra("credentials");
+            String credentials = intent.getStringExtra(SiteController.EXTRAS_KEY_CREDENTIALS);
             mAccount.setCredentials(credentials != null ? credentials : "");
 
-            String username = data.getStringExtra("username");
+            String username = intent.getStringExtra(SiteController.EXTRAS_KEY_USERNAME);
             mAccount.setUserName(username != null ? username : "");
+
+            String data = intent.getStringExtra(SiteController.EXTRAS_KEY_DATA);
+            mAccount.setData(data != null ? data : null);
 
             if (resultCode == android.app.Activity.RESULT_OK) {
                 mAccount.setAreCredentialsValid(true);

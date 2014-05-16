@@ -54,12 +54,12 @@ public class FlickrSiteController extends SiteController {
         Log.d(TAG, "startAuthentication()");
         
         Intent intent = new Intent(currentContext, FlickrLoginActivity.class);
-        intent.putExtra("credentials", account.getCredentials());
+        intent.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, account.getCredentials());
         ((Activity)currentContext).startActivityForResult(intent, SiteController.CONTROLLER_REQUEST_CODE);
     }
     
     @Override
-    public void upload(String title, String body, String mediaPath, String username, String credentials)
+    public void upload(String title, String body, String mediaPath, Account account)
     {
         String path = Environment.getExternalStorageDirectory() + File.separator + "flickr.conf"; // FIXME this should probably be stored on protected internal storage... or perhaps IOCipher
         
@@ -89,7 +89,7 @@ public class FlickrSiteController extends SiteController {
         // token stored in properties?  let's assume so for now...
         
         UploadFileTask ufTask = new UploadFileTask(this);
-        ufTask.execute(title, body, mediaPath, credentials);
+        ufTask.execute(title, body, mediaPath, account.getCredentials());
     }
     
     class UploadFileTask extends AsyncTask<String, String, String> 

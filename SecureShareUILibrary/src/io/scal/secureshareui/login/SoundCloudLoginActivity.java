@@ -3,6 +3,7 @@ package io.scal.secureshareui.login;
 
 import java.io.IOException;
 
+import io.scal.secureshareui.controller.SiteController;
 import io.scal.secureshareui.controller.SoundCloudSiteController;
 import io.scal.secureshareui.soundcloud.ApiWrapper;
 import io.scal.secureshareui.soundcloud.Token;
@@ -99,7 +100,7 @@ public class SoundCloudLoginActivity extends Activity {
     @Override
     public void finish() {
         Intent data = new Intent();
-        data.putExtra("credentials", mAccessToken);
+        data.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, mAccessToken);
 
         setResult(mAccessResult, data);
         super.finish();

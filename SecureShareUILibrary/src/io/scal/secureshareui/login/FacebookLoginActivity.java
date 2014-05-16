@@ -1,6 +1,7 @@
 
 package io.scal.secureshareui.login;
 
+import io.scal.secureshareui.controller.SiteController;
 import io.scal.secureshareuilibrary.R;
 
 import java.util.Arrays;
@@ -34,7 +35,7 @@ public class FacebookLoginActivity extends Activity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            mAccessToken = extras.getString("credentials");
+            mAccessToken = extras.getString(SiteController.EXTRAS_KEY_CREDENTIALS);
         }
         // added to
         Session.setActiveSession(null);
@@ -167,7 +168,7 @@ public class FacebookLoginActivity extends Activity {
     @Override
     public void finish() {
         Intent data = new Intent();
-        data.putExtra("credentials", mAccessToken);
+        data.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, mAccessToken);
 
         setResult(mAccessResult, data);
         super.finish();

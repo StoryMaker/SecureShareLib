@@ -10,6 +10,7 @@ import com.flickr.api.FlickrProperties;
 import com.flickr.api.entities.UserInfos;
 
 import info.guardianproject.onionkit.ui.OrbotHelper;
+import io.scal.secureshareui.controller.SiteController;
 import io.scal.secureshareuilibrary.R;
 import android.app.Activity;
 import android.content.Intent;
@@ -191,7 +192,7 @@ public class FlickrLoginActivity extends Activity
         Log.d(TAG, "finish()"); 
         
         Intent data = new Intent();
-        data.putExtra("credentials", token); // WHAT ABOUT VERIFIER?
+        data.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, token); // WHAT ABOUT VERIFIER?
 
         setResult(Activity.RESULT_OK, data);
         super.finish();

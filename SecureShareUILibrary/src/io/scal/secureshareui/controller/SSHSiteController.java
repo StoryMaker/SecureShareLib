@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
@@ -32,23 +35,47 @@ public class SSHSiteController extends SiteController {
     @Override
     public void startAuthentication(Account account) {
         Intent intent = new Intent(mContext, SSHLoginActivity.class);
-        intent.putExtra("credentials", account.getCredentials());
+        intent.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, account.getCredentials());
         ((Activity) mContext).startActivityForResult(intent, SiteController.CONTROLLER_REQUEST_CODE); // FIXME not a safe cast, context might be a service
     }
 
     @Override
-    public void upload(String title, String body, String mediaPath, String username, String credentials) {
-//        ScpTo.main(mediaPath, username + "@test.rebex.net:" + "foo.jpg");
+    public void upload(String title, String body, String mediaPath, Account account) {
+        String host = null;
+        String remotePath = null;
+        JSONObject obj = null;
+        try {
+            obj = new JSONObject(account.getData());
+            host = obj.getString(SSHLoginActivity.DATA_KEY_SERVER_URL);
+        } catch (JSONException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        
+        jobFailed(267321323, "No Hostname or IP Address specified for SSH server");
+        
+        try {
+            if (obj != null) remotePath = obj.getString(SSHLoginActivity.DATA_KEY_REMOTE_PATH);
+        } catch (JSONException e) {
+            // ignore this, its optional
+        }
+        
         String[] chunks = mediaPath.split("/");
         String fileName = chunks[chunks.length-1];
-//        String path = "abc123"; // generate via datetime?
-//        String connectionString = username + "@web232.webfaction.com:" + path + "/" + fileName;
-        String host = "web232.webfaction.com";
-//        String remoteFile = path + "/" + fileName;
-//        SSH.scpTo(mediaPath, connectionString, credentials, this);
-        SSH.scpTo(mediaPath, username, credentials, host, fileName, this);
-        String result = "foo"; // FIXME can we tell where the file actually was put?  probably where we stuck it...
-        jobSucceeded(result);
+        String remoteFile = null;
+        if ((remotePath != null) && (!remotePath.isEmpty())) {
+            // FIXME check for trailing /
+            remoteFile = remotePath + "/" + fileName;
+        } else {
+            remoteFile = fileName;
+        }
+        
+        if (SSH.scpTo(mediaPath, account.getUserName(), account.getCredentials(), host, remoteFile, this)) {
+            String result = account.getUserName() + "@" + host + ":" + remoteFile;
+            jobSucceeded(result);
+        } else {
+            jobFailed(2767234, "SSH upload failed.");
+        }
     }
 
     public static class SSH {

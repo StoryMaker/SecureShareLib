@@ -14,6 +14,7 @@ public class Account {
     private String site;
     private String userName;
     private String credentials;
+    private String data;
     private boolean isConnected;
     private boolean areCredentialsValid;
     public static final String[] CONTROLLER_SITE_NAMES = {
@@ -31,12 +32,13 @@ public class Account {
             SSHSiteController.SITE_KEY
     };
 
-    public Account(String id, String name, String site, String userName, String credentials, boolean isConnected, boolean areCredentialsValid) {
+    public Account(String id, String name, String site, String userName, String credentials, String data, boolean isConnected, boolean areCredentialsValid) {
         this.id = id;
         this.setName(name);
         this.setSite(site);
         this.setUserName(userName);
         this.setCredentials(credentials);
+        this.setData(data);
         this.setIsConnected(isConnected);
         this.setAreCredentialsValid(areCredentialsValid);
     }
@@ -75,6 +77,14 @@ public class Account {
 
     public void setCredentials(String credentials) {
         this.credentials = credentials;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
     }
 
     public boolean getIsConnected() {
