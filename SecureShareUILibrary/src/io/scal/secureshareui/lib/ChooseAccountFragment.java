@@ -147,7 +147,7 @@ public class ChooseAccountFragment extends Fragment {
                             public void onClick(DialogInterface dialog, int id) {
                                 addAvailableAccount(currentAccount);
                                 mContainerConnectedAccountsView.removeView(vgConnectedAccounts);
-
+                                mEventListener.onRemove(currentAccount);
                                 // if there are no rows remaining, show the
                                 // empty view.
                                 if (mContainerConnectedAccountsView.getChildCount() == 0) {
@@ -206,7 +206,6 @@ public class ChooseAccountFragment extends Fragment {
         mContainerAvailableAccountsView.addView(vgAvailableAccounts, 0);
         mView.findViewById(R.id.tv_accounts_available_empty).setVisibility(View.GONE);
 
-        // move Account from Available to Connected
         vgAvailableAccounts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -248,23 +247,19 @@ public class ChooseAccountFragment extends Fragment {
             if (resultCode == android.app.Activity.RESULT_OK) {
                 mAccount.setAreCredentialsValid(true);
                 mEventListener.onSuccess(mAccount);
-            }
-            else {
-                mAccount.setAreCredentialsValid(false);
-                mEventListener.onFailure(mAccount, "Error Loggging in");
-            }
 
-            if (mAttemptingLoginRetry) {
-                mContainerConnectedAccountsView.removeView(mVgAccounts);
-                addConnectedAccount(mAccount, true);
-            }
-            else {
-                addConnectedAccount(mAccount, true);
-                mContainerAvailableAccountsView.removeView(mVgAccounts);
+                if (mAttemptingLoginRetry) {
+                    mContainerConnectedAccountsView.removeView(mVgAccounts);
+                    addConnectedAccount(mAccount, true);
+                }
+                else {
+                    addConnectedAccount(mAccount, true);
+                    mContainerAvailableAccountsView.removeView(mVgAccounts);
 
-                // If there are no rows remaining, show the empty view.
-                if (mContainerAvailableAccountsView.getChildCount() == 0) {
-                    mView.findViewById(R.id.tv_accounts_available_empty).setVisibility(View.VISIBLE);
+                    // If there are no rows remaining, show the empty view.
+                    if (mContainerAvailableAccountsView.getChildCount() == 0) {
+                        mView.findViewById(R.id.tv_accounts_available_empty).setVisibility(View.VISIBLE);
+                    }
                 }
             }
         }

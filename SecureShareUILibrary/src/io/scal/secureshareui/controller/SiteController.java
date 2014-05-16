@@ -33,6 +33,8 @@ public abstract class SiteController {
         public void onSuccess(Account publishAccount);
 
         public void onFailure(Account publishAccount, String failureMessage);
+        
+        public void onRemove(Account account);
     }
 
     public SiteController(Context context, Handler handler, String jobId) {

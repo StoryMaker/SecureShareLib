@@ -57,13 +57,6 @@ public class SSHLoginActivity extends Activity {
         mURL = (EditText) findViewById(R.id.etServerURL);
         mRemotePath = (EditText) findViewById(R.id.etRemotePath);
         btnSignIn = (Button) findViewById(R.id.btnSignIn);
-        
-        // DEBUG:
-        mUsername.setText("vitriolix");
-        mPassword.setText("b0ll0cks");
-        mNickname.setText("Webfaction Scal.io box");
-        mURL.setText("web232.webfaction.com");
-//        mRemotePath.setText("");
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
