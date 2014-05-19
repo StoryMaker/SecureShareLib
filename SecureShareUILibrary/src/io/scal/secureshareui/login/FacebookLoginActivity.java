@@ -12,32 +12,35 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 
 import com.facebook.Session;
 import com.facebook.SessionState;
+import com.facebook.widget.LoginButton;
 
 public class FacebookLoginActivity extends Activity {
 
     private static int mAccessResult;
     private static String mAccessToken;
 
-    private Button buttonLoginLogout;
+    private LoginButton buttonLoginLogout;
     private Session.StatusCallback statusCallback = new SessionStatusCallback();
     private static final int REAUTH_ACTIVITY_CODE = 100;
-    private static final List<String> PERMISSIONS = Arrays.asList("publish_actions");
-
+    private static final List<String> READ_PERMISSIONS = Arrays.asList("public_profile");
+    private static final List<String> WRITE_PERMISSIONS = Arrays.asList("publish_actions");
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facebook_login);
-        buttonLoginLogout = (Button) findViewById(R.id.login_button);
-
+        buttonLoginLogout = (LoginButton) findViewById(R.id.login_button);
+        buttonLoginLogout.setPublishPermissions(WRITE_PERMISSIONS);
+        
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             mAccessToken = extras.getString(SiteController.EXTRAS_KEY_CREDENTIALS);
         }
-        // added to
+        
+        //reset session on new login
         Session.setActiveSession(null);
 
         Session session = Session.getActiveSession();
@@ -73,12 +76,17 @@ public class FacebookLoginActivity extends Activity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Session session = Session.getActiveSession();
+        
+        Session session = Session.getActiveSession();     
+        if (session == null) {
+            return;
+        }
         session.onActivityResult(this, requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK) { // successful login
+        // successful login && publish permissions authorized
+        if ((resultCode == RESULT_OK) && hasPublishPermissions(session)) {
             mAccessResult = RESULT_OK;
-        } else if (resultCode == 0) { // failed login
+        } else { // failed login
             mAccessResult = 0;
         }
 
@@ -114,20 +122,10 @@ public class FacebookLoginActivity extends Activity {
     private void onClickLogin() {
         Session session = Session.getActiveSession();
         if (!session.isOpened() && !session.isClosed()) {
-            session.openForPublish(new Session.OpenRequest(this).setPermissions(PERMISSIONS).setCallback(statusCallback));
-
-            /*
-             * session.openForRead(new Session.OpenRequest(this)
-             * .setPermissions(Arrays.asList("basic_info"))
-             * .setCallback(statusCallback));
-             */
-
-            // session.requestNewPublishPermissions(new
-            // Session.NewPermissionsRequest(this, PERMISSIONS));
+            session.openForPublish(new Session.OpenRequest(this).setPermissions(READ_PERMISSIONS).setCallback(statusCallback).setRequestCode(REAUTH_ACTIVITY_CODE));
         } else {
             Session.openActiveSession(this, true, statusCallback);
         }
-
     }
 
     private void onClickLogout() {
@@ -137,31 +135,19 @@ public class FacebookLoginActivity extends Activity {
         }
     }
 
+    private boolean hasPublishPermissions(Session session) {
+    	List<String> permissions = session.getPermissions();
+        if (permissions.containsAll((WRITE_PERMISSIONS))) {
+            return true;
+        }
+        
+        return false;
+    }
+    
     private class SessionStatusCallback implements Session.StatusCallback {
         @Override
         public void call(Session session, SessionState state, Exception exception) {
             updateView();
-        }
-    }
-
-    private void handlePublish() {
-        Session session = Session.getActiveSession();
-
-        if (session == null || !session.isOpened()) {
-            return;
-        }
-
-        List<String> permissions = session.getPermissions();
-        if (!permissions.containsAll(PERMISSIONS)) {
-            requestPublishPermissions(session);
-            return;
-        }
-    }
-
-    private void requestPublishPermissions(Session session) {
-        if (session != null) {
-            Session.NewPermissionsRequest newPermissionsRequest = new Session.NewPermissionsRequest(this, PERMISSIONS).setRequestCode(REAUTH_ACTIVITY_CODE);
-            session.requestNewPublishPermissions(newPermissionsRequest);
         }
     }
 
