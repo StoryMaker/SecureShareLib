@@ -81,6 +81,7 @@ public class FacebookSiteController extends SiteController {
         try {
             request = Request.newUploadVideoRequest(session, videoFile, uploadVideoRequestCallback);
             Bundle parameters = request.getParameters();
+            parameters.putString("title", title);
             parameters.putString("description", body);
 
             request.setParameters(parameters);
