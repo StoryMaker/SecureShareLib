@@ -198,6 +198,8 @@ public class SSHSiteController extends SiteController {
                 byte[] buf = new byte[1024];
                 int bytesTransfered = 0;
                 float progress = 0;
+                int lastProgressRounded = -1;
+                int progressRounded = 0;
                 while (true) {
                     int len = fis.read(buf, 0, buf.length);
                     if (len <= 0) {
@@ -205,7 +207,11 @@ public class SSHSiteController extends SiteController {
                     }
                     bytesTransfered += len;
                     progress = ((float) bytesTransfered) / ((float) _lfile.length());
-                    controller.jobProgress(progress, "SSH upload in progress..."); // FIXME move to strings
+                    progressRounded = Math.round(progress * 100); // rate limit the progress to single percent
+                    if (progressRounded != lastProgressRounded) { 
+                        controller.jobProgress(progress, context.getString(R.string.ssh_upload_in_progress));
+                    }
+                    lastProgressRounded = progressRounded;
                     out.write(buf, 0, len); // out.flush();
                 }
                 fis.close();
