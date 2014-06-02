@@ -28,6 +28,10 @@ public abstract class SiteController {
     public static final String EXTRAS_KEY_DATA = "data";
     public static final String EXTRAS_KEY_USERNAME = "username";
     public static final String EXTRAS_KEY_CREDENTIALS = "credentials";
+    
+    protected static final String ORBOT_HOST = "127.0.0.1";
+    protected static final int ORBOT_HTTP_PORT = 8118;
+    protected static final int ORBOT_SOCKS_PORT = 9050;
 
     public interface OnEventListener {
         public void onSuccess(Account publishAccount);
@@ -45,7 +49,7 @@ public abstract class SiteController {
 
     public abstract void startAuthentication(Account account);
 
-    public abstract void upload(String title, String body, String mediaPath, Account account);
+    public abstract void upload(String title, String body, String mediaPath, Account account, boolean useTor);
 
     public static SiteController getSiteController(String site, Context context, Handler handler, String jobId) {
         if (site.equals(FacebookSiteController.SITE_KEY)) {

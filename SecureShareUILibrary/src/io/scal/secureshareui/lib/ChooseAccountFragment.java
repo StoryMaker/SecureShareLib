@@ -13,6 +13,8 @@ import io.scal.secureshareuilibrary.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.holoeverywhere.widget.Switch;
+
 import com.facebook.Session;
 
 import android.app.Activity;
@@ -45,6 +47,8 @@ public class ChooseAccountFragment extends Fragment {
     private static boolean mAttemptingLoginRetry = false;
     public static final int ACCOUNT_REQUEST_CODE = 102;
     public static final String EXTRAS_ACCOUNT_KEYS = "accountIds";
+    public static final String EXTRAS_USE_TOR = "use_tor";
+    public static final String EXTRAS_PUBLISH_TO_STORYMAKER = "publish_to_storymaker"; // TODO generalize this, allow clie
 
     // return the ids of selected items
     ArrayList<String> mSelectedAccountIds = new ArrayList<String>();
@@ -53,6 +57,11 @@ public class ChooseAccountFragment extends Fragment {
     private static ViewGroup mVgAccounts;
     private static Account mAccount;
     private Button mBtnContinue;
+    private Switch mSwitchTor;
+    private TextView mTextViewTor;
+    private Switch mSwitchStoryMaker;
+    private TextView mTextViewStoryMaker;
+    private View mDivider;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -75,10 +84,27 @@ public class ChooseAccountFragment extends Fragment {
                         // item
                         Intent data = new Intent();
                         data.putStringArrayListExtra(EXTRAS_ACCOUNT_KEYS, mSelectedAccountIds);
+                        data.putExtra(EXTRAS_USE_TOR, mSwitchTor.isChecked());
+                        data.putExtra(EXTRAS_PUBLISH_TO_STORYMAKER, mSwitchStoryMaker.isChecked());
                         getActivity().setResult(Activity.RESULT_OK, data);
                         getActivity().finish();
                     }
                 });
+
+                mSwitchTor = (Switch) mView.findViewById(R.id.switchTor);
+                mSwitchTor.setVisibility(View.VISIBLE);TextView
+
+                mTextViewTor = (TextView) mView.findViewById(R.id.textViewTor);
+                mTextViewTor.setVisibility(View.VISIBLE);
+
+                mSwitchStoryMaker = (Switch) mView.findViewById(R.id.switchStoryMaker);
+                mSwitchStoryMaker.setVisibility(View.VISIBLE);
+
+                mTextViewStoryMaker = (TextView) mView.findViewById(R.id.textStoryMaker);
+                mTextViewStoryMaker.setVisibility(View.VISIBLE);
+
+                mDivider = (View) mView.findViewById(R.id.divider);
+                mDivider.setVisibility(View.VISIBLE);
             }
         }
 
