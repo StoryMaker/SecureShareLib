@@ -1,14 +1,16 @@
 
 package io.scal.secureshareui.controller;
 
+import io.scal.secureshareui.model.Account;
+
+import java.io.File;
+
 import android.content.Context;
-import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
-import io.scal.secureshareui.login.FacebookLoginActivity;
-import io.scal.secureshareui.model.Account;
+import android.webkit.MimeTypeMap;
 
 public abstract class SiteController {
     private OnEventListener mPublishEventListener;
@@ -69,6 +71,33 @@ public abstract class SiteController {
         }
 
         return null;
+    }
+    
+    public static boolean isAudioFile(File mediaFile) {
+    	if(getMimeType(mediaFile).contains("audio")) {
+    		return true;
+    	}
+    	return false;
+    }
+    
+    public static boolean isImageFile(File mediaFile) {
+    	if(getMimeType(mediaFile).contains("image")) {
+    		return true;
+    	}
+    	return false;
+    }
+    
+    public static boolean isVideoFile(File mediaFile) {
+    	if(getMimeType(mediaFile).contains("video")) {
+    		return true;
+    	}
+    	return false;
+    }
+    
+    private static String getMimeType(File mediaFile) {
+    	Uri fileUri = Uri.fromFile(mediaFile);
+    	String fileExtension = MimeTypeMap.getFileExtensionFromUrl(fileUri.toString());
+    	return MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
     }
 
     public OnEventListener getOnPublishEventListener() {
