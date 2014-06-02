@@ -41,13 +41,13 @@ public class FacebookSiteController extends SiteController {
         Session session = Session.openActiveSessionFromCache(mContext);
 
         // setup callback
-        Request.Callback uploadVideoRequestCallback = new Request.OnProgressCallback() {
+        Request.Callback uploadMediaRequestCallback = new Request.OnProgressCallback() {
             @Override
             public void onCompleted(Response response) {
 
                 // post fail
                 if (response.getError() != null) {
-                    Log.d(TAG, "photo upload problem. Error= " + response.getError());
+                    Log.d(TAG, "media upload problem. Error= " + response.getError());
                     jobFailed(1, response.getError().toString());
                     return;
                 }
@@ -57,14 +57,14 @@ public class FacebookSiteController extends SiteController {
                 // upload fail
                 if (graphResponse == null || !(graphResponse instanceof String)
                         || TextUtils.isEmpty((String) graphResponse)) {
-                    Log.d(TAG, "failed video upload/no response");
+                    Log.d(TAG, "failed media upload/no response");
 
-                    jobFailed(0, "failed video upload/no response");
+                    jobFailed(0, "failed media upload/no response");
                 }
                 // upload success
                 else {
                     jobSucceeded("" + graphResponse);
-                    Log.d(TAG, "successful video upload: " + graphResponse);
+                    Log.d(TAG, "successful media upload: " + graphResponse);
                 }
             }
 
@@ -76,16 +76,33 @@ public class FacebookSiteController extends SiteController {
         };
 
         // upload File
-        File videoFile = new File(mediaPath);
+        File mediaFile = new File(mediaPath);
+        Bundle parameters = null;    
         Request request = null;
         try {
-            request = Request.newUploadVideoRequest(session, videoFile, uploadVideoRequestCallback);
-            Bundle parameters = request.getParameters();
-            parameters.putString("title", title);
-            parameters.putString("description", body);
-
+        	if(super.isVideoFile(mediaFile)) {
+        		request = Request.newUploadVideoRequest(session, mediaFile, uploadMediaRequestCallback);
+        		parameters = request.getParameters();
+        		
+        		//video params
+        		parameters.putString("title", title);
+        		parameters.putString("description", body);
+        	}
+        	else if(super.isImageFile(mediaFile)){
+        		request = Request.newUploadPhotoRequest(session, mediaFile, uploadMediaRequestCallback);
+        		parameters = request.getParameters();
+        		
+        		//image params
+        		parameters.putString("name", title);
+        	}
+        	else {
+        		Log.d(TAG, "media type not supported");
+        		return;
+        	}
+        	
             request.setParameters(parameters);
-        } catch (FileNotFoundException e) {
+        } 
+        catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
