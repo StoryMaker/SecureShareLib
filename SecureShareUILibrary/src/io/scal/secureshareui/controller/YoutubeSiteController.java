@@ -21,7 +21,7 @@ public class YoutubeSiteController extends SiteController {
         
     }
     @Override
-    public void upload(String title, String body, String mediaPath, Account account) {
+    public void upload(String title, String body, String mediaPath, Account account, boolean useTor) {
         // TODO Auto-generated method stub
         
     }

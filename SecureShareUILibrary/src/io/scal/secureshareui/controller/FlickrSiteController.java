@@ -59,7 +59,7 @@ public class FlickrSiteController extends SiteController {
     }
     
     @Override
-    public void upload(String title, String body, String mediaPath, Account account)
+    public void upload(String title, String body, String mediaPath, Account account, boolean useTor)
     {
         String path = Environment.getExternalStorageDirectory() + File.separator + "flickr.conf"; // FIXME this should probably be stored on protected internal storage... or perhaps IOCipher
         
@@ -74,7 +74,7 @@ public class FlickrSiteController extends SiteController {
                        fProps);                      // properties
 
         OrbotHelper orbotHelper = new OrbotHelper(mContext);
-        if(orbotHelper.isOrbotRunning()) 
+        if(useTor && orbotHelper.isOrbotRunning()) 
         {    
             Log.d(TAG, "orbot running, setting proxy");
             

@@ -36,7 +36,7 @@ public class FacebookSiteController extends SiteController {
     }
 
     @Override
-    public void upload(String title, String body, String mediaPath, Account account) { 
+    public void upload(String title, String body, String mediaPath, Account account, boolean useTor) { 
         // FIXME this doesn't use the credentials we pass in at all...
         Session session = Session.openActiveSessionFromCache(mContext);
 

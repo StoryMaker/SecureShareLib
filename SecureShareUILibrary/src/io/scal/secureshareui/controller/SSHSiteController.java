@@ -12,11 +12,15 @@ import org.json.JSONObject;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.ProxySOCKS4;
+import com.jcraft.jsch.ProxySOCKS5;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
 
+import info.guardianproject.onionkit.ui.OrbotHelper;
 import io.scal.secureshareui.login.SSHLoginActivity;
 import io.scal.secureshareui.model.Account;
+import io.scal.secureshareuilibrary.R;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -40,7 +44,7 @@ public class SSHSiteController extends SiteController {
     }
 
     @Override
-    public void upload(String title, String body, String mediaPath, Account account) {
+    public void upload(String title, String body, String mediaPath, Account account, boolean useTor) {
         String host = null;
         String remotePath = null;
         JSONObject obj = null;
@@ -52,7 +56,7 @@ public class SSHSiteController extends SiteController {
             e1.printStackTrace();
         }
         
-        jobFailed(267321323, "No Hostname or IP Address specified for SSH server");
+//        jobFailed(267321323, "No Hostname or IP Address specified for SSH server");
         
         try {
             if (obj != null) remotePath = obj.getString(SSHLoginActivity.DATA_KEY_REMOTE_PATH);
@@ -70,7 +74,7 @@ public class SSHSiteController extends SiteController {
             remoteFile = fileName;
         }
         
-        if (SSH.scpTo(mediaPath, account.getUserName(), account.getCredentials(), host, remoteFile, this)) {
+        if (SSH.scpTo(mContext, mediaPath, account.getUserName(), account.getCredentials(), host, remoteFile, this, useTor)) {
             String result = account.getUserName() + "@" + host + ":" + remoteFile;
             jobSucceeded(result);
         } else {
@@ -83,7 +87,7 @@ public class SSHSiteController extends SiteController {
             return true; // FIXME implement SSH credentials check
         }
 //        public static boolean scpTo(String filePath, String target, final String password, SiteController controller) {
-        public static boolean scpTo(String filePath, String username, final String password, String host, String remoteFile, SiteController controller) {
+        public static boolean scpTo(Context context, String filePath, String username, final String password, String host, String remoteFile, SiteController controller, boolean useTor) {
 //            if (arg.length != 2) {
 //                System.err.println("usage: java ScpTo file1 user@remotehost:file2");
 //                System.exit(-1);
@@ -98,9 +102,15 @@ public class SSHSiteController extends SiteController {
 //                String remoteFile = target.substring(target.indexOf(':') + 1);
 
                 JSch jsch = new JSch();
+                
                 Session session = jsch.getSession(username, host, 22);
                 session.setConfig("StrictHostKeyChecking", "no"); // FIXME disabling host ssh checking for now  
-
+                
+                OrbotHelper orbotHelper = new OrbotHelper(context);
+                if (useTor && orbotHelper.isOrbotRunning()) {
+                    session.setProxy(new ProxySOCKS4(ORBOT_HOST, ORBOT_SOCKS_PORT));
+                }
+                
                 // username and password will be given via UserInfo interface.
                 UserInfo ui = new UserInfo() {
 
@@ -198,6 +208,8 @@ public class SSHSiteController extends SiteController {
                 byte[] buf = new byte[1024];
                 int bytesTransfered = 0;
                 float progress = 0;
+                int lastProgressRounded = -1;
+                int progressRounded = 0;
                 while (true) {
                     int len = fis.read(buf, 0, buf.length);
                     if (len <= 0) {
@@ -205,7 +217,11 @@ public class SSHSiteController extends SiteController {
                     }
                     bytesTransfered += len;
                     progress = ((float) bytesTransfered) / ((float) _lfile.length());
-                    controller.jobProgress(progress, "SSH upload in progress..."); // FIXME move to strings
+                    progressRounded = Math.round(progress * 100); // rate limit the progress to single percent
+                    if (progressRounded != lastProgressRounded) { 
+                        controller.jobProgress(progress, context.getString(R.string.ssh_upload_in_progress));
+                    }
+                    lastProgressRounded = progressRounded;
                     out.write(buf, 0, len); // out.flush();
                 }
                 fis.close();
