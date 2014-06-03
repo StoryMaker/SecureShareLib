@@ -3,6 +3,7 @@ package io.scal.secureshareui.lib;
 
 import io.scal.secureshareui.controller.FacebookSiteController;
 import io.scal.secureshareui.controller.FlickrSiteController;
+import io.scal.secureshareui.controller.SSHSiteController;
 import io.scal.secureshareui.controller.SiteController;
 import io.scal.secureshareui.controller.SiteController.OnEventListener;
 import io.scal.secureshareui.controller.SoundCloudSiteController;
@@ -116,15 +117,12 @@ public class ChooseAccountFragment extends Fragment {
         final CheckBox cbToPublish = (CheckBox) vgConnectedAccounts.findViewById(R.id.cbToPublish);
         final Account currentAccount = account;
         ((TextView) vgConnectedAccounts.findViewById(R.id.tv_account_name)).setText(account.getName());
-        ((ImageView) vgConnectedAccounts.findViewById(R.id.iv_account_icon)).setImageResource(getAccountIcon(account.getSite(), true));
+        ((ImageView) vgConnectedAccounts.findViewById(R.id.iv_account_icon)).setImageResource(SiteController.getAccountIcon(account.getSite(), true, account.getAreCredentialsValid()));
 
         mContainerConnectedAccountsView.addView(vgConnectedAccounts, 0);
         mView.findViewById(R.id.tv_accounts_connected_empty).setVisibility(View.GONE);
 
-        if (!currentAccount.getAreCredentialsValid()) {
-            vgConnectedAccounts.setBackgroundColor(Color.RED);
-        }
-        else if (mInSelectionMode) {
+        if (account.getAreCredentialsValid() && mInSelectionMode) {
             cbToPublish.setVisibility(View.VISIBLE);
 
             // is added after activity load
@@ -133,7 +131,6 @@ public class ChooseAccountFragment extends Fragment {
                 mSelectedAccountIds.add(currentAccount.getSite());
                 setContinueEnabledState();
             }
-
         }
 
         // move Account from Connected to Available
@@ -201,7 +198,7 @@ public class ChooseAccountFragment extends Fragment {
         final ViewGroup vgAvailableAccounts = (ViewGroup) LayoutInflater.from(getActivity()).inflate(R.layout.account_item, mContainerAvailableAccountsView, false);
         final Account currentAccount = account;
         ((TextView) vgAvailableAccounts.findViewById(R.id.tv_account_name)).setText(account.getName());
-        ((ImageView) vgAvailableAccounts.findViewById(R.id.iv_account_icon)).setImageResource(getAccountIcon(account.getSite(), false));
+        ((ImageView) vgAvailableAccounts.findViewById(R.id.iv_account_icon)).setImageResource(SiteController.getAccountIcon(account.getSite(), false, true));
 
         mContainerAvailableAccountsView.addView(vgAvailableAccounts, 0);
         mView.findViewById(R.id.tv_accounts_available_empty).setVisibility(View.GONE);
@@ -263,22 +260,5 @@ public class ChooseAccountFragment extends Fragment {
                 }
             }
         }
-    }
-
-    private int getAccountIcon(String site, boolean isConnected) {
-        if (site.equals(FacebookSiteController.SITE_KEY)) {
-            return isConnected ? R.drawable.ic_context_facebook_on : R.drawable.ic_context_facebook;
-        }
-        else if (site.equals(YoutubeSiteController.SITE_KEY)) {
-            return isConnected ? R.drawable.ic_context_youtube_on : R.drawable.ic_context_youtube;
-        }
-        else if (site.equals(SoundCloudSiteController.SITE_KEY)) {
-            return isConnected ? R.drawable.ic_context_soundcloud_on : R.drawable.ic_context_soundcloud;
-        }
-        else if (site.equals(FlickrSiteController.SITE_KEY)) {
-            return isConnected ? R.drawable.ic_context_vimeo_on : R.drawable.ic_context_vimeo;
-        }
-
-        return R.drawable.ssh;
     }
 }

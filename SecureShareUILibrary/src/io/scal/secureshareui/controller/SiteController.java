@@ -2,6 +2,7 @@
 package io.scal.secureshareui.controller;
 
 import io.scal.secureshareui.model.Account;
+import io.scal.secureshareuilibrary.R;
 
 import java.io.File;
 
@@ -140,5 +141,41 @@ public abstract class SiteController {
         data.putString(MESSAGE_KEY_MESSAGE, message);
         msg.setData(data);
         mHandler.sendMessage(msg);
+    }
+    
+    public static int getAccountIcon(String site, boolean isConnected, boolean areCredentialsValid) {
+        if (site.equals(FacebookSiteController.SITE_KEY)) {     	
+        	if (!isConnected) { //not connected
+        		return R.drawable.ic_context_facebook;
+        	}
+        	//since connected, check if valid
+        	return areCredentialsValid ? R.drawable.ic_context_facebook_on : R.drawable.ic_context_facebook_error;
+        }
+        else if (site.equals(YoutubeSiteController.SITE_KEY)) {
+        	if (!isConnected) {
+        		return R.drawable.ic_context_youtube;
+        	}
+        	return areCredentialsValid ? R.drawable.ic_context_youtube_on : R.drawable.ic_context_youtube_error;
+        }
+        else if (site.equals(SoundCloudSiteController.SITE_KEY)) {
+        	if (!isConnected) {
+        		return R.drawable.ic_context_soundcloud;
+        	}
+        	return areCredentialsValid ? R.drawable.ic_context_soundcloud_on : R.drawable.ic_context_soundcloud_error;
+        }
+        else if (site.equals(FlickrSiteController.SITE_KEY)) {
+        	if (!isConnected) {
+        		return R.drawable.ic_context_flickr;
+        	}
+        	return areCredentialsValid ? R.drawable.ic_context_flickr_on : R.drawable.ic_context_flickr_error;
+        }
+        else if (site.equals(SSHSiteController.SITE_KEY)) {
+        	if (!isConnected) {
+        		return R.drawable.ic_context_server;
+        	}
+        	return areCredentialsValid ? R.drawable.ic_context_server_on : R.drawable.ic_context_server_error;
+        }
+
+        return R.drawable.ic_launcher;
     }
 }
