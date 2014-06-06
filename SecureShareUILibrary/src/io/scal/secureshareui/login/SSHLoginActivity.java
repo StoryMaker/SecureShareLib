@@ -65,8 +65,9 @@ public class SSHLoginActivity extends Activity {
 
                 String username = mUsername.getText().toString();
                 String password = mPassword.getText().toString();
+                String host = mURL.getText().toString();
 
-                new CheckCredentialsAsync().execute(username, password);
+                new CheckCredentialsAsync().execute(username, password, host);
             }
         });
     }
@@ -76,7 +77,7 @@ public class SSHLoginActivity extends Activity {
         @Override
         protected String doInBackground(String... params) {
             
-            if (SSHSiteController.SSH.checkCredentials(params[0], params[1])) { // success
+            if (SSHSiteController.SSH.checkCredentials(params[0], params[1], params[2])) { // success
                 return "-1"; // FIXME this is ugly as sin
             }
 

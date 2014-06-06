@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.ProxySOCKS4;
 import com.jcraft.jsch.ProxySOCKS5;
 import com.jcraft.jsch.Session;
@@ -83,8 +84,22 @@ public class SSHSiteController extends SiteController {
     }
 
     public static class SSH {
-        public static boolean checkCredentials(String username, String password) {
-            return true; // FIXME implement SSH credentials check
+        public static boolean checkCredentials(String username, String password, String host) {
+        	JSch jsch = new JSch();
+            
+            try {
+				Session session = jsch.getSession(username, host, 22);
+				session.setPassword(password);
+				session.setConfig("StrictHostKeyChecking", "no");
+				
+				session.connect();
+				session.disconnect();
+			} catch (JSchException e) {
+				e.printStackTrace();
+				return false;
+			}
+        	
+        	return true;
         }
 //        public static boolean scpTo(String filePath, String target, final String password, SiteController controller) {
         public static boolean scpTo(Context context, String filePath, String username, final String password, String host, String remoteFile, SiteController controller, boolean useTor) {
