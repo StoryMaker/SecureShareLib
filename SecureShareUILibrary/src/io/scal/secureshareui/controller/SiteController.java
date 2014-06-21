@@ -1,16 +1,20 @@
 
 package io.scal.secureshareui.controller;
 
+import info.guardianproject.onionkit.ui.OrbotHelper;
 import io.scal.secureshareui.model.Account;
 import io.scal.secureshareuilibrary.R;
 
 import java.io.File;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 public abstract class SiteController {
@@ -36,6 +40,8 @@ public abstract class SiteController {
     protected static final int ORBOT_HTTP_PORT = 8118;
     protected static final int ORBOT_SOCKS_PORT = 9050;
 
+    private static final String TAG = "SiteController";
+
     public interface OnEventListener {
         public void onSuccess(Account publishAccount);
 
@@ -54,6 +60,21 @@ public abstract class SiteController {
 
     public abstract void upload(String title, String body, String mediaPath, Account account, boolean useTor);
 
+    public static boolean torCheck(boolean useTor, Context mContext) {
+        OrbotHelper orbotHelper = new OrbotHelper(mContext);
+
+        if(useTor && orbotHelper.isOrbotRunning()) 
+        {    
+            Log.d(TAG, "use tor");
+            return true;
+        }
+        else
+        {            
+            Log.d(TAG, "don't use tor");
+            return false;
+        }
+    }   
+    
     public static SiteController getSiteController(String site, Context context, Handler handler, String jobId) {
         if (site.equals(FacebookSiteController.SITE_KEY)) {
             return new FacebookSiteController(context, handler, jobId);

@@ -75,7 +75,7 @@ public class SSHSiteController extends SiteController {
             remoteFile = fileName;
         }
         
-        if (SSH.scpTo(mContext, mediaPath, account.getUserName(), account.getCredentials(), host, remoteFile, this, useTor)) {
+        if (SSH.scpTo(mContext, mediaPath, account.getUserName(), account.getCredentials(), host, remoteFile, this, useTor, mContext)) {
             String result = account.getUserName() + "@" + host + ":" + remoteFile;
             jobSucceeded(result);
         } else {
@@ -102,7 +102,7 @@ public class SSHSiteController extends SiteController {
         	return true;
         }
 //        public static boolean scpTo(String filePath, String target, final String password, SiteController controller) {
-        public static boolean scpTo(Context context, String filePath, String username, final String password, String host, String remoteFile, SiteController controller, boolean useTor) {
+        public static boolean scpTo(Context context, String filePath, String username, final String password, String host, String remoteFile, SiteController controller, boolean useTor, Context mContext) {
 //            if (arg.length != 2) {
 //                System.err.println("usage: java ScpTo file1 user@remotehost:file2");
 //                System.exit(-1);
@@ -121,8 +121,7 @@ public class SSHSiteController extends SiteController {
                 Session session = jsch.getSession(username, host, 22);
                 session.setConfig("StrictHostKeyChecking", "no"); // FIXME disabling host ssh checking for now  
                 
-                OrbotHelper orbotHelper = new OrbotHelper(context);
-                if (useTor && orbotHelper.isOrbotRunning()) {
+                if (torCheck(useTor, mContext)) {
                     session.setProxy(new ProxySOCKS4(ORBOT_HOST, ORBOT_SOCKS_PORT));
                 }
                 

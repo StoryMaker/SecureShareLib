@@ -49,28 +49,28 @@ public class SoundCloudSiteController extends SiteController {
 
     @Override
     public void upload(String title, String body, String mediaPath, Account account, boolean useTor) {
-        new UploadAsync().execute(title, body, mediaPath, account.getCredentials());
+        new UploadAsync().execute(title, body, mediaPath, account.getCredentials(), Boolean.valueOf(useTor).toString());
     }
 
     private class UploadAsync extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... params) {
-            uploadFile(params[0], params[1], params[2], params[3]);
+            uploadFile(params[0], params[1], params[2], params[3], params[4]);
             return "success";
         }
     }
 
-    private void uploadFile(String title, String body, String mediaPath, String credentials) {
+    private void uploadFile(String title, String body, String mediaPath, String credentials, String useTor) {
         final ApiWrapper wrapper = new ApiWrapper(APP_CLIENT_ID,    // client_id
                 APP_CLIENT_SECRET,                                  // client_secret
                 null,                                               // redirect URI
                 new Token(credentials, "0"));                       // token
 
-        if (Util.isOrbotInstalledAndRunning(mContext)) {
+        if (torCheck(Boolean.parseBoolean(useTor), mContext)) {
             URI uri = null;
             try {
-                uri = new URI("http", null, Util.ORBOT_HOST, Util.ORBOT_HTTP_PORT, null,
+                uri = new URI("http", null, ORBOT_HOST, ORBOT_HTTP_PORT, null,
                         null, null);
 
             } catch (URISyntaxException e) {

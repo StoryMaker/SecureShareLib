@@ -73,17 +73,16 @@ public class FlickrSiteController extends SiteController {
                        "delete",                     // permissions ("delete" permission allows read/write/delete)
                        fProps);                      // properties
 
-        OrbotHelper orbotHelper = new OrbotHelper(mContext);
-        if(useTor && orbotHelper.isOrbotRunning()) 
+        if(torCheck(useTor, mContext))
         {    
-            Log.d(TAG, "orbot running, setting proxy");
+            Log.d(TAG, "setting proxy");
             
             Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ORBOT_HOST, ORBOT_HTTP_PORT));
             f.setProxy(proxy);
         }
         else
         {
-            Log.d(TAG, "orbot not running, proxy not set");
+            Log.d(TAG, "proxy not set");
         }
         
         // token stored in properties?  let's assume so for now...
