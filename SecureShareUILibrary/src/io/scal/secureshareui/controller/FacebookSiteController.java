@@ -3,6 +3,8 @@ package io.scal.secureshareui.controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 
 import com.facebook.Request;
 import com.facebook.Response;
@@ -82,6 +84,14 @@ public class FacebookSiteController extends SiteController {
         try {
         	if(super.isVideoFile(mediaFile)) {
         		request = Request.newUploadVideoRequest(session, mediaFile, uploadMediaRequestCallback);
+        		
+        		if (torCheck(useTor, mContext))
+        		{
+        		    Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ORBOT_HOST, ORBOT_HTTP_PORT));
+                    request.setProxy(proxy);
+        		}
+        		    
+        		
         		parameters = request.getParameters();
         		
         		//video params
@@ -90,6 +100,13 @@ public class FacebookSiteController extends SiteController {
         	}
         	else if(super.isImageFile(mediaFile)){
         		request = Request.newUploadPhotoRequest(session, mediaFile, uploadMediaRequestCallback);
+        		
+        		if (torCheck(useTor, mContext))
+                {
+                    Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ORBOT_HOST, ORBOT_HTTP_PORT));
+                    request.setProxy(proxy);
+                }
+        		
         		parameters = request.getParameters();
         		
         		//image params
