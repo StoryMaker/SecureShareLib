@@ -41,18 +41,20 @@ public class YoutubeLoginActivity extends Activity implements Runnable {
 	private static String mAccessToken = null;
 
 	static final String TAG = "YoutubeLoginActivity";
-	private static final String CLIENT_ID = "279338940292-7pqin08vmde3nhheekijn6cfetknotbs.apps.googleusercontent.com";//"422811616434-03efee9fu30quev60avpopvvg8osird3.apps.googleusercontent.com";
-	private static final String CLIENT_SECRET = "N3uZBIBjr__TPHUWUkmtBUYk";//UsH4wlEuM9eEy7K1VBbrvbH8";
 	
+	private static final String CLIENT_ID = "279338940292-7pqin08vmde3nhheekijn6cfetknotbs.apps.googleusercontent.com";
+	private static final String CLIENT_SECRET = "N3uZBIBjr__TPHUWUkmtBUYk";
+	
+	private static final String REDIRECT_URI = "http://localhost";
 	private static final String YOUTUBE_USER_INFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo";
+	private static final String YOUTUBE_EMAIL_SCOPE = "https://www.googleapis.com/auth/userinfo.email";
 	
 	HttpTransport transport = new NetHttpTransport();
     private final JsonFactory jsonFactory = new GsonFactory();
 	
 	private String mReturnedWebCode;
 	private GoogleTokenResponse mAuthResp;
-	private static final String REDIRECT_URI = "http://localhost";
-	
+		
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -63,13 +65,15 @@ public class YoutubeLoginActivity extends Activity implements Runnable {
 
 	public void login() {
 		WebView webview = new WebView(this);
+		webview.clearCache(true);
 		webview.getSettings().setJavaScriptEnabled(true);
 		webview.setVisibility(View.VISIBLE);
 		setContentView(webview);
 
 		List<String> scopes = new ArrayList<String>();
 		scopes.add(YouTubeScopes.YOUTUBE_UPLOAD);
-		scopes.add("https://www.googleapis.com/auth/userinfo.email");
+		scopes.add(YOUTUBE_EMAIL_SCOPE);
+		
 		
 		String authUrl = new GoogleAuthorizationCodeRequestUrl(CLIENT_ID, REDIRECT_URI, scopes).build();
 
