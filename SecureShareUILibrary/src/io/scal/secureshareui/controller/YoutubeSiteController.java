@@ -41,7 +41,7 @@ public class YoutubeSiteController extends SiteController {
     private static final String TAG = "YouTubeSiteController";
     public static final String SITE_NAME = "YouTube";
     public static final String SITE_KEY = "youtube";
-    private static final String CLIENT_ID = "279338940292-cnhaihnd4tskh2nciv2h6q0kqo55tioi.apps.googleusercontent.com";
+    private static final String CLIENT_ID = "279338940292-7pqin08vmde3nhheekijn6cfetknotbs.apps.googleusercontent.com";
     
     HttpTransport transport = new NetHttpTransport();
     final JsonFactory jsonFactory = new GsonFactory();
@@ -79,7 +79,7 @@ public class YoutubeSiteController extends SiteController {
 			System.setProperty("https.proxyHost", ORBOT_HOST);
 			System.setProperty("https.proxyPort", String.valueOf(ORBOT_HTTP_PORT));
 			
-			//this incosistently works
+			//this inconsistently works
 			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ORBOT_HOST, ORBOT_HTTP_PORT));
 			transport = new NetHttpTransport.Builder().setProxy(proxy).build();
 		}
@@ -96,7 +96,8 @@ public class YoutubeSiteController extends SiteController {
 
     public YouTube.Videos.Insert prepareUpload(String title, String body, File mediaFile) {
         try {
-        	if(!super.isVideoFile(mediaFile)){ 
+        	if(!super.isVideoFile(mediaFile)){
+        		jobFailed(1231291, "Invalid file format.");
         		return null;
         	}
         	
@@ -148,7 +149,6 @@ public class YoutubeSiteController extends SiteController {
                             break;
                         case MEDIA_COMPLETE:
                             Log.d(TAG, "Upload file: Upload Completed!");
-                            jobSucceeded("YouTube Upload: Success");
                             break;
                         case NOT_STARTED:
                             Log.d(TAG, "Upload file: Upload Not Started!");
@@ -168,37 +168,42 @@ public class YoutubeSiteController extends SiteController {
         }
     }
 
-    public class VideoUploadAsyncTask extends AsyncTask<YouTube.Videos.Insert, Void, Void> {
-        @Override
-        protected Void doInBackground( YouTube.Videos.Insert... requestInserts ) {
-            YouTube.Videos.Insert requestInsert = requestInserts[0];
-            try {
-            	if(null == requestInsert) {
-            		jobFailed(1, "IO Exception");
-            		return null;
-            	} 
- 	
-                Video uploadedVideo = requestInsert.execute();
-                String videoEId = uploadedVideo.getEtag();
-                String videoId = uploadedVideo.getId();
-                int i = 1;
-                int j = i++;
-                
-            } catch (final GooglePlayServicesAvailabilityIOException availabilityException) {
-            	String error = "Google Play Services not Available: " + availabilityException.getMessage();
-            	Log.e(TAG, error);
-            	jobFailed(1, error);
-            } catch (UserRecoverableAuthIOException userRecoverableException) {
-            	String error = "Insuffiecent Permissions: " + userRecoverableException.getMessage();
-            	Log.e(TAG, error);
-            	jobFailed(1, error);
-            } catch (IOException e) {
-            	String error = "AsyncTask IOException: " + e.getMessage();
-                Log.e(TAG, error);
-                jobFailed(1, error);
-            }
-            
-            return null;
-        }
-    }
+	public class VideoUploadAsyncTask extends AsyncTask<YouTube.Videos.Insert, Void, Void> {
+		@Override
+		protected Void doInBackground(YouTube.Videos.Insert... requestInserts) {
+			int errorId = -1;
+			String errorMessage = null;
+			String uploadedVideoId = null;
+			YouTube.Videos.Insert requestInsert = requestInserts[0];
+
+			if (null == requestInsert) {
+				errorId = 1231231;
+				errorMessage = "Video is Null";
+			} else {
+				try {
+					Video uploadedVideo = requestInsert.execute();
+					uploadedVideoId = uploadedVideo.getId();
+				} catch (final GooglePlayServicesAvailabilityIOException ae) {
+					errorId = 1231232;
+					errorMessage = "Google Play Services not Available: " + ae.getMessage();
+				} catch (UserRecoverableAuthIOException ure) {
+					errorId = 1231233;
+					errorMessage = "Insuffiecent Permissions: " + ure.getMessage();
+				} catch (IOException e) {
+					errorId = 1231234;
+					errorMessage = "AsyncTask IOException: " + e.getMessage();
+				}
+			}
+
+			//success
+			if (errorId == -1) {
+				jobSucceeded(uploadedVideoId);
+			} else {
+				Log.e(TAG, errorId + "_" + errorMessage);
+				jobFailed(errorId, errorMessage);
+			}
+
+			return null;
+		}
+	}
 }
