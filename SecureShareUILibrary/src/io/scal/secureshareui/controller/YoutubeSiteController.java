@@ -151,7 +151,7 @@ public class YoutubeSiteController extends SiteController {
                             Log.d(TAG, "Upload file: Upload Completed!");
                             break;
                         case NOT_STARTED:
-                            Log.d(TAG, "Upload file: Upload Not Started!");
+                            Log.d(TAG, "Upload file: Upload Not Started!"); 
                             break;
                     }
                 }
@@ -160,10 +160,10 @@ public class YoutubeSiteController extends SiteController {
             uploader.setProgressListener(progressListener);      
             return requestInsert;
         } catch (FileNotFoundException e) {
-            Log.e(TAG, "File not found: " + e.getMessage());
+            Log.e(TAG, "File not found: " + e.getMessage()); // FIXME move to strings
             return null;
         } catch (IOException e) {
-            Log.e(TAG, "Progress IOException: " + e.getMessage());
+            Log.e(TAG, "Progress IOException: " + e.getMessage()); // FIXME move to strings
             return null;
         }
     }
@@ -178,20 +178,23 @@ public class YoutubeSiteController extends SiteController {
 
 			if (null == requestInsert) {
 				errorId = 1231231;
-				errorMessage = "Video is Null";
+				errorMessage = "Video is Null"; // FIXME move to strings
 			} else {
 				try {
 					Video uploadedVideo = requestInsert.execute();
 					uploadedVideoId = uploadedVideo.getId();
 				} catch (final GooglePlayServicesAvailabilityIOException ae) {
 					errorId = 1231232;
-					errorMessage = "Google Play Services not Available: " + ae.getMessage();
+                    String msg = ae.getMessage() != null ? ae.getMessage() + ", " : "";
+					errorMessage = "Google Play Services not Available: " + ae.getCause() + msg; // FIXME move to strings
 				} catch (UserRecoverableAuthIOException ure) {
 					errorId = 1231233;
-					errorMessage = "Insuffiecent Permissions: " + ure.getMessage();
+                    String msg = ure.getMessage() != null ? ure.getMessage() + ", " : "";
+					errorMessage = "Insufficient Permissions: " + ure.getCause() + msg; // FIXME move to strings
 				} catch (IOException e) {
 					errorId = 1231234;
-					errorMessage = "AsyncTask IOException: " + e.getMessage();
+					String msg = e.getMessage() != null ? e.getMessage() + ", " : "";
+					errorMessage = e.getCause() + msg;
 				}
 			}
 

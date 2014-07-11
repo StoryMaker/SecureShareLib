@@ -92,8 +92,9 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:checked="true"
             android:text="Upload Securely"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/textViewTor"
@@ -115,8 +116,9 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:checked="true"
             android:text="Publish to StoryMaker"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/textStoryMaker"
