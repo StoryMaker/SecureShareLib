@@ -108,8 +108,6 @@ public class YoutubeLoginActivity extends Activity implements Runnable {
 
 			@Override
 			public void onPageStarted(WebView view, String url, Bitmap bitmap) {
-				int i = 1;
-				i++;
 			}
 
 			@Override
