@@ -16,6 +16,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -25,6 +26,8 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.common.AccountPicker;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
@@ -62,10 +65,33 @@ public class YoutubeLoginActivity extends Activity implements Runnable {
 
 		login();
 	}
+	/*
+	private void login() {	
+		Intent googlePicker =AccountPicker.newChooseAccountIntent(null,null, new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE},true,null,null,null,null);
+	    startActivityForResult(googlePicker, 111);
+	}
+	
+	protected void onActivityResult(final int requestCode,
+			final int resultCode, final Intent data) {
+		if (requestCode == 111 && resultCode == RESULT_OK) {
+			String userEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+
+			if (null != userEmail) {
+				mAccessResult = RESULT_OK;
+				mAccessToken = userEmail;
+			} else { // failed login
+				mAccessResult = RESULT_CANCELED;
+			}
+		}
+		
+		finish();
+	}*/
+	
 
 	public void login() {
 		WebView webview = new WebView(this);
 		webview.clearCache(true);
+		//webview.destroy();
 		webview.getSettings().setJavaScriptEnabled(true);
 		webview.setVisibility(View.VISIBLE);
 		setContentView(webview);
@@ -81,7 +107,10 @@ public class YoutubeLoginActivity extends Activity implements Runnable {
 		webview.setWebViewClient(new WebViewClient() {
 
 			@Override
-			public void onPageStarted(WebView view, String url, Bitmap bitmap) {}
+			public void onPageStarted(WebView view, String url, Bitmap bitmap) {
+				int i = 1;
+				i++;
+			}
 
 			@Override
 			public void onPageFinished(WebView view, String url) {
@@ -95,7 +124,7 @@ public class YoutubeLoginActivity extends Activity implements Runnable {
 						}
 					} else if (url.indexOf("error=") != -1) {
 						view.setVisibility(View.INVISIBLE);
-						setResult(RESULT_CANCELED);
+						mAccessResult = RESULT_CANCELED;
 					}
 				}
 			}
@@ -122,7 +151,7 @@ public class YoutubeLoginActivity extends Activity implements Runnable {
 	            mAccessResult = RESULT_OK;
 	            mAccessToken = userEmail;
 	        } else { // failed login
-	            mAccessResult = 0;
+	            mAccessResult = RESULT_CANCELED;
 	        }
 			
 		} catch (IOException ioe) {
