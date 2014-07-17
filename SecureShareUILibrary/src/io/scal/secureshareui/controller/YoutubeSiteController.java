@@ -97,7 +97,7 @@ public class YoutubeSiteController extends SiteController {
     public YouTube.Videos.Insert prepareUpload(String title, String body, File mediaFile) {
         try {
         	if(!super.isVideoFile(mediaFile)){
-        		jobFailed(1231291, "Invalid file format.");
+        		jobFailed(1231291, "Invalid file format."); // FIXME move to strings
         		return null;
         	}
         	
@@ -145,7 +145,7 @@ public class YoutubeSiteController extends SiteController {
                         case MEDIA_IN_PROGRESS:
                             Log.d(TAG, "YouTube Upload: Upload in progress");
                             float uploadPercent = (float) (uploader.getProgress());
-                            jobProgress(uploadPercent, "YouTube uploading...");                        
+                            jobProgress(uploadPercent, "YouTube uploading..."); // FIXME move to strings
                             break;
                         case MEDIA_COMPLETE:
                             Log.d(TAG, "Upload file: Upload Completed!");
@@ -160,10 +160,14 @@ public class YoutubeSiteController extends SiteController {
             uploader.setProgressListener(progressListener);      
             return requestInsert;
         } catch (FileNotFoundException e) {
-            Log.e(TAG, "File not found: " + e.getMessage());
+            String msg = e.getMessage() != null ? e.getMessage() + ", " : "";
+            String errorMessage = e.getCause() + msg;
+            Log.e(TAG, "File not found: " + errorMessage);
             return null;
         } catch (IOException e) {
-            Log.e(TAG, "Progress IOException: " + e.getMessage());
+            String msg = e.getMessage() != null ? e.getMessage() + ", " : "";
+            String errorMessage = e.getCause() + msg;
+            Log.e(TAG, "Progress IOException: " + errorMessage);
             return null;
         }
     }
@@ -183,15 +187,18 @@ public class YoutubeSiteController extends SiteController {
 				try {
 					Video uploadedVideo = requestInsert.execute();
 					uploadedVideoId = uploadedVideo.getId();
-				} catch (final GooglePlayServicesAvailabilityIOException ae) {
+				} catch (final GooglePlayServicesAvailabilityIOException e) {
 					errorId = 1231232;
-					errorMessage = "Google Play Services not Available: " + ae.getMessage();
-				} catch (UserRecoverableAuthIOException ure) {
+					String msg = e.getMessage() != null ? e.getMessage() + ", " : "";
+					errorMessage = "Google Play Services not Available: " + e.getCause() + msg; // FIXME move to strings
+				} catch (UserRecoverableAuthIOException e) {
 					errorId = 1231233;
-					errorMessage = "Insuffiecent Permissions: " + ure.getMessage();
+                    String msg = e.getMessage() != null ? e.getMessage() + ", " : "";
+					errorMessage = "Insuffiecent Permissions: " + e.getCause() + msg; // FIXME move to strings
 				} catch (IOException e) {
 					errorId = 1231234;
-					errorMessage = "AsyncTask IOException: " + e.getMessage();
+                    String msg = e.getMessage() != null ? e.getMessage() + ", " : "";
+					errorMessage = "AsyncTask IOException: " + e.getCause() + msg; // FIXME move to strings
 				}
 			}
 
