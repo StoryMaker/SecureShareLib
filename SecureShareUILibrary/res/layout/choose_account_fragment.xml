@@ -92,7 +92,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:checked="true"
+            android:checked="false"
             android:text="Upload Securely"
             android:visibility="gone" />
 
@@ -116,7 +116,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:checked="true"
+            android:checked="false"
             android:text="Publish to StoryMaker"
             android:visibility="gone" />
 
