@@ -71,15 +71,6 @@ public class YoutubeSiteController extends SiteController {
 		
 		//set proxy
 		if(super.torCheck(useTor, super.mContext)) {
-			
-			//this works
-			System.setProperty("http.proxyHost", ORBOT_HOST);
-			System.setProperty("http.proxyPort", String.valueOf(ORBOT_HTTP_PORT));
-			
-			System.setProperty("https.proxyHost", ORBOT_HOST);
-			System.setProperty("https.proxyPort", String.valueOf(ORBOT_HTTP_PORT));
-			
-			//this inconsistently works
 			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ORBOT_HOST, ORBOT_HTTP_PORT));
 			transport = new NetHttpTransport.Builder().setProxy(proxy).build();
 		}
