@@ -53,6 +53,16 @@ These are caused when there are two duplicate jar files seen from the main proje
 - click 'Add JARs' button on right and point it to the soundcloud-api-wrapper.jar (located in secureshareuilibrary/external/)
 - clean and rebuild
 
+###Dex Issue
+Due to the large number of dependencies, SecureShare has hit Android's DEX 65K methods limit.  You can read more about this issue [here](https://medium.com/@rotxed/dex-skys-the-limit-no-65k-methods-is-28e6cb40cf71).
+
+The error message:
+Unable to execute dex: method ID not in [0, 0xffff]: 65536
+Conversion to Dalvik format failed: Unable to execute dex: method ID not in [0, 0xffff]: 65536
+
+The workaround:
+We have found a way to go through the problematic JAR files and remove the unused packagages manually.  We used the google-play-services script [here](https://gist.github.com/dextorer/a32cad7819b7f272239b), and then modified it to work with the amazon JARs as well.  You can find the sripts and their corresponding files in the external/dex-libs-issue/ folder.  Simple run the .sh scripts and it will generate minified versions of the JAR files.
+
 ###Credits
 
 SecureShareLib was developed by [Scal.io](http://scal.io) and [Small World News](http://smallworldnews.tv/) as part of the [StoryMaker](http://storymaker.cc/) project with the generous support of [Open Technology Fund](https://www.opentechfund.org/).
