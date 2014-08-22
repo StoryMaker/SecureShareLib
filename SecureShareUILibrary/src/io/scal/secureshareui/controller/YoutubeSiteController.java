@@ -70,6 +70,7 @@ public class YoutubeSiteController extends SiteController {
 		credential.setSelectedAccountName(account.getCredentials());
 		
 		//set proxy
+		useTor=false; //FIXME Hardcoded until we find a Tor workaround
 		if(super.torCheck(useTor, super.mContext)) {
 			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ORBOT_HOST, ORBOT_HTTP_PORT));
 			transport = new NetHttpTransport.Builder().setProxy(proxy).build();
