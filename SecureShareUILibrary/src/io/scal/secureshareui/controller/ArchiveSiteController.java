@@ -2,10 +2,30 @@ package io.scal.secureshareui.controller;
 
 import io.scal.secureshareui.login.FacebookLoginActivity;
 import io.scal.secureshareui.model.Account;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.util.Log;
+
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.Protocol;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.transfer.TransferManager;
+import com.amazonaws.services.s3.transfer.Upload;
+import com.amazonaws.services.s3.transfer.model.UploadResult;
 
 public class ArchiveSiteController extends SiteController {
 	public static final String SITE_NAME = "Archive";
@@ -36,7 +56,7 @@ public class ArchiveSiteController extends SiteController {
 	@Override
 	public void upload(String title, String body, String mediaPath, Account account, boolean useTor) {
 		
-		/*
+		
 		Log.d(TAG, "Upload file: Entering upload");
 		AWSCredentials credential = new BasicAWSCredentials(sAccessKey, sSecretKey);
 		ClientConfiguration s3Config = new ClientConfiguration();
@@ -112,6 +132,6 @@ public class ArchiveSiteController extends SiteController {
 				} catch (IOException e) {}
 			}
 		}
-		return in;*/
+		return in;
 	}
 }
