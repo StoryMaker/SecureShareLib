@@ -3,44 +3,41 @@ package io.scal.secureshareui.controller;
 import io.scal.secureshareui.login.FacebookLoginActivity;
 import io.scal.secureshareui.model.Account;
 
-import java.io.BufferedInputStream;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.Protocol;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.transfer.TransferManager;
-import com.amazonaws.services.s3.transfer.Upload;
-import com.amazonaws.services.s3.transfer.model.UploadResult;
 
 public class ArchiveSiteController extends SiteController {
 	public static final String SITE_NAME = "Archive";
 	public static final String SITE_KEY = "archive";
 	private static final String TAG = "ArchiveSiteController";
 
-	private static final String sAccessKey = "Te8eJIS48D6N32Ju";
-	private static final String sSecretKey = "HI4q8EWv1Rn2Bgfu";
 
-	private static final String sBucketName = "micah_scal_Dog";
-	private static final String sBucketKey = "t0";
-	private static final String sArchiveAPIEndpoint = "http://s3.us.archive.org/";
+    private static final String sArchiveAPIEndpoint = "http://s3.us.archive.org/";
+    private static final String sAccessKey = "Te8eJIS48D6N32Ju";
+    private static final String sSecretKey = "HI4q8EWv1Rn2Bgfu";
 
-	private int contentLength = -1;
+    private static final String sBucketName = "theworldisavampire2";
+    private static final String sBucketKey = "0.mp4";
+    
+    public static final MediaType MEDIA_TYPE = MediaType.parse("");
 
+    
 	public ArchiveSiteController(Context context, Handler handler, String jobId) {
 		super(context, handler, jobId);
 	}
@@ -55,83 +52,68 @@ public class ArchiveSiteController extends SiteController {
 
 	@Override
 	public void upload(String title, String body, String mediaPath, Account account, boolean useTor) {
-		
-		
 		Log.d(TAG, "Upload file: Entering upload");
-		AWSCredentials credential = new BasicAWSCredentials(sAccessKey, sSecretKey);
-		ClientConfiguration s3Config = new ClientConfiguration();
-
-		useTor=false; //FIXME Hardcoded until we find a Tor workaround
-		if(super.torCheck(useTor, super.mContext)) {
-			s3Config.setProxyHost(ORBOT_HOST);
-			s3Config.setProxyPort(ORBOT_HTTP_PORT);
-			s3Config.setProtocol(Protocol.HTTP);
-		}
-		
-		AmazonS3 s3Client = new AmazonS3Client(credential, s3Config);
-		s3Client.setEndpoint(sArchiveAPIEndpoint);
-
-		TransferManager manager = new TransferManager(s3Client);
 
 		File file = new File(mediaPath);
 		if (!file.exists()) {
 			jobFailed(4000000, "Archive upload failed: invalid file");
 			return;
 		}
-
-		InputStream inputStream = convertFileToInputStream(file);
-		if (null == inputStream) {
-			jobFailed(4000001, "Archive upload failed: failed to convert file to inputStream");
-			return;
-		}
-
-		// set metadata
-		ObjectMetadata metadata = new ObjectMetadata();
-		if (contentLength > 0) {
-			metadata.setContentLength(contentLength);
-		}
-
-		// Transfer a file to an S3 bucket.
-		Upload upload = manager.upload(sBucketName,  //path that will appear in URL
-										sBucketKey,  //actual name of file within bucket
-										inputStream, //file
-										metadata);   //metadata
-
-		try {
-			Log.d(TAG, "Upload file: Initiation Started");
-			UploadResult result = upload.waitForUploadResult();
-		} catch (InterruptedException e) {
-			jobFailed(4000002, "Archive upload failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-
-		while (!upload.isDone()) {
-			long transfered = upload.getProgress().getBytesTransfered();
-			// publish progress
-
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	private InputStream convertFileToInputStream(File file) {
-		InputStream in = null;
-
-		try {
-			in = new BufferedInputStream(new FileInputStream(file));
-		} catch (FileNotFoundException e) {
 			
-		} finally {
-			if (in != null) {
-				try {
-					contentLength = in.available();
-					in.close();
-				} catch (IOException e) {}
-			}
+		OkHttpClient client = new OkHttpClient();
+		
+		useTor=false; //FIXME Hardcoded until we find a Tor workaround
+		if(super.torCheck(useTor, super.mContext)) {
+			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ORBOT_HOST, ORBOT_HTTP_PORT));
+	        client.setProxy(proxy);
 		}
-		return in;
+		
+		String url = sArchiveAPIEndpoint + "/" + sBucketName + "/" + sBucketKey;
+		
+		Request request = new Request.Builder()
+        .url(url)
+        .put(RequestBody.create(MEDIA_TYPE, file))
+        .addHeader("Accept", "*/*")
+        .addHeader("x-amz-auto-make-bucket", "1")
+        .addHeader("x-archive-meta01-collection", "opensource")
+        .addHeader("x-archive-meta-mediatype", "texts")
+        .addHeader("x-archive-meta-sponsor", "Sponsor 998")
+        .addHeader("x-archive-meta-language", "eng")
+        .addHeader("authorization", "LOW " + sAccessKey + ":" + sSecretKey)//authorization: LOW $accesskey:$secret
+        .build();
+
+		UploadFileTask uploadFileTask = new UploadFileTask(client, request);
+		uploadFileTask.execute();
 	}
+
+	class UploadFileTask extends AsyncTask<String, String, String> {
+        private OkHttpClient client;
+        private Request request;
+        private Response response;
+
+        public UploadFileTask(OkHttpClient client, Request request) {
+            this.client = client;
+            this.request = request;
+        }
+
+        @Override
+        protected String doInBackground(String... params) {  	
+        	Log.d(TAG, "Begin Upload");
+        	
+            try {
+                response = client.newCall(request).execute();
+            } catch (IOException e) {
+            	jobFailed(4000001, "Archive upload failed");	
+                e.printStackTrace();
+            }
+
+            try {
+                Log.d(TAG, response.body().string());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return "-1";
+        }
+    }
 }
