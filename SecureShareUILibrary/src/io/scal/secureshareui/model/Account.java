@@ -1,6 +1,7 @@
 
 package io.scal.secureshareui.model;
 
+import io.scal.secureshareui.controller.ArchiveSiteController;
 import io.scal.secureshareui.controller.FacebookSiteController;
 import io.scal.secureshareui.controller.FlickrSiteController;
 import io.scal.secureshareui.controller.SSHSiteController;
@@ -18,6 +19,7 @@ public class Account {
     private boolean isConnected;
     private boolean areCredentialsValid;
     public static final String[] CONTROLLER_SITE_NAMES = {
+        	ArchiveSiteController.SITE_NAME,
             FacebookSiteController.SITE_NAME,
             YoutubeSiteController.SITE_NAME,
             SoundCloudSiteController.SITE_NAME,
@@ -25,7 +27,8 @@ public class Account {
             SSHSiteController.SITE_NAME
     };
     public static final String[] CONTROLLER_SITE_KEYS = {
-            FacebookSiteController.SITE_KEY,
+	        ArchiveSiteController.SITE_KEY,
+	        FacebookSiteController.SITE_KEY,
             YoutubeSiteController.SITE_KEY,
             SoundCloudSiteController.SITE_KEY,
             FlickrSiteController.SITE_KEY,
