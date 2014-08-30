@@ -1,14 +1,14 @@
 
 package io.scal.secureshareui.controller;
 
+import io.scal.secureshareui.login.FacebookLoginActivity;
+import io.scal.secureshareui.model.Account;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,8 +17,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
-import io.scal.secureshareui.login.FacebookLoginActivity;
-import io.scal.secureshareui.model.Account;
+
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
 
 public class FacebookSiteController extends SiteController {
     public static final String SITE_NAME = "Facebook";
@@ -38,8 +40,13 @@ public class FacebookSiteController extends SiteController {
     }
 
     @Override
-    public void upload(String title, String body, String mediaPath, Account account, boolean useTor) { 
-        // FIXME this doesn't use the credentials we pass in at all...
+    public void upload(Account account, HashMap<String, String> valueMap) {
+		Log.d(TAG, "Upload file: Entering upload");
+		
+		String title = valueMap.get("title");
+		String body = valueMap.get("body");
+		String mediaPath = valueMap.get("mediaPath");
+		boolean useTor = Boolean.getBoolean(valueMap.get("useTor"));
         Session session = Session.openActiveSessionFromCache(mContext);
 
         // setup callback

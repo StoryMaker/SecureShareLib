@@ -1,37 +1,39 @@
 package io.scal.secureshareui.controller;
 
+import io.scal.secureshareui.login.SSHLoginActivity;
+import io.scal.secureshareui.model.Account;
+import io.scal.secureshareuilibrary.R;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
+import android.util.Log;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.ProxySOCKS4;
-import com.jcraft.jsch.ProxySOCKS5;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
-
-import info.guardianproject.onionkit.ui.OrbotHelper;
-import io.scal.secureshareui.login.SSHLoginActivity;
-import io.scal.secureshareui.model.Account;
-import io.scal.secureshareuilibrary.R;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Handler;
 
 public class SSHSiteController extends SiteController {
     private static final String TAG = "SSHSiteController";
     public static final String SITE_NAME = "Private Server (SSH)"; 
     public static final String SITE_KEY = "ssh"; 
 
+    
     public SSHSiteController(Context context, Handler handler, String jobId) {
         super(context, handler, jobId);
         // TODO Auto-generated constructor stub
@@ -45,7 +47,14 @@ public class SSHSiteController extends SiteController {
     }
 
     @Override
-    public void upload(String title, String body, String mediaPath, Account account, boolean useTor) {
+    public void upload(Account account, HashMap<String, String> valueMap) {
+		Log.d(TAG, "Upload file: Entering upload");
+		
+		String title = valueMap.get("title");
+		String body = valueMap.get("body");
+		String mediaPath = valueMap.get("mediaPath");
+		boolean useTor = Boolean.getBoolean(valueMap.get("useTor"));
+		
         String host = null;
         String remotePath = null;
         JSONObject obj = null;

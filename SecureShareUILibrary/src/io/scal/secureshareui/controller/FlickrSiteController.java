@@ -1,20 +1,13 @@
 package io.scal.secureshareui.controller;
 
+import io.scal.secureshareui.login.FlickrLoginActivity;
+import io.scal.secureshareui.model.Account;
+import io.scal.secureshareuilibrary.R;
+
 import java.io.File;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.util.List;
-
-import com.flickr.api.Flickr;
-import com.flickr.api.FlickrException;
-import com.flickr.api.FlickrProperties;
-import com.flickr.api.PeopleService;
-import com.flickr.api.PhotosService;
-import com.flickr.api.UploadService;
-import com.flickr.api.entities.Comment;
-import com.flickr.api.entities.Paginated;
-import com.flickr.api.entities.Photo;
-import com.flickr.api.entities.UserInfos;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.content.Context;
@@ -23,10 +16,11 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
-import info.guardianproject.onionkit.ui.OrbotHelper;
-import io.scal.secureshareui.login.FlickrLoginActivity;
-import io.scal.secureshareui.model.Account;
-import io.scal.secureshareuilibrary.R;
+
+import com.flickr.api.Flickr;
+import com.flickr.api.FlickrException;
+import com.flickr.api.FlickrProperties;
+import com.flickr.api.UploadService;
 
 public class FlickrSiteController extends SiteController {
     public static final String SITE_NAME = "Flickr"; 
@@ -36,9 +30,6 @@ public class FlickrSiteController extends SiteController {
     String key;
     String secret;
     
- // TOR PROXY SETTINGS
-    private static final String ORBOT_HOST = "127.0.0.1";
-    private static final int ORBOT_HTTP_PORT = 8118;
     
     public FlickrSiteController(Context context, Handler handler, String jobId) {
         super(context, handler, jobId);
@@ -59,8 +50,14 @@ public class FlickrSiteController extends SiteController {
     }
     
     @Override
-    public void upload(String title, String body, String mediaPath, Account account, boolean useTor)
-    {
+    public void upload(Account account, HashMap<String, String> valueMap) {
+		Log.d(TAG, "Upload file: Entering upload");
+		
+		String title = valueMap.get("title");
+		String body = valueMap.get("body");
+		String mediaPath = valueMap.get("mediaPath");
+		boolean useTor = Boolean.getBoolean(valueMap.get("useTor"));
+		
         String path = Environment.getExternalStorageDirectory() + File.separator + "flickr.conf"; // FIXME this should probably be stored on protected internal storage... or perhaps IOCipher
         
         Log.d(TAG, "upload() path: " + path);

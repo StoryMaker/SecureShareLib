@@ -6,8 +6,7 @@ import io.scal.secureshareui.model.Account;
 import io.scal.secureshareuilibrary.R;
 
 import java.io.File;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
+import java.util.HashMap;
 
 import android.content.Context;
 import android.net.Uri;
@@ -58,7 +57,7 @@ public abstract class SiteController {
 
     public abstract void startAuthentication(Account account);
 
-    public abstract void upload(String title, String body, String mediaPath, Account account, boolean useTor);
+    public abstract void upload(Account account, HashMap<String, String> valueMap);
 
     public static boolean torCheck(boolean useTor, Context mContext) {
         OrbotHelper orbotHelper = new OrbotHelper(mContext);
@@ -90,6 +89,9 @@ public abstract class SiteController {
         }
         else if (site.equals(SSHSiteController.SITE_KEY)) {
             return new SSHSiteController(context, handler, jobId);
+        }
+        else if (site.equals(ArchiveSiteController.SITE_KEY)) {
+            return new ArchiveSiteController(context, handler, jobId);
         }
 
         return null;
@@ -199,6 +201,12 @@ public abstract class SiteController {
         		return R.drawable.ic_context_server;
         	}
         	return areCredentialsValid ? R.drawable.ic_context_server_on : R.drawable.ic_context_server_error;
+        }
+        else if (site.equals(ArchiveSiteController.SITE_KEY)) {
+        	if (!isConnected) {
+        		return R.drawable.ic_context_server; //TODO add archive.org assets
+        	}
+        	return areCredentialsValid ? R.drawable.ic_context_server_on : R.drawable.ic_context_server_error; //TODO add archive.org assets
         }
 
         return R.drawable.ic_launcher;

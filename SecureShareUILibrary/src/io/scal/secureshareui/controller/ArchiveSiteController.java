@@ -3,16 +3,11 @@ package io.scal.secureshareui.controller;
 import io.scal.secureshareui.login.FacebookLoginActivity;
 import io.scal.secureshareui.model.Account;
 
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,6 +15,12 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
+
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
 public class ArchiveSiteController extends SiteController {
 	public static final String SITE_NAME = "Archive";
@@ -48,8 +49,13 @@ public class ArchiveSiteController extends SiteController {
 	}
 
 	@Override
-	public void upload(String title, String body, String mediaPath, Account account, boolean useTor) {
+	public void upload(Account account, HashMap<String, String> valueMap) {
 		Log.d(TAG, "Upload file: Entering upload");
+		
+		String title = valueMap.get("title");
+		String body = valueMap.get("body");
+		String mediaPath = valueMap.get("mediaPath");
+		boolean useTor = Boolean.getBoolean(valueMap.get("useTor"));
 
 		File file = new File(mediaPath);
 		if (!file.exists()) {
@@ -59,7 +65,6 @@ public class ArchiveSiteController extends SiteController {
 
 		OkHttpClient client = new OkHttpClient();
 
-		useTor = false; // FIXME Hardcoded until we find a Tor workaround
 		if (super.torCheck(useTor, super.mContext)) {
 			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ORBOT_HOST, ORBOT_HTTP_PORT));
 			client.setProxy(proxy);
@@ -99,15 +104,17 @@ public class ArchiveSiteController extends SiteController {
 
 			try {
 				response = client.newCall(request).execute();
+				if (!response.isSuccessful()) {
+					jobFailed(4000001, "Archive upload failed: Unexpected Response Code: " + response);
+					Log.d(TAG, response.body().string());
+				}
 			} catch (IOException e) {
-				jobFailed(4000001, "Archive upload failed");
-				e.printStackTrace();
-			}
-
-			try {
-				Log.d(TAG, response.body().string());
-			} catch (IOException e) {
-				e.printStackTrace();
+				jobFailed(4000002, "Archive upload failed: IOException");
+				try {
+					Log.d(TAG, response.body().string());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 			}
 
 			return "-1";

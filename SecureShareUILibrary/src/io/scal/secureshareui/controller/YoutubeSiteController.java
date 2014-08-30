@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
@@ -49,6 +50,7 @@ public class YoutubeSiteController extends SiteController {
     
     private static String VIDEO_FILE_FORMAT = "video/*";
     
+    
     public YoutubeSiteController(Context context, Handler handler, String jobId) {
         super(context, handler, jobId);
     }
@@ -61,7 +63,14 @@ public class YoutubeSiteController extends SiteController {
     }
     
 	@Override
-	public void upload(String title, String body, String mediaPath, Account account, boolean useTor) {	
+	public void upload(Account account, HashMap<String, String> valueMap) {
+		Log.d(TAG, "Upload file: Entering upload");
+		
+		String title = valueMap.get("title");
+		String body = valueMap.get("body");
+		String mediaPath = valueMap.get("mediaPath");
+		boolean useTor = Boolean.getBoolean(valueMap.get("useTor"));
+		
 		List<String> scopes = new ArrayList<String>();
 		scopes.add(YouTubeScopes.YOUTUBE_UPLOAD);
 		
