@@ -53,10 +53,10 @@ public class FlickrSiteController extends SiteController {
     public void upload(Account account, HashMap<String, String> valueMap) {
 		Log.d(TAG, "Upload file: Entering upload");
 		
-		String title = valueMap.get("title");
-		String body = valueMap.get("body");
-		String mediaPath = valueMap.get("mediaPath");
-		boolean useTor = Boolean.getBoolean(valueMap.get("useTor"));
+		String title = valueMap.get(VALUE_KEY_TITLE);
+		String body = valueMap.get(VALUE_KEY_BODY);
+		String mediaPath = valueMap.get(VALUE_KEY_MEDIA_PATH);
+		boolean useTor = Boolean.getBoolean(valueMap.get(VALUE_KEY_USE_TOR));
 		
         String path = Environment.getExternalStorageDirectory() + File.separator + "flickr.conf"; // FIXME this should probably be stored on protected internal storage... or perhaps IOCipher
         

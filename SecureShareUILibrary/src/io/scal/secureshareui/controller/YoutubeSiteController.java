@@ -66,10 +66,10 @@ public class YoutubeSiteController extends SiteController {
 	public void upload(Account account, HashMap<String, String> valueMap) {
 		Log.d(TAG, "Upload file: Entering upload");
 		
-		String title = valueMap.get("title");
-		String body = valueMap.get("body");
-		String mediaPath = valueMap.get("mediaPath");
-		boolean useTor = Boolean.getBoolean(valueMap.get("useTor"));
+		String title = valueMap.get(VALUE_KEY_TITLE);
+		String body = valueMap.get(VALUE_KEY_BODY);
+		String mediaPath = valueMap.get(VALUE_KEY_MEDIA_PATH);
+		boolean useTor = Boolean.getBoolean(valueMap.get(VALUE_KEY_USE_TOR));
 		
 		List<String> scopes = new ArrayList<String>();
 		scopes.add(YouTubeScopes.YOUTUBE_UPLOAD);
