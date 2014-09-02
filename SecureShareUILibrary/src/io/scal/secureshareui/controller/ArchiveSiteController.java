@@ -24,7 +24,7 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
 public class ArchiveSiteController extends SiteController {
-	public static final String SITE_NAME = "Archive";
+	public static final String SITE_NAME = "Internet Archive";
 	public static final String SITE_KEY = "archive";
 	private static final String TAG = "ArchiveSiteController";
     static {

@@ -25,7 +25,7 @@ public class Util {
     {
 
       /* Assign a string that contains the set of characters you allow. */
-      private static final String symbols = "ABCDEFGJKLMNPRSTUVWXYZ0123456789"; 
+      private static final String symbols = "abcdefghijklmnopqrstuvwxyz0123456789";
 
       private final Random random = new SecureRandom();
 
