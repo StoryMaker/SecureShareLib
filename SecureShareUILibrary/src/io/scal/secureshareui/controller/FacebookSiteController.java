@@ -132,4 +132,10 @@ public class FacebookSiteController extends SiteController {
 
         request.executeAsync();
     }
+
+    @Override
+    public void startMetadataActivity(Intent intent) {
+        return; // nop
+    }
+
 }

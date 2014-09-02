@@ -32,5 +32,6 @@
     <string name="sign_in">Sign In</string>
     <string name="inavalid_credentials">*Invalid Login Credentials</string>
     <string name="ssh_upload_in_progress">SSH upload in progress...</string>
-
+	<string name="lbl_no">off</string>
+	<string name="lbl_yes">on</string>
 </resources>

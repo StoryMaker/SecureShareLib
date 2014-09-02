@@ -214,4 +214,10 @@ public class YoutubeSiteController extends SiteController {
 			return null;
 		}
 	}
+
+    @Override
+    public void startMetadataActivity(Intent intent) {
+        return; // nop
+    }
+
 }

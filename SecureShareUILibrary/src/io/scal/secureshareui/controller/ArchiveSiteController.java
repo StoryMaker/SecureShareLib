@@ -27,6 +27,9 @@ public class ArchiveSiteController extends SiteController {
 	public static final String SITE_NAME = "Archive";
 	public static final String SITE_KEY = "archive";
 	private static final String TAG = "ArchiveSiteController";
+    static {
+        METADATA_REQUEST_CODE = 1022783271;
+    }
 
 	private static final String sArchiveAPIEndpoint = "http://s3.us.archive.org";
 	private static final String sAccessKey = "Te8eJIS48D6N32Ju"; // FIXME use login credentials
@@ -154,4 +157,9 @@ public class ArchiveSiteController extends SiteController {
 			return "-1";
 		}
 	}
+
+    @Override
+    public void startMetadataActivity(Intent intent) {
+//        get the intent extras and launch the new intent with them
+    }
 }

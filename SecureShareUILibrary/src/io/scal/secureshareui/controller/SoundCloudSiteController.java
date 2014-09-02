@@ -108,4 +108,10 @@ public class SoundCloudSiteController extends SiteController {
             }
         }
     }
+
+    @Override
+    public void startMetadataActivity(Intent intent) {
+        return; // nop
+    }
+
 }

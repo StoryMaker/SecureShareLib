@@ -410,4 +410,10 @@ public class SSHSiteController extends SiteController {
 //            }
 //        }
     }
+
+    @Override
+    public void startMetadataActivity(Intent intent) {
+        return; // nop
+    }
+
 }

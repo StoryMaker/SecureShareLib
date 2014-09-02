@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.HashMap;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -49,6 +50,8 @@ public abstract class SiteController {
     protected static final String ORBOT_HOST = "127.0.0.1";
     protected static final int ORBOT_HTTP_PORT = 8118;
     protected static final int ORBOT_SOCKS_PORT = 9050;
+    
+    public static int METADATA_REQUEST_CODE = 1022783270;
 
     private static final String TAG = "SiteController";
 
@@ -67,6 +70,13 @@ public abstract class SiteController {
     }
 
     public abstract void startAuthentication(Account account);
+    
+    /**
+     * Gives a SiteController a chance to add metadata to the intent resulting from the ChooseAccounts process
+     * that gets passed to each SiteController during publishing
+     * @param intent   
+     */
+    public abstract void startMetadataActivity(Intent intent);
 
     public abstract void upload(Account account, HashMap<String, String> valueMap);
 
