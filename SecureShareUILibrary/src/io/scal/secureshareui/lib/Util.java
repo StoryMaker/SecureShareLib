@@ -1,6 +1,9 @@
 
 package io.scal.secureshareui.lib;
 
+import java.security.SecureRandom;
+import java.util.Random;
+
 import info.guardianproject.onionkit.ui.OrbotHelper;
 
 import android.content.Context;
@@ -17,4 +20,30 @@ public class Util {
         return (orbotHelper.isOrbotInstalled() && orbotHelper.isOrbotRunning());
     }
 
+    // TODO audit code for security since we use the to generate random strings for url slugs
+    public static final class RandomString
+    {
+
+      /* Assign a string that contains the set of characters you allow. */
+      private static final String symbols = "ABCDEFGJKLMNPRSTUVWXYZ0123456789"; 
+
+      private final Random random = new SecureRandom();
+
+      private final char[] buf;
+
+      public RandomString(int length)
+      {
+        if (length < 1)
+          throw new IllegalArgumentException("length < 1: " + length);
+        buf = new char[length];
+      }
+
+      public String nextString()
+      {
+        for (int idx = 0; idx < buf.length; ++idx) 
+          buf[idx] = symbols.charAt(random.nextInt(symbols.length()));
+        return new String(buf);
+      }
+
+    }
 }

@@ -34,8 +34,9 @@ public abstract class SiteController {
     public static final String EXTRAS_KEY_DATA = "data";
     public static final String EXTRAS_KEY_USERNAME = "username";
     public static final String EXTRAS_KEY_CREDENTIALS = "credentials";
-    
-	public static final String VALUE_KEY_TITLE = "title";
+
+    public static final String VALUE_KEY_TITLE = "title";
+    public static final String VALUE_KEY_SLUG = "slug";
 	public static final String VALUE_KEY_BODY = "body";
 	public static final String VALUE_KEY_TAGS = "tags";
 	public static final String VALUE_KEY_AUTHOR = "author";
@@ -43,6 +44,7 @@ public abstract class SiteController {
 	public static final String VALUE_KEY_LOCATION_NAME = "locationName";
 	public static final String VALUE_KEY_MEDIA_PATH = "mediaPath";
 	public static final String VALUE_KEY_USE_TOR = "use_tor";
+	public static final String VALUE_KEY_PUBLISH_TO_STORYMAKER = "publish_to_storymaker"; // TODO generalize this, allow clie
     
     protected static final String ORBOT_HOST = "127.0.0.1";
     protected static final int ORBOT_HTTP_PORT = 8118;

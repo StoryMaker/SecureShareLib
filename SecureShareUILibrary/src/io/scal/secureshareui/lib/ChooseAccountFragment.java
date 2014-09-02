@@ -48,8 +48,6 @@ public class ChooseAccountFragment extends Fragment {
     private static boolean mAttemptingLoginRetry = false;
     public static final int ACCOUNT_REQUEST_CODE = 102;
     public static final String EXTRAS_ACCOUNT_KEYS = "accountIds";
-    public static final String EXTRAS_USE_TOR = "use_tor";
-    public static final String EXTRAS_PUBLISH_TO_STORYMAKER = "publish_to_storymaker"; // TODO generalize this, allow clie
 
     // return the ids of selected items
     ArrayList<String> mSelectedAccountIds = new ArrayList<String>();
@@ -85,8 +83,8 @@ public class ChooseAccountFragment extends Fragment {
                         // item
                         Intent data = new Intent();
                         data.putStringArrayListExtra(EXTRAS_ACCOUNT_KEYS, mSelectedAccountIds);
-                        data.putExtra(EXTRAS_USE_TOR, mSwitchTor.isChecked());
-                        data.putExtra(EXTRAS_PUBLISH_TO_STORYMAKER, mSwitchStoryMaker.isChecked());
+                        data.putExtra(SiteController.VALUE_KEY_USE_TOR, mSwitchTor.isChecked());
+                        data.putExtra(SiteController.VALUE_KEY_PUBLISH_TO_STORYMAKER, mSwitchStoryMaker.isChecked());
                         getActivity().setResult(Activity.RESULT_OK, data);
                         getActivity().finish();
                     }

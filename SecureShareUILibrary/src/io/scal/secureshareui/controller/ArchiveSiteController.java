@@ -1,5 +1,6 @@
 package io.scal.secureshareui.controller;
 
+import io.scal.secureshareui.lib.Util;
 import io.scal.secureshareui.login.ArchiveLoginActivity;
 import io.scal.secureshareui.model.Account;
 
@@ -27,14 +28,11 @@ public class ArchiveSiteController extends SiteController {
 	public static final String SITE_KEY = "archive";
 	private static final String TAG = "ArchiveSiteController";
 
-	private static final String sArchiveAPIEndpoint = "http://s3.us.archive.org/";
-	private static final String sAccessKey = "Te8eJIS48D6N32Ju";
-	private static final String sSecretKey = "HI4q8EWv1Rn2Bgfu";
-
-	private static final String sBucketName = "theworldisavampire2";
-	private static final String sBucketKey = "my_new_file.mp4";
-	
-	public static final String VALUE_KEY_LICENSE_URL = "licenseUrl";
+	private static final String sArchiveAPIEndpoint = "http://s3.us.archive.org";
+	private static final String sAccessKey = "Te8eJIS48D6N32Ju"; // FIXME use login credentials
+	private static final String sSecretKey = "HI4q8EWv1Rn2Bgfu"; // FIXME use login credentials
+	private String resultUrl = "";
+	public static final String VALUE_KEY_LICENSE_URL = "licenseUrl";    // FIXME use correct shit for this
 
 	public static final MediaType MEDIA_TYPE = MediaType.parse("");
 
@@ -54,7 +52,8 @@ public class ArchiveSiteController extends SiteController {
 	public void upload(Account account, HashMap<String, String> valueMap) {
 		Log.d(TAG, "Upload file: Entering upload");
 		// TODO this should make sure we arn't accidentally using one of archive.org's metadata fields by accident
-		String title = valueMap.get(VALUE_KEY_TITLE);
+        String title = valueMap.get(VALUE_KEY_TITLE);
+        String slug = valueMap.get(VALUE_KEY_SLUG);
 		String tags = valueMap.get(VALUE_KEY_TAGS); // FIXME move these magic keys into  constants
 		String author = valueMap.get(VALUE_KEY_AUTHOR);
 		String profileUrl = valueMap.get(VALUE_KEY_PROFILE_URL);
@@ -63,8 +62,11 @@ public class ArchiveSiteController extends SiteController {
 		String mediaPath = valueMap.get(VALUE_KEY_MEDIA_PATH);
 		boolean useTor = Boolean.getBoolean(valueMap.get(VALUE_KEY_USE_TOR));
 
+		String fileName = mediaPath.substring(mediaPath.lastIndexOf("/")+1, mediaPath.length()); 
+		
 		String licenseUrl = valueMap.get(VALUE_KEY_LICENSE_URL);
 
+		
 		File file = new File(mediaPath);
 		if (!file.exists()) {
 			jobFailed(4000473, "Archive upload failed: invalid file");
@@ -78,17 +80,23 @@ public class ArchiveSiteController extends SiteController {
 			client.setProxy(proxy);
 		}
 
-		String url = sArchiveAPIEndpoint + "/" + sBucketName + "/" + sBucketKey;
+        // FIXME we are putting a random 4 cahr string in the bucket name for collision avoidance, we might want to do this differently?
+        String randomString = new Util.RandomString(4).nextString();
+        String url = sArchiveAPIEndpoint  + "/" + slug + "-" + randomString + "/" + fileName;
+		Log.d(TAG, "uploading to url: " + url);
+		
+		resultUrl = "https://archive.org/details/" + slug + "-" + randomString;
 
 		Request.Builder builder = new Request.Builder()
 				.url(url)
 				.put(RequestBody.create(MEDIA_TYPE, file))
 				.addHeader("Accept", "*/*")
-				.addHeader("x-amz-auto-make-bucket", "1")
+                .addHeader("x-amz-auto-make-bucket", "1")
 //				.addHeader("x-archive-meta01-collection", "opensource")
 //				.addHeader("x-archive-meta-mediatype", "texts")
 //				.addHeader("x-archive-meta-sponsor", "Sponsor 998")
 				.addHeader("x-archive-meta-language", "eng") // FIXME pull meta language from story
+				// FIXME add all metadata from metadata as headers here
 				.addHeader("authorization", "LOW " + sAccessKey + ":" + sSecretKey);
 
 		if (profileUrl != null) {
@@ -100,11 +108,8 @@ public class ArchiveSiteController extends SiteController {
 		}
 		
 		if (tags != null) {
-			String keywords = tags.replace(',', ';');
-			builder.addHeader("x-archive-meta-keywords", keywords);
-//			for (String tag: tags.split("'")) {
-//				
-//			}
+			String keywords = tags.replace(',', ';').replaceAll(" ", "");
+			builder.addHeader("x-archive-meta-subject", keywords);
 		}
 		
 		
@@ -131,16 +136,18 @@ public class ArchiveSiteController extends SiteController {
 
 			try {
 				response = client.newCall(request).execute();
+                Log.d(TAG, "response: " + response + ", body: " + response.body().string());
 				if (!response.isSuccessful()) {
 					jobFailed(4000001, "Archive upload failed: Unexpected Response Code: " + response);
-					Log.d(TAG, response.body().string());
+				} else {
+				    jobSucceeded(resultUrl);
 				}
 			} catch (IOException e) {
 				jobFailed(4000002, "Archive upload failed: IOException");
 				try {
 					Log.d(TAG, response.body().string());
 				} catch (IOException e1) {
-					e1.printStackTrace();
+				    Log.d(TAG, "exception: " + e1.getLocalizedMessage() + ", stacktrace: " + e1.getStackTrace());
 				}
 			}
 
