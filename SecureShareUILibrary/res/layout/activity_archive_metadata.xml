@@ -4,8 +4,8 @@
     android:layout_height="wrap_content" >
 
 <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="8dp"
     android:paddingLeft="16dp"
@@ -175,7 +175,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingBottom="4dp"
-        android:paddingTop="4dp" >
+        android:paddingTop="4dp" 
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/iv_location"
@@ -286,31 +287,31 @@
         android:orientation="horizontal" >
 
         <RadioButton
-            android:id="@+id/radio0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_weight="1"
-            android:background="@drawable/by"
-            android:checked="true"
-            android:text="" />
-
-        <RadioButton
-            android:id="@+id/radio1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_weight="1"
-            android:background="@drawable/bysa"
-            android:text="" />
-
-        <RadioButton
-            android:id="@+id/radio2"
+            android:id="@+id/radioByNcNd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_weight="1"
             android:background="@drawable/byncnd"
+            android:text="" 
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/radioBy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/by"
+            android:text="" />
+
+        <RadioButton
+            android:id="@+id/radioBySa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bysa"
             android:text="" />
 
     </RadioGroup>

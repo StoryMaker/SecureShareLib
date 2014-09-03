@@ -1,5 +1,6 @@
 package io.scal.secureshareui.controller;
 
+import io.scal.secureshareui.lib.ArchiveMetadataActivity;
 import io.scal.secureshareui.lib.Util;
 import io.scal.secureshareui.login.ArchiveLoginActivity;
 import io.scal.secureshareui.model.Account;
@@ -54,25 +55,29 @@ public class ArchiveSiteController extends SiteController {
 	@Override
 	public void upload(Account account, HashMap<String, String> valueMap) {
 		Log.d(TAG, "Upload file: Entering upload");
+        
+		String mediaPath = valueMap.get(VALUE_KEY_MEDIA_PATH);
+        boolean useTor = Boolean.getBoolean(valueMap.get(VALUE_KEY_USE_TOR));
+        String fileName = mediaPath.substring(mediaPath.lastIndexOf("/")+1, mediaPath.length()); 
+        String licenseUrl = valueMap.get(VALUE_KEY_LICENSE_URL);
+        
 		// TODO this should make sure we arn't accidentally using one of archive.org's metadata fields by accident
         String title = valueMap.get(VALUE_KEY_TITLE);
+        boolean shareTitle = (valueMap.get(ArchiveMetadataActivity.INTENT_EXTRA_SHARE_TITLE).equals("true")) ? true : false;
         String slug = valueMap.get(VALUE_KEY_SLUG);
 		String tags = valueMap.get(VALUE_KEY_TAGS); // FIXME move these magic keys into  constants
+        boolean shareTags = (valueMap.get(ArchiveMetadataActivity.INTENT_EXTRA_SHARE_TAGS).equals("true")) ? true : false;
 		String author = valueMap.get(VALUE_KEY_AUTHOR);
-		String profileUrl = valueMap.get(VALUE_KEY_PROFILE_URL);
+        boolean shareAuthor = (valueMap.get(ArchiveMetadataActivity.INTENT_EXTRA_SHARE_AUTHOR).equals("true")) ? true : false;
+//		String profileUrl = valueMap.get(VALUE_KEY_PROFILE_URL);
 		String locationName = valueMap.get(VALUE_KEY_LOCATION_NAME);
+        boolean shareLocation = (valueMap.get(ArchiveMetadataActivity.INTENT_EXTRA_SHARE_LOCATION).equals("true")) ? true : false;
 		String body = valueMap.get(VALUE_KEY_BODY);
-		String mediaPath = valueMap.get(VALUE_KEY_MEDIA_PATH);
-		boolean useTor = Boolean.getBoolean(valueMap.get(VALUE_KEY_USE_TOR));
-
-		String fileName = mediaPath.substring(mediaPath.lastIndexOf("/")+1, mediaPath.length()); 
-		
-		String licenseUrl = valueMap.get(VALUE_KEY_LICENSE_URL);
-
+        boolean shareDescription = (valueMap.get(ArchiveMetadataActivity.INTENT_EXTRA_SHARE_DESCRIPTION).equals("true")) ? true : false;
 		
 		File file = new File(mediaPath);
 		if (!file.exists()) {
-			jobFailed(4000473, "Archive upload failed: invalid file");
+			jobFailed(4000473, "Internett Archive upload failed: invalid file");
 			return;
 		}
 
@@ -84,11 +89,19 @@ public class ArchiveSiteController extends SiteController {
 		}
 
         // FIXME we are putting a random 4 cahr string in the bucket name for collision avoidance, we might want to do this differently?
-        String randomString = new Util.RandomString(4).nextString();
-        String url = sArchiveAPIEndpoint  + "/" + slug + "-" + randomString + "/" + fileName;
+		String urlPath = null;
+		String url = null;
+        if (shareTitle) {
+            String randomString = new Util.RandomString(4).nextString();
+            urlPath = slug + "-" + randomString;
+            url = sArchiveAPIEndpoint  + "/" + urlPath + "/" + fileName;
+        } else {
+            urlPath = new Util.RandomString(16).nextString(); // FIXME need to use real GUIDs
+            url = sArchiveAPIEndpoint  + "/" + urlPath + "/" + fileName;
+        }
 		Log.d(TAG, "uploading to url: " + url);
 		
-		resultUrl = "https://archive.org/details/" + slug + "-" + randomString;
+		resultUrl = "https://archive.org/details/" + urlPath;
 
 		Request.Builder builder = new Request.Builder()
 				.url(url)
@@ -102,20 +115,30 @@ public class ArchiveSiteController extends SiteController {
 				// FIXME add all metadata from metadata as headers here
 				.addHeader("authorization", "LOW " + sAccessKey + ":" + sSecretKey);
 
-		if (profileUrl != null) {
-			builder.addHeader("x-archive-meta-authorurl", profileUrl);
-		}
+//		if (profileUrl != null) {
+//			builder.addHeader("x-archive-meta-authorurl", profileUrl);
+//		}
 		
 		if (locationName != null) {
 			builder.addHeader("x-archive-meta-location", locationName);
 		}
-		
-		if (tags != null) {
-			String keywords = tags.replace(',', ';').replaceAll(" ", "");
-			builder.addHeader("x-archive-meta-subject", keywords);
-		}
-		
-		
+        
+        if (shareTags && tags != null) {
+            String keywords = tags.replace(',', ';').replaceAll(" ", "");
+            builder.addHeader("x-archive-meta-subject", keywords);
+        }
+        
+        if (shareDescription && body != null) {
+            builder.addHeader("x-archive-meta-description", body);
+        }
+        
+        if (shareTitle && title != null) {
+            builder.addHeader("x-archive-meta-title", title);
+        }
+        
+        if (licenseUrl != null) {
+            builder.addHeader("x-archive-meta-licenseurl", licenseUrl);
+        }
 		
 		Request request = builder.build();
 
