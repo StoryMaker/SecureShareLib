@@ -64,9 +64,13 @@ public class ArchiveLoginActivity extends Activity {
 				super.onPageFinished(view, url);		
 				//if credentials page, inject JS for scraping
 				if (url.equals(ARCHIVE_CREDENTIALS_URL)) {
-		            String jsInjected = "javascript:window.htmlout.processHTML('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');";
-		            webview.loadUrl(jsInjected);
+		            String jsCheckBox= "javascript:(function(){document.getElementById('confirm').checked=true;})();";
+		            String jsBtnClick = "javascript:(function(){$('[value=\"Generate New Keys\"]').click();})();";
+		            String jsSourceDump = "javascript:window.htmlout.processHTML('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');";
+		            
+					webview.loadUrl(jsCheckBox + jsBtnClick + jsSourceDump); 
 				}
+				
 			}
 		});
 
@@ -80,12 +84,18 @@ public class ArchiveLoginActivity extends Activity {
 		int iStartCode = rawHtml.indexOf(startCode);
 		int iEndCode = rawHtml.lastIndexOf(endCode);
 		
-		//user doesn't appear to be logged in
+		//code tags not on page
 		if(iStartCode < 0 || iEndCode < 0) {
 			return;
 		}
+		
 		String rawCodes = rawHtml.substring(iStartCode, iEndCode);
 		rawCodes = rawCodes.replaceAll("\\s", "");
+		
+		//check to see codes are !present
+		if(rawCodes.contains("GenerateNewKeys")) {
+			return;
+		}
 		
 		//strip codes
 		char colon = ':';
