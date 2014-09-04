@@ -69,7 +69,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:checked="true"
             android:textOff="@string/lbl_no"
             android:textOn="@string/lbl_yes" />
     </RelativeLayout>
@@ -292,8 +291,7 @@
             android:layout_margin="8dp"
             android:layout_weight="1"
             android:background="@drawable/byncnd"
-            android:text="" 
-            android:checked="true" />
+            android:text="" />
 
         <RadioButton
             android:id="@+id/radioBy"
