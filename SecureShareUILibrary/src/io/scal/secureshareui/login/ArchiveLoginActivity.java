@@ -22,18 +22,20 @@ public class ArchiveLoginActivity extends Activity {
 	private final static String ARCHIVE_LOGGED_IN_URL = "https://archive.org/index.php";
 	private final static String ARCHIVE_CREDENTIALS_URL = "https://archive.org/account/s3.php";
 
-	private static int mAccessResult = Activity.RESULT_CANCELED;
-	private static String mAccessKey = null;
-    private static String mSecretKey = null;
-
+	private static boolean sIsLoginScren = false;
+	private int mAccessResult = Activity.RESULT_CANCELED;
+	private String mAccessKey = null;
+    private String mSecretKey = null;
+    
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		login();
+		login(ARCHIVE_LOGIN_URL);
 	}
 
 	@SuppressLint({ "SetJavaScriptEnabled" })
-	private void login() {
+	private void login(String currentURL) {
 		final WebView webview = new WebView(this);
 		webview.getSettings().setJavaScriptEnabled(true);
 		webview.addJavascriptInterface(new JSInterface(), "htmlout");
@@ -48,14 +50,7 @@ public class ArchiveLoginActivity extends Activity {
 					view.loadUrl(ARCHIVE_CREDENTIALS_URL);
 					
 					return true;
-				} else if(url.equals(ARCHIVE_CREATE_ACCOUNT_URL)) {
-						showAccountCreatedDialog(new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    });
-				}
-				
+				}			
 				return false;
 			}
 
@@ -64,17 +59,22 @@ public class ArchiveLoginActivity extends Activity {
 				super.onPageFinished(view, url);		
 				//if credentials page, inject JS for scraping
 				if (url.equals(ARCHIVE_CREDENTIALS_URL)) {
+					sIsLoginScren = true;
+					
 		            String jsCheckBox= "javascript:(function(){document.getElementById('confirm').checked=true;})();";
 		            String jsBtnClick = "javascript:(function(){$('[value=\"Generate New Keys\"]').click();})();";
 		            String jsSourceDump = "javascript:window.htmlout.processHTML('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');";
 		            
 					webview.loadUrl(jsCheckBox + jsBtnClick + jsSourceDump); 
-				}
-				
+				} else if(url.equals(ARCHIVE_CREATE_ACCOUNT_URL)) {
+					sIsLoginScren = false;
+					String jsSourceDump = "javascript:window.htmlout.processHTML('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');";
+					webview.loadUrl(jsSourceDump);
+				}			
 			}
 		});
 
-		webview.loadUrl(ARCHIVE_LOGIN_URL);
+		webview.loadUrl(currentURL);
 	}
 	
 	private void parseArchiveCredentials(String rawHtml) {
@@ -115,22 +115,31 @@ public class ArchiveLoginActivity extends Activity {
 		finish();
 	}
 	
+	class JSInterface {
+	    @JavascriptInterface
+		public void processHTML(String html) {			
+			if(null == html) {
+				return;
+			}
+			
+			if(sIsLoginScren) {
+				parseArchiveCredentials(html);
+			} else if (html.contains("Verification Email Sent")) {
+				showAccountCreatedDialog(new DialogInterface.OnClickListener() {
+					@Override
+                    public void onClick(DialogInterface dialog, int which) {
+						finish();
+                    }
+                });		
+			}
+	    }
+	}
+	
 	private void showAccountCreatedDialog(DialogInterface.OnClickListener positiveBtnClickListener) {
 		new AlertDialog.Builder(this)
 				.setTitle(getString(R.string.archive_title))
 				.setMessage(getString(R.string.archive_message))
 				.setPositiveButton(R.string.ok, positiveBtnClickListener).show();
-	}
-	
-	class JSInterface {
-	    @SuppressWarnings("null")
-		@JavascriptInterface
-		public void processHTML(String html) {			
-			if(null == html) {
-				return;
-			}
-			parseArchiveCredentials(html);
-	    }
 	}
 
 	@Override

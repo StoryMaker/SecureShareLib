@@ -35,5 +35,5 @@
 	<string name="lbl_no">off</string>
 	<string name="lbl_yes">on</string>
 	<string name="archive_title">Email Confimation</string>
-	<string name="archive_message">Please confirm your email and return here to login.</string>
+	<string name="archive_message">Please confirm your email and return to connect your Archive account.</string>
 </resources>
