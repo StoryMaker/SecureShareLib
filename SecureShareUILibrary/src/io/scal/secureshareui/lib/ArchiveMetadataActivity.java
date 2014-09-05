@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +35,14 @@ public class ArchiveMetadataActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_archive_metadata);
 		Button button = (Button) findViewById(R.id.buttonSubmit);
+		
+		//set up links in textviews
+		TextView tvLicenseByNcNd = (TextView) findViewById(R.id.tv_license_byncnd);
+		tvLicenseByNcNd.setMovementMethod(LinkMovementMethod.getInstance());
+		TextView tvLicenseBy = (TextView) findViewById(R.id.tv_license_by);
+		tvLicenseBy.setMovementMethod(LinkMovementMethod.getInstance());		
+		TextView tvLicenseBySa = (TextView) findViewById(R.id.tv_license_bysa);
+		tvLicenseBySa.setMovementMethod(LinkMovementMethod.getInstance());
 
         final Switch title = (Switch) findViewById(R.id.tb_title);
         final Switch description = (Switch) findViewById(R.id.tb_description);
