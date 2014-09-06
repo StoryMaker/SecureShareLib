@@ -288,7 +288,7 @@
             android:id="@+id/radioByNcNd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_margin="4dp"
             android:layout_weight="1"
             android:background="@drawable/byncnd"
             android:text="" />
@@ -297,7 +297,7 @@
             android:id="@+id/radioBy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_margin="4dp"
             android:layout_weight="1"
             android:background="@drawable/by"
             android:text="" />
@@ -306,7 +306,7 @@
             android:id="@+id/radioBySa"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_margin="4dp"
             android:layout_weight="1"
             android:background="@drawable/bysa"
             android:text="" />
@@ -325,7 +325,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_margin="4dp"
             android:layout_weight="1"
             android:text="@string/archive_license_byncnd"
             android:textAppearance="?android:attr/textAppearanceSmall" />
@@ -335,7 +334,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_margin="4dp"
             android:layout_weight="1"
             android:text="@string/archive_license_by"
             android:textAppearance="?android:attr/textAppearanceSmall" />
@@ -345,7 +343,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_margin="4dp"
             android:layout_weight="1"
             android:text="@string/archive_license_bysa"
             android:textAppearance="?android:attr/textAppearanceSmall" />
@@ -357,8 +354,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginTop="16dp"
-        android:text="Submit to Internet Archive" />
+        android:layout_marginTop="8dp"
+        android:text="@string/upload_to_internet_archive" />
 
 </LinearLayout>
 </ScrollView>

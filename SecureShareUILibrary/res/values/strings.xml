@@ -40,4 +40,5 @@
 	<string name="archive_license_by"><a href="https://creativecommons.org/licenses/by/4.0/">By</a></string>
 	<string name="archive_license_bysa"><a href="https://creativecommons.org/licenses/by-sa/4.0/">By SA</a></string>
 	<string name="archive_license_byncnd"><a href="http://creativecommons.org/licenses/by-nc-nd/4.0/">By NC/ND</a></string>
+	<string name="upload_to_internet_archive">Upload to Internet Archive</string>
 </resources>
