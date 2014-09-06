@@ -19,13 +19,13 @@
 		<ScrollView
 		    android:id="@+id/scrollView1"
 		    android:layout_width="match_parent"
-		    android:layout_height="match_parent"
+		    android:layout_height="0dp"
 		    android:layout_weight="1" 
 		    >
 
 		    <LinearLayout
 		        android:layout_width="match_parent"
-		        android:layout_height="match_parent"
+		        android:layout_height="wrap_content"
 		        android:orientation="vertical" >
 
 		        <TextView
@@ -93,14 +93,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:checked="false"
-            android:text="Upload Securely"
+            android:text="@string/upload_securely_via_tor"
             android:visibility="gone" />
 
         <TextView
             android:id="@+id/textViewTor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Use Tor to upload securely and anonymously."
+            android:text="@string/use_tor_to_upload_securely_and_anonymously_"
             android:layout_marginTop="8dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:visibility="gone"/>
@@ -117,14 +117,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:checked="false"
-            android:text="Publish to StoryMaker"
+            android:text="@string/publish_to_storymaker"
             android:visibility="gone" />
 
         <TextView
             android:id="@+id/textStoryMaker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Login to StoryMaker.cc to publish."
+            android:text="@string/login_to_storymaker_cc_to_publish_"
             android:layout_marginTop="8dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:visibility="gone"/>
