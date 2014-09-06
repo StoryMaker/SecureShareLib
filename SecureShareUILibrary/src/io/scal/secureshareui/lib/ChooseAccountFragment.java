@@ -91,16 +91,16 @@ public class ChooseAccountFragment extends Fragment {
                 });
 
                 mSwitchTor = (Switch) mView.findViewById(R.id.switchTor);
-                mSwitchTor.setVisibility(View.VISIBLE);TextView
+                mSwitchTor.setVisibility(View.VISIBLE);
 
-                mTextViewTor = (TextView) mView.findViewById(R.id.textViewTor);
-                mTextViewTor.setVisibility(View.VISIBLE);
+//                mTextViewTor = (TextView) mView.findViewById(R.id.textViewTor);
+//                mTextViewTor.setVisibility(View.VISIBLE);
 
                 mSwitchStoryMaker = (Switch) mView.findViewById(R.id.switchStoryMaker);
                 mSwitchStoryMaker.setVisibility(View.VISIBLE);
 
-                mTextViewStoryMaker = (TextView) mView.findViewById(R.id.textStoryMaker);
-                mTextViewStoryMaker.setVisibility(View.VISIBLE);
+//                mTextViewStoryMaker = (TextView) mView.findViewById(R.id.textStoryMaker);
+//                mTextViewStoryMaker.setVisibility(View.VISIBLE);
 
                 mDivider = (View) mView.findViewById(R.id.divider);
                 mDivider.setVisibility(View.VISIBLE);
