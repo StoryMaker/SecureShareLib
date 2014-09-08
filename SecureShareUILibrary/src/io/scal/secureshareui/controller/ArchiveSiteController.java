@@ -33,8 +33,8 @@ public class ArchiveSiteController extends SiteController {
     }
 
 	private static final String sArchiveAPIEndpoint = "http://s3.us.archive.org";
-	private static final String sAccessKey = "Te8eJIS48D6N32Ju"; // FIXME use login credentials
-	private static final String sSecretKey = "HI4q8EWv1Rn2Bgfu"; // FIXME use login credentials
+	private static final String sAccessKey = "ITGeccOWkfNk6o82"; // FIXME use login credentials
+	private static final String sSecretKey = "1domgyMJcihRjjDS"; // FIXME use login credentials
 	private String resultUrl = "";
 	public static final String VALUE_KEY_LICENSE_URL = "licenseUrl";    // FIXME use correct shit for this
 
@@ -77,7 +77,7 @@ public class ArchiveSiteController extends SiteController {
 		
 		File file = new File(mediaPath);
 		if (!file.exists()) {
-			jobFailed(4000473, "Internett Archive upload failed: invalid file");
+			jobFailed(4000473, "Internet Archive upload failed: invalid file");
 			return;
 		}
 
