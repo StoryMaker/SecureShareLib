@@ -33,10 +33,8 @@ public class ArchiveSiteController extends SiteController {
     }
 
 	private static final String sArchiveAPIEndpoint = "http://s3.us.archive.org";
-	private static final String sAccessKey = "ITGeccOWkfNk6o82"; // FIXME use login credentials
-	private static final String sSecretKey = "1domgyMJcihRjjDS"; // FIXME use login credentials
 	private String resultUrl = "";
-	public static final String VALUE_KEY_LICENSE_URL = "licenseUrl";    // FIXME use correct shit for this
+	public static final String VALUE_KEY_LICENSE_URL = "licenseUrl";    // FIXME use correct for this
 
 	public static final MediaType MEDIA_TYPE = MediaType.parse("");
 
@@ -113,7 +111,7 @@ public class ArchiveSiteController extends SiteController {
 //				.addHeader("x-archive-meta-sponsor", "Sponsor 998")
 				.addHeader("x-archive-meta-language", "eng") // FIXME pull meta language from story
 				// FIXME add all metadata from metadata as headers here
-				.addHeader("authorization", "LOW " + sAccessKey + ":" + sSecretKey);
+				.addHeader("authorization", "LOW " + account.getUserName() + ":" + account.getCredentials());
 
 //		if (profileUrl != null) {
 //			builder.addHeader("x-archive-meta-authorurl", profileUrl);
