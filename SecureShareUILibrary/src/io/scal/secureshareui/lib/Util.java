@@ -7,6 +7,7 @@ import java.util.Random;
 import info.guardianproject.onionkit.ui.OrbotHelper;
 
 import android.content.Context;
+import android.webkit.MimeTypeMap;
 
 public class Util {
 
@@ -46,4 +47,41 @@ public class Util {
       }
 
     }
+    
+	public static String getMediaType(String mediaPath) {
+		String result = null;
+		String fileExtension = MimeTypeMap.getFileExtensionFromUrl(mediaPath);		
+		result = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
+		
+		if (result == null) {
+			if (mediaPath.endsWith("wav")) {
+				result = "audio/wav";
+			}
+			else if (mediaPath.endsWith("mp3")) {
+				result = "audio/mpeg";
+			}
+			else if (mediaPath.endsWith("3gp")) {
+				result = "audio/3gpp";
+			}
+			else if (mediaPath.endsWith("mp4")) {
+				result = "video/mp4";
+			}
+			else if (mediaPath.endsWith("jpg")) {
+				result = "image/jpeg";
+			}
+			else if (mediaPath.endsWith("png")) {
+				result = "image/png";
+			}
+		}
+		
+		if (result.contains("audio")) {
+			return "audio";
+		} else if(result.contains("image")) {
+			return "image";
+		} else if(result.contains("video")) {
+			return "movies";
+		}
+		
+		return null;
+	}
 }
