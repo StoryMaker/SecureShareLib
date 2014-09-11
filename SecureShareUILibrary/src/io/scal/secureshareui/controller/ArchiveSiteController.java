@@ -32,13 +32,11 @@ public class ArchiveSiteController extends SiteController {
         METADATA_REQUEST_CODE = 1022783271;
     }
 
-	private static final String sArchiveAPIEndpoint = "http://s3.us.archive.org";
-	private static final String sAccessKey = "Te8eJIS48D6N32Ju"; // FIXME use login credentials
-	private static final String sSecretKey = "HI4q8EWv1Rn2Bgfu"; // FIXME use login credentials
-	private String resultUrl = "";
-	public static final String VALUE_KEY_LICENSE_URL = "licenseUrl";    // FIXME use correct shit for this
-
+	private static final String ARCHIVE_API_ENDPOINT = "http://s3.us.archive.org";
+	private static final String ARCHIVE_DETAILS_ENDPOINT = "https://archive.org/details/";
+	public static final String VALUE_KEY_LICENSE_URL = "licenseUrl";    // FIXME use correct for this
 	public static final MediaType MEDIA_TYPE = MediaType.parse("");
+	private String resultUrl = "";
 
 	public ArchiveSiteController(Context context, Handler handler, String jobId) {
 		super(context, handler, jobId);
@@ -57,7 +55,7 @@ public class ArchiveSiteController extends SiteController {
 		Log.d(TAG, "Upload file: Entering upload");
         
 		String mediaPath = valueMap.get(VALUE_KEY_MEDIA_PATH);
-        boolean useTor = Boolean.getBoolean(valueMap.get(VALUE_KEY_USE_TOR));
+        boolean useTor = (valueMap.get(VALUE_KEY_USE_TOR).equals("true")) ? true : false;
         String fileName = mediaPath.substring(mediaPath.lastIndexOf("/")+1, mediaPath.length()); 
         String licenseUrl = valueMap.get(VALUE_KEY_LICENSE_URL);
         
@@ -73,13 +71,15 @@ public class ArchiveSiteController extends SiteController {
 		String locationName = valueMap.get(VALUE_KEY_LOCATION_NAME);
         boolean shareLocation = (valueMap.get(ArchiveMetadataActivity.INTENT_EXTRA_SHARE_LOCATION).equals("true")) ? true : false;
 		String body = valueMap.get(VALUE_KEY_BODY);
-        boolean shareDescription = (valueMap.get(ArchiveMetadataActivity.INTENT_EXTRA_SHARE_DESCRIPTION).equals("true")) ? true : false;
-		
+        boolean shareDescription = (valueMap.get(ArchiveMetadataActivity.INTENT_EXTRA_SHARE_DESCRIPTION).equals("true")) ? true : false;  
+        
 		File file = new File(mediaPath);
 		if (!file.exists()) {
-			jobFailed(4000473, "Internett Archive upload failed: invalid file");
+			jobFailed(4000473, "Internet Archive upload failed: invalid file");
 			return;
 		}
+		
+		String mediaType = Util.getMediaType(mediaPath);		
 
 		OkHttpClient client = new OkHttpClient();
 
@@ -94,30 +94,41 @@ public class ArchiveSiteController extends SiteController {
         if (shareTitle) {
             String randomString = new Util.RandomString(4).nextString();
             urlPath = slug + "-" + randomString;
-            url = sArchiveAPIEndpoint  + "/" + urlPath + "/" + fileName;
+            url = ARCHIVE_API_ENDPOINT  + "/" + urlPath + "/" + fileName;
         } else {
             urlPath = new Util.RandomString(16).nextString(); // FIXME need to use real GUIDs
-            url = sArchiveAPIEndpoint  + "/" + urlPath + "/" + fileName;
+            url = ARCHIVE_API_ENDPOINT  + "/" + urlPath + "/" + fileName;
         }
 		Log.d(TAG, "uploading to url: " + url);
 		
-		resultUrl = "https://archive.org/details/" + urlPath;
+		resultUrl = ARCHIVE_DETAILS_ENDPOINT + urlPath;
 
 		Request.Builder builder = new Request.Builder()
 				.url(url)
 				.put(RequestBody.create(MEDIA_TYPE, file))
 				.addHeader("Accept", "*/*")
                 .addHeader("x-amz-auto-make-bucket", "1")
-//				.addHeader("x-archive-meta01-collection", "opensource")
-//				.addHeader("x-archive-meta-mediatype", "texts")
 //				.addHeader("x-archive-meta-sponsor", "Sponsor 998")
 				.addHeader("x-archive-meta-language", "eng") // FIXME pull meta language from story
 				// FIXME add all metadata from metadata as headers here
-				.addHeader("authorization", "LOW " + sAccessKey + ":" + sSecretKey);
+				.addHeader("authorization", "LOW " + account.getUserName() + ":" + account.getCredentials());
 
 //		if (profileUrl != null) {
 //			builder.addHeader("x-archive-meta-authorurl", profileUrl);
 //		}
+		
+		//TODO x-archive-metadata-collection ALWAYS defaulting to opensource
+		if (mediaType != null) {
+			builder.addHeader("x-archive-meta-mediatype", mediaType);
+			if(mediaType.contains("audio")) {
+				builder.addHeader("x-archive-metadata-collection", "opensource_audio");
+			} else {
+				builder.addHeader("x-archive-metadata01-collection", "opensource_movies");
+			}
+			
+		} else {
+			builder.addHeader("x-archive-metadata-collection", "opensource");
+		}
 		
 		if (locationName != null) {
 			builder.addHeader("x-archive-meta-location", locationName);

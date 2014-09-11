@@ -1,13 +1,8 @@
 
 package io.scal.secureshareui.lib;
 
-import io.scal.secureshareui.controller.FacebookSiteController;
-import io.scal.secureshareui.controller.FlickrSiteController;
-import io.scal.secureshareui.controller.SSHSiteController;
 import io.scal.secureshareui.controller.SiteController;
 import io.scal.secureshareui.controller.SiteController.OnEventListener;
-import io.scal.secureshareui.controller.SoundCloudSiteController;
-import io.scal.secureshareui.controller.YoutubeSiteController;
 import io.scal.secureshareui.model.Account;
 import io.scal.secureshareuilibrary.R;
 
@@ -16,15 +11,12 @@ import java.util.List;
 
 import org.holoeverywhere.widget.Switch;
 
-import com.facebook.Session;
-
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.support.v4.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,8 +24,8 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.TextView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class ChooseAccountFragment extends Fragment {
@@ -78,9 +70,6 @@ public class ChooseAccountFragment extends Fragment {
                 mBtnContinue.setVisibility(View.VISIBLE);
                 mBtnContinue.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        // TODO only do this if the user has selected something?
-                        // maybe button shouldn't be enabled until you select an
-                        // item
                         Intent data = new Intent();
                         data.putStringArrayListExtra(EXTRAS_ACCOUNT_KEYS, mSelectedAccountIds);
                         data.putExtra(SiteController.VALUE_KEY_USE_TOR, mSwitchTor.isChecked());
@@ -151,8 +140,12 @@ public class ChooseAccountFragment extends Fragment {
 
             // is added after activity load
             if (isDynamicallyAdded) {
-                cbToPublish.setChecked(true);
-                mSelectedAccountIds.add(currentAccount.getSite());
+            	if(!isAnAccountSelected()) {
+            		cbToPublish.setChecked(true);
+                    mSelectedAccountIds.add(currentAccount.getSite());
+            	} else {
+            		Toast.makeText(getActivity(), "Only one account may be selected for upload", Toast.LENGTH_LONG).show();
+            	}
                 setContinueEnabledState();
             }
         }
@@ -169,8 +162,7 @@ public class ChooseAccountFragment extends Fragment {
                                 addAvailableAccount(currentAccount);
                                 mContainerConnectedAccountsView.removeView(vgConnectedAccounts);
                                 mEventListener.onRemove(currentAccount);
-                                // if there are no rows remaining, show the
-                                // empty view.
+                                // if there are no rows remaining, show the empty view.
                                 if (mContainerConnectedAccountsView.getChildCount() == 0) {
                                     mView.findViewById(R.id.tv_accounts_connected_empty).setVisibility(View.VISIBLE);
                                 }
@@ -200,8 +192,12 @@ public class ChooseAccountFragment extends Fragment {
                             mSelectedAccountIds.remove(currentAccount.getSite());
                         }
                         else {
-                            cbToPublish.setChecked(true);
-                            mSelectedAccountIds.add(currentAccount.getSite());
+                        	if(!isAnAccountSelected()) {
+                        		cbToPublish.setChecked(true);
+                                mSelectedAccountIds.add(currentAccount.getSite());
+                        	} else {
+                        		Toast.makeText(getActivity(), "Only one account may be selected for upload", Toast.LENGTH_LONG).show();
+                        	}               
                         }
                         setContinueEnabledState();
                     }
@@ -215,6 +211,11 @@ public class ChooseAccountFragment extends Fragment {
 
     private void setContinueEnabledState() {
         mBtnContinue.setEnabled(!mSelectedAccountIds.isEmpty());
+    }
+    
+    //TODO added temporarily to allow only 1 account upload at a time
+    private boolean isAnAccountSelected() {
+        return (!mSelectedAccountIds.isEmpty());
     }
 
     private void addAvailableAccount(Account account) {
@@ -241,7 +242,6 @@ public class ChooseAccountFragment extends Fragment {
 
         // ensure controller exists
         if (null == siteController) {
-            Toast.makeText(getActivity(), "Error Finding Controller (try Facebook!)", Toast.LENGTH_SHORT).show();
             mEventListener.onFailure(currentAccount, "Error Finding Controller");
             return;
         }

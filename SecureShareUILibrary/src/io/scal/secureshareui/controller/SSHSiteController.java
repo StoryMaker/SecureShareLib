@@ -53,7 +53,7 @@ public class SSHSiteController extends SiteController {
 		String title = valueMap.get("title");
 		String body = valueMap.get("body");
 		String mediaPath = valueMap.get("mediaPath");
-		boolean useTor = Boolean.getBoolean(valueMap.get("useTor"));
+		boolean useTor = (valueMap.get(VALUE_KEY_USE_TOR).equals("true")) ? true : false;
 		
         String host = null;
         String remotePath = null;
