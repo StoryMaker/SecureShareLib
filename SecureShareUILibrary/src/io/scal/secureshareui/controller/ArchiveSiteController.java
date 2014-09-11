@@ -55,7 +55,7 @@ public class ArchiveSiteController extends SiteController {
 		Log.d(TAG, "Upload file: Entering upload");
         
 		String mediaPath = valueMap.get(VALUE_KEY_MEDIA_PATH);
-        boolean useTor = Boolean.getBoolean(valueMap.get(VALUE_KEY_USE_TOR));
+        boolean useTor = (valueMap.get(VALUE_KEY_USE_TOR).equals("true")) ? true : false;
         String fileName = mediaPath.substring(mediaPath.lastIndexOf("/")+1, mediaPath.length()); 
         String licenseUrl = valueMap.get(VALUE_KEY_LICENSE_URL);
         

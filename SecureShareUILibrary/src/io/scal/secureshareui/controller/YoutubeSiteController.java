@@ -69,7 +69,7 @@ public class YoutubeSiteController extends SiteController {
 		String title = valueMap.get(VALUE_KEY_TITLE);
 		String body = valueMap.get(VALUE_KEY_BODY);
 		String mediaPath = valueMap.get(VALUE_KEY_MEDIA_PATH);
-		boolean useTor = Boolean.getBoolean(valueMap.get(VALUE_KEY_USE_TOR));
+		boolean useTor = (valueMap.get(VALUE_KEY_USE_TOR).equals("true")) ? true : false;
 		
 		List<String> scopes = new ArrayList<String>();
 		scopes.add(YouTubeScopes.YOUTUBE_UPLOAD);
