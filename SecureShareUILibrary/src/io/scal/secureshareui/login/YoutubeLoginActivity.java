@@ -78,11 +78,8 @@ public class YoutubeLoginActivity extends Activity implements Runnable {
 		
 		WebView webview = new WebView(this);
 		webview.clearCache(true);
+		webview.getSettings().setJavaScriptEnabled(true);
 		webview.setVisibility(View.VISIBLE);
-		
-		WebSettings webSettings = webview.getSettings();
-		webSettings.setSaveFormData(false);
-		webSettings.setJavaScriptEnabled(true);
 		
 		setContentView(webview);
 
