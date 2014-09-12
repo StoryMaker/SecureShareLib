@@ -17,12 +17,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.accounts.AccountManager;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -65,54 +69,37 @@ public class YoutubeLoginActivity extends Activity implements Runnable {
 
 		login();
 	}
-	/*
-	private void login() {	
-		Intent googlePicker =AccountPicker.newChooseAccountIntent(null,null, new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE},true,null,null,null,null);
-	    startActivityForResult(googlePicker, 111);
-	}
-	
-	protected void onActivityResult(final int requestCode,
-			final int resultCode, final Intent data) {
-		if (requestCode == 111 && resultCode == RESULT_OK) {
-			String userEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
 
-			if (null != userEmail) {
-				mAccessResult = RESULT_OK;
-				mAccessToken = userEmail;
-			} else { // failed login
-				mAccessResult = RESULT_CANCELED;
-			}
-		}
-		
-		finish();
-	}*/
-	
-
+	@SuppressLint("SetJavaScriptEnabled")
 	public void login() {
+		CookieSyncManager.createInstance(this);
+		CookieManager cookieManager = CookieManager.getInstance();
+		cookieManager.removeAllCookie();
+		
 		WebView webview = new WebView(this);
 		webview.clearCache(true);
-		//webview.destroy();
-		webview.getSettings().setJavaScriptEnabled(true);
 		webview.setVisibility(View.VISIBLE);
+		
+		WebSettings webSettings = webview.getSettings();
+		webSettings.setSaveFormData(false);
+		webSettings.setJavaScriptEnabled(true);
+		
 		setContentView(webview);
 
 		List<String> scopes = new ArrayList<String>();
 		scopes.add(YouTubeScopes.YOUTUBE_UPLOAD);
 		scopes.add(YOUTUBE_EMAIL_SCOPE);
-		
-		
+			
 		String authUrl = new GoogleAuthorizationCodeRequestUrl(CLIENT_ID, REDIRECT_URI, scopes).build();
 
 		// WebViewClient must be set BEFORE calling loadUrl!
 		webview.setWebViewClient(new WebViewClient() {
-
 			@Override
 			public void onPageStarted(WebView view, String url, Bitmap bitmap) {
 			}
 
 			@Override
 			public void onPageFinished(WebView view, String url) {
-
 				if (url.startsWith(REDIRECT_URI)) {
 					if (url.indexOf("code=") != -1) {
 						if (mReturnedWebCode == null) {
