@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAuthIOException;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.client.googleapis.media.MediaHttpUploader;
@@ -196,8 +197,19 @@ public class YoutubeSiteController extends SiteController {
 					errorId = 1231233;
                     String msg = e.getMessage() != null ? e.getMessage() + ", " : "";
 					errorMessage = "Insuffiecent Permissions: " + e.getCause() + msg; // FIXME move to strings
-				} catch (IOException e) {
+				} catch (GoogleAuthIOException e) {
 					errorId = 1231234;
+                    String msg = e.getMessage() != null ? e.getMessage() + ", " : "";
+                    String cause = "" + e.getCause();
+                    
+                    //if bad username error, explain to user how to fix
+                    if(cause.contains("BadUsername")) {
+                    	errorMessage = "Connect your Google account to this device."; // FIXME move to strings
+                    } else {
+                    	errorMessage = "GoogleAuth IOException: " + e.getCause() + msg; // FIXME move to strings
+                    }
+				}catch (IOException e) {
+					errorId = 1231235;
                     String msg = e.getMessage() != null ? e.getMessage() + ", " : "";
 					errorMessage = "AsyncTask IOException: " + e.getCause() + msg; // FIXME move to strings
 				}
