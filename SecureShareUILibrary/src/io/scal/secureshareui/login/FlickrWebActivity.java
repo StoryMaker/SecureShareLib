@@ -2,12 +2,15 @@ package io.scal.secureshareui.login;
 
 import info.guardianproject.onionkit.ui.OrbotHelper;
 import info.guardianproject.onionkit.web.WebkitProxy;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -18,7 +21,8 @@ public class FlickrWebActivity extends Activity {
     
     private static final String TAG = "FlickrWebActivity";
     
-    public void onCreate(Bundle savedInstanceState) {
+    @SuppressLint("SetJavaScriptEnabled")
+	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
         Log.d(TAG, "onCreate()");
@@ -34,8 +38,6 @@ public class FlickrWebActivity extends Activity {
             return;
         }
         
-        WebView view = new WebView(this);
-        
         OrbotHelper orbotHelper = new OrbotHelper(getApplicationContext());
 
         if(orbotHelper.isOrbotRunning()) {    
@@ -50,12 +52,19 @@ public class FlickrWebActivity extends Activity {
         else {
           Log.d(TAG, "orbot not running, proxy not set");
         }
+                
+        CookieSyncManager.createInstance(this);
+		CookieManager cookieManager = CookieManager.getInstance();
+		cookieManager.removeAllCookie();
+		
+		WebView webview = new WebView(this);
+		webview.clearCache(true);
+		webview.getSettings().setJavaScriptEnabled(true);
+		webview.setVisibility(View.VISIBLE);
        
-        view.getSettings().setJavaScriptEnabled(true);
-        view.setVisibility(View.VISIBLE);
-        setContentView(view);
+        setContentView(webview);
         
-        view.setWebViewClient(new WebViewClient() {
+        webview.setWebViewClient(new WebViewClient() {
             Intent resultIntent = new Intent();
 
             @Override
@@ -75,6 +84,6 @@ public class FlickrWebActivity extends Activity {
             }
         });
         
-        view.loadUrl(url);
+        webview.loadUrl(url);
     }
 }
