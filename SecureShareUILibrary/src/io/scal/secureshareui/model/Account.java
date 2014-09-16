@@ -10,7 +10,7 @@ import io.scal.secureshareui.controller.YoutubeSiteController;
 
 public class Account {
 
-    private String id;
+    private int id;
     private String name;
     private String site;
     private String userName;
@@ -35,7 +35,7 @@ public class Account {
             SSHSiteController.SITE_KEY
     };
 
-    public Account(String id, String name, String site, String userName, String credentials, String data, boolean isConnected, boolean areCredentialsValid) {
+    public Account(int id, String name, String site, String userName, String credentials, String data, boolean isConnected, boolean areCredentialsValid) {
         this.id = id;
         this.setName(name);
         this.setSite(site);
@@ -46,8 +46,12 @@ public class Account {
         this.setAreCredentialsValid(areCredentialsValid);
     }
 
-    public String getId() {
+    public int getId() {
         return id;
+    }
+    
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -105,5 +109,4 @@ public class Account {
     public void setAreCredentialsValid(boolean areCredentialsValid) {
         this.areCredentialsValid = areCredentialsValid;
     }
-
 }
