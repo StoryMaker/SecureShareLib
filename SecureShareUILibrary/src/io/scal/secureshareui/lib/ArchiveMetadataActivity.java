@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Switch;
 import android.widget.TextView;
 import io.scal.secureshareui.controller.SiteController;
@@ -34,31 +35,17 @@ public class ArchiveMetadataActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_archive_metadata);
-		Button button = (Button) findViewById(R.id.buttonSubmit);
-		
-		//set up links in textviews
-		TextView tvLicenseByNcNd = (TextView) findViewById(R.id.tv_license_byncnd);
-		tvLicenseByNcNd.setMovementMethod(LinkMovementMethod.getInstance());
-		TextView tvLicenseBy = (TextView) findViewById(R.id.tv_license_by);
-		tvLicenseBy.setMovementMethod(LinkMovementMethod.getInstance());		
-		TextView tvLicenseBySa = (TextView) findViewById(R.id.tv_license_bysa);
-		tvLicenseBySa.setMovementMethod(LinkMovementMethod.getInstance());
+		Button btnSubmit = (Button) findViewById(R.id.buttonSubmit);
 
         final Switch title = (Switch) findViewById(R.id.tb_title);
         final Switch description = (Switch) findViewById(R.id.tb_description);
         final Switch author = (Switch) findViewById(R.id.tb_author);
         final Switch tags = (Switch) findViewById(R.id.tb_tags);
         final Switch location = (Switch) findViewById(R.id.tb_location);
-        final RadioGroup licenseRg = (RadioGroup) findViewById(R.id.radioGroupCC);
+        final RadioGroup rgLicense = (RadioGroup) findViewById(R.id.radioGroupCC);
 
         final Intent i = getIntent();
         Bundle extras = i.getExtras();
-        
-//        for (String key : extras.keySet()) {
-//            Object value = extras.get(key);
-//            Log.d(TAG, String.format("%s %s (%s)", key,  
-//                value.toString(), value.getClass().getName()));
-//        }
         
         //set defaults based on previous selections
         final SharedPreferences sharedPref = this.getSharedPreferences(PREF_FILE_KEY, Context.MODE_PRIVATE); 
@@ -67,7 +54,12 @@ public class ArchiveMetadataActivity extends Activity {
 		author.setChecked(sharedPref.getBoolean(INTENT_EXTRA_SHARE_AUTHOR, false));
 		tags.setChecked(sharedPref.getBoolean(INTENT_EXTRA_SHARE_TAGS, false));
 		location.setChecked(sharedPref.getBoolean(INTENT_EXTRA_SHARE_LOCATION, false));
-		licenseRg.check(sharedPref.getInt(INTENT_EXTRA_LICENSE_URL, R.id.radioByNcNd));
+		rgLicense.check(sharedPref.getInt(INTENT_EXTRA_LICENSE_URL, R.id.radioByNcNd));
+		
+		//set up ccLicnse link
+		final TextView tvCCLicenseLink = (TextView) findViewById(R.id.tv_cc_license);
+		tvCCLicenseLink.setMovementMethod(LinkMovementMethod.getInstance());	
+    	setCCLicenseText(rgLicense.getCheckedRadioButtonId(), tvCCLicenseLink);
     
 		//set default text
         final TextView tvtitle = (TextView) findViewById(R.id.tv_title_desc);
@@ -85,13 +77,18 @@ public class ArchiveMetadataActivity extends Activity {
         final TextView tvlocation = (TextView) findViewById(R.id.tv_location_desc);
         tvlocation.setText(extras.getString(SiteController.VALUE_KEY_LOCATION_NAME, "(No location shared)"));
         
-		button.setOnClickListener(new OnClickListener() {
-			
+        rgLicense.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {	
+            	setCCLicenseText(rgLicense.getCheckedRadioButtonId(), tvCCLicenseLink);
+            }
+        });
+        
+        btnSubmit.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onClick(View v) {
-		        
+			public void onClick(View v) {        
 				String licenseUrl = null;
-		        int licenseId = licenseRg.getCheckedRadioButtonId();
+		        int licenseId = rgLicense.getCheckedRadioButtonId();
 		        if (licenseId == R.id.radioBy) {
 		            licenseUrl = "https://creativecommons.org/licenses/by/4.0/";
 		        } else if (licenseId == R.id.radioBySa) {
@@ -122,5 +119,15 @@ public class ArchiveMetadataActivity extends Activity {
 				finish();
 			}
 		});
+	}
+	
+	private void setCCLicenseText(int licenseId, TextView tvCCLicenseLink) {
+    	if (licenseId == R.id.radioBy) {
+    		tvCCLicenseLink.setText(R.string.archive_license_by);
+        } else if (licenseId == R.id.radioBySa) {
+        	tvCCLicenseLink.setText(R.string.archive_license_bysa);
+        } else { // ByNcNd is default
+        	tvCCLicenseLink.setText(R.string.archive_license_byncnd);
+        }
 	}
 }

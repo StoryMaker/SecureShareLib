@@ -37,9 +37,9 @@
 	<string name="archive_title">Email Confimation</string>
 	<string name="archive_message">Please confirm your email and return to connect your Archive account.</string>
 	
-	<string name="archive_license_by"><a href="https://creativecommons.org/licenses/by/4.0/">By</a></string>
-	<string name="archive_license_bysa"><a href="https://creativecommons.org/licenses/by-sa/4.0/">By SA</a></string>
-	<string name="archive_license_byncnd"><a href="http://creativecommons.org/licenses/by-nc-nd/4.0/">By NC/ND</a></string>
+	<string name="archive_license_by"><a href="https://creativecommons.org/licenses/by/4.0/">Attribution</a></string>
+	<string name="archive_license_bysa"><a href="https://creativecommons.org/licenses/by-sa/4.0/">Attribution-ShareAlike</a></string>
+	<string name="archive_license_byncnd"><a href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Attribution-NonCommercial-NoDerivs</a></string>
 	<string name="upload_to_internet_archive">Upload to Internet Archive</string>
 	<string name="upload_securely_via_tor">Upload Securely via Tor</string>
 	<string name="use_tor_to_upload_securely_and_anonymously_">Use Tor to upload securely and anonymously.</string>
