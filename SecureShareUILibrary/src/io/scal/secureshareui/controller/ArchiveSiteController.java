@@ -175,7 +175,7 @@ public class ArchiveSiteController extends SiteController {
 				response = client.newCall(request).execute();
                 Log.d(TAG, "response: " + response + ", body: " + response.body().string());
 				if (!response.isSuccessful()) {
-					jobFailed(4000001, "Archive upload failed: Unexpected Response Code: " + response);
+					jobFailed(4000001, "Archive upload failed: Unexpected Response Code: " + "response: " + response + ", body: " + response.body().string());
 				} else {
 				    jobSucceeded(resultUrl);
 				}
