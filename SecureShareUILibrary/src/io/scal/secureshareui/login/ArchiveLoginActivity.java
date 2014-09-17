@@ -41,11 +41,7 @@ public class ArchiveLoginActivity extends Activity {
 	}
 
 	@SuppressLint({ "SetJavaScriptEnabled" })
-	private void login(String currentURL) {		
-		CookieSyncManager.createInstance(this);
-		CookieManager cookieManager = CookieManager.getInstance();
-		cookieManager.removeAllCookie();
-		
+	private void login(String currentURL) {
 		final WebView webview = new WebView(this);
 		Util.clearWebviewAndCookies(webview, this);
 		webview.getSettings().setJavaScriptEnabled(true);
