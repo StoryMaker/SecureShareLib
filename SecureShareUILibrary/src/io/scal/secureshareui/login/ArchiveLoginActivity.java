@@ -1,6 +1,7 @@
 package io.scal.secureshareui.login;
 
 import io.scal.secureshareui.controller.SiteController;
+import io.scal.secureshareui.lib.Util;
 import io.scal.secureshareuilibrary.R;
 
 import org.holoeverywhere.app.Activity;
@@ -10,13 +11,18 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 public class ArchiveLoginActivity extends Activity {
 
+	private static final String TAG = "ArchiveLoginActivity";
+	
 	private final static String ARCHIVE_CREATE_ACCOUNT_URL = "https://archive.org/account/login.createaccount.php";
 	private final static String ARCHIVE_LOGIN_URL = "https://archive.org/account/login.php";
 	private final static String ARCHIVE_LOGGED_IN_URL = "https://archive.org/index.php";
@@ -35,10 +41,17 @@ public class ArchiveLoginActivity extends Activity {
 	}
 
 	@SuppressLint({ "SetJavaScriptEnabled" })
-	private void login(String currentURL) {
+	private void login(String currentURL) {		
+		CookieSyncManager.createInstance(this);
+		CookieManager cookieManager = CookieManager.getInstance();
+		cookieManager.removeAllCookie();
+		
 		final WebView webview = new WebView(this);
+		Util.clearWebviewAndCookies(webview, this);
 		webview.getSettings().setJavaScriptEnabled(true);
+		webview.setVisibility(View.VISIBLE);
 		webview.addJavascriptInterface(new JSInterface(), "htmlout");
+
 		setContentView(webview);
 
 		webview.setWebViewClient(new WebViewClient() {
@@ -144,11 +157,13 @@ public class ArchiveLoginActivity extends Activity {
 
 	@Override
 	public void finish() {
+		Log.d(TAG, "finish()"); 
+		
 		Intent data = new Intent();
 		data.putExtra(SiteController.EXTRAS_KEY_USERNAME, mAccessKey);
 		data.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, mSecretKey);
-
 		setResult(mAccessResult, data);
+		
 		super.finish();
 	}
 }

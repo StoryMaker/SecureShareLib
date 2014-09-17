@@ -10,6 +10,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -19,6 +20,8 @@ import com.facebook.widget.LoginButton;
 
 public class FacebookLoginActivity extends Activity {
 
+	private static final String TAG = "FacebookWebActivity";
+	
     private static int mAccessResult;
     private static String mAccessToken;
 
@@ -153,10 +156,14 @@ public class FacebookLoginActivity extends Activity {
 
     @Override
     public void finish() {
+    	Log.d(TAG, "finish()");
+    	
+    	Session.setActiveSession(null);
+    	
         Intent data = new Intent();
         data.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, mAccessToken);
-
         setResult(mAccessResult, data);
+        
         super.finish();
     }
 }

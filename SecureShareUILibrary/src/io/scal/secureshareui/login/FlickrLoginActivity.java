@@ -11,6 +11,7 @@ import com.flickr.api.entities.UserInfos;
 
 import info.guardianproject.onionkit.ui.OrbotHelper;
 import io.scal.secureshareui.controller.SiteController;
+import io.scal.secureshareui.lib.Util;
 import io.scal.secureshareuilibrary.R;
 import android.app.Activity;
 import android.content.Intent;
@@ -27,10 +28,6 @@ public class FlickrLoginActivity extends Activity
     String verifier = null;
     String key;
     String secret;
-    
- // TOR PROXY SETTINGS
-    private static final String ORBOT_HOST = "127.0.0.1";
-    private static final int ORBOT_HTTP_PORT = 8118;
     
     private static final String TAG = "FlickrLoginActivity";
     private int CODE = 0;
@@ -90,7 +87,7 @@ public class FlickrLoginActivity extends Activity
         {    
             Log.d(TAG, "orbot running, setting proxy");
             
-            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ORBOT_HOST, ORBOT_HTTP_PORT));
+            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(Util.ORBOT_HOST, Util.ORBOT_HTTP_PORT));
             f.setProxy(proxy);
         }
         else
@@ -193,8 +190,8 @@ public class FlickrLoginActivity extends Activity
         
         Intent data = new Intent();
         data.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, token); // WHAT ABOUT VERIFIER?
-
         setResult(Activity.RESULT_OK, data);
+        
         super.finish();
     }
 }

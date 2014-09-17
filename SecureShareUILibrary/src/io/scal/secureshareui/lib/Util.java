@@ -6,8 +6,12 @@ import java.util.Random;
 
 import info.guardianproject.onionkit.ui.OrbotHelper;
 
+import android.app.Activity;
 import android.content.Context;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.MimeTypeMap;
+import android.webkit.WebView;
 
 public class Util {
 
@@ -83,5 +87,14 @@ public class Util {
 		}
 		
 		return null;
+	}
+	
+	public static void clearWebviewAndCookies(WebView webview, Activity callingActivity) {
+		webview.clearHistory();
+		webview.clearCache(true);
+		
+		CookieSyncManager.createInstance(callingActivity);
+		CookieManager cookieManager = CookieManager.getInstance();
+		cookieManager.removeAllCookie();
 	}
 }

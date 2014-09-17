@@ -1,6 +1,7 @@
 package io.scal.secureshareui.login;
 
 import io.scal.secureshareui.controller.SiteController;
+import io.scal.secureshareui.lib.Util;
 import io.scal.secureshareuilibrary.R;
 
 import java.io.IOException;
@@ -16,7 +17,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -24,14 +24,9 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.common.AccountPicker;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
@@ -41,7 +36,6 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.youtube.YouTubeScopes;
 
-@SuppressWarnings("deprecation")
 public class YoutubeLoginActivity extends Activity implements Runnable {
 
 	private static int mAccessResult = 0;
@@ -58,7 +52,7 @@ public class YoutubeLoginActivity extends Activity implements Runnable {
 	
 	HttpTransport transport = new NetHttpTransport();
     private final JsonFactory jsonFactory = new GsonFactory();
-	
+    
 	private String mReturnedWebCode;
 	private GoogleTokenResponse mAuthResp;
 		
@@ -72,15 +66,11 @@ public class YoutubeLoginActivity extends Activity implements Runnable {
 
 	@SuppressLint("SetJavaScriptEnabled")
 	public void login() {
-		CookieSyncManager.createInstance(this);
-		CookieManager cookieManager = CookieManager.getInstance();
-		cookieManager.removeAllCookie();
-		
 		WebView webview = new WebView(this);
-		webview.clearCache(true);
+		Util.clearWebviewAndCookies(webview, this);
 		webview.getSettings().setJavaScriptEnabled(true);
 		webview.setVisibility(View.VISIBLE);
-		
+
 		setContentView(webview);
 
 		List<String> scopes = new ArrayList<String>();
@@ -167,8 +157,10 @@ public class YoutubeLoginActivity extends Activity implements Runnable {
 	    
 	    return userEmail;
 	}
-
+ 
 	public void finish() {
+		Log.d(TAG, "finish()");
+		
 		Intent data = new Intent();
         data.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, mAccessToken);
         setResult(mAccessResult, data);;

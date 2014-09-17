@@ -2,6 +2,7 @@ package io.scal.secureshareui.login;
 
 import info.guardianproject.onionkit.ui.OrbotHelper;
 import info.guardianproject.onionkit.web.WebkitProxy;
+import io.scal.secureshareui.lib.Util;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -9,8 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -53,16 +52,12 @@ public class FlickrWebActivity extends Activity {
           Log.d(TAG, "orbot not running, proxy not set");
         }
                 
-        CookieSyncManager.createInstance(this);
-		CookieManager cookieManager = CookieManager.getInstance();
-		cookieManager.removeAllCookie();
-		
-		WebView webview = new WebView(this);
-		webview.clearCache(true);
+        WebView webview = new WebView(this);
+		Util.clearWebviewAndCookies(webview, this);
 		webview.getSettings().setJavaScriptEnabled(true);
 		webview.setVisibility(View.VISIBLE);
-       
-        setContentView(webview);
+
+		setContentView(webview);
         
         webview.setWebViewClient(new WebViewClient() {
             Intent resultIntent = new Intent();
