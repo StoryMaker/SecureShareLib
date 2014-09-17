@@ -22,8 +22,8 @@ public class FacebookLoginActivity extends Activity {
 
 	private static final String TAG = "FacebookWebActivity";
 	
-    private static int mAccessResult;
-    private static String mAccessToken;
+    private int mAccessResult = RESULT_CANCELED;
+    private String mAccessToken = null;
 
     private LoginButton buttonLoginLogout;
     private Session.StatusCallback statusCallback = new SessionStatusCallback();
@@ -90,7 +90,7 @@ public class FacebookLoginActivity extends Activity {
         if ((resultCode == RESULT_OK) && hasPublishPermissions(session)) {
             mAccessResult = RESULT_OK;
         } else { // failed login
-            mAccessResult = 0;
+            mAccessResult = RESULT_CANCELED;
         }
 
         mAccessToken = session.getAccessToken();

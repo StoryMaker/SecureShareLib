@@ -38,8 +38,8 @@ import com.google.api.services.youtube.YouTubeScopes;
 
 public class YoutubeLoginActivity extends Activity implements Runnable {
 
-	private static int mAccessResult = 0;
-	private static String mAccessToken = null;
+	private int mAccessResult = RESULT_CANCELED;
+	private String mAccessToken = null;
 
 	static final String TAG = "YoutubeLoginActivity";
 	

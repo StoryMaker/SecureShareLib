@@ -13,11 +13,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-public class FlickrWebActivity extends Activity {
-    // TOR PROXY SETTINGS
-    private static final String ORBOT_HOST = "127.0.0.1";
-    private static final int ORBOT_HTTP_PORT = 8118;
-    
+public class FlickrWebActivity extends Activity {    
     private static final String TAG = "FlickrWebActivity";
     
     @SuppressLint("SetJavaScriptEnabled")
@@ -43,7 +39,7 @@ public class FlickrWebActivity extends Activity {
             Log.d(TAG, "orbot running, setting proxy");
   
             try {
-                WebkitProxy.setProxy("android.app.Application", getApplicationContext() , ORBOT_HOST, ORBOT_HTTP_PORT);
+                WebkitProxy.setProxy("android.app.Application", getApplicationContext() , Util.ORBOT_HOST, Util.ORBOT_HTTP_PORT);
             } catch (Exception e) {
                 Log.e(TAG, "exception while setting proxy: " + e.getMessage());
             }            

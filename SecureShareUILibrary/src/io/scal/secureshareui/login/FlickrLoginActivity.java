@@ -1,18 +1,14 @@
 package io.scal.secureshareui.login;
 
-import java.io.File;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-
-import com.flickr.api.Flickr;
-import com.flickr.api.FlickrException;
-import com.flickr.api.FlickrProperties;
-import com.flickr.api.entities.UserInfos;
-
 import info.guardianproject.onionkit.ui.OrbotHelper;
 import io.scal.secureshareui.controller.SiteController;
 import io.scal.secureshareui.lib.Util;
 import io.scal.secureshareuilibrary.R;
+
+import java.io.File;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -20,17 +16,23 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 
+import com.flickr.api.Flickr;
+import com.flickr.api.FlickrException;
+import com.flickr.api.FlickrProperties;
+
 public class FlickrLoginActivity extends Activity 
 {
+    private static final String TAG = "FlickrLoginActivity";
+    
+    private int mAccessResult = RESULT_CANCELED;
+    private String mAccessToken = null;
+    private String mAccessVerifier = null;
+    
+    private int CODE = 0;
     Flickr f = null;
     String url = null;
-    String token = null;
-    String verifier = null;
     String key;
     String secret;
-    
-    private static final String TAG = "FlickrLoginActivity";
-    private int CODE = 0;
     
     
     @Override
@@ -118,12 +120,15 @@ public class FlickrLoginActivity extends Activity
             if (resultCode == Activity.RESULT_OK)
             {
                 Bundle results = data.getExtras();
-                token = results.getString("token");
-                verifier = results.getString("verifier");
+                mAccessToken = results.getString("token");
+                mAccessVerifier = results.getString("verifier");
                 
-                if ((token != null) && (verifier != null))
+                if ((mAccessToken != null) && (mAccessVerifier != null))
                 {
-                    Log.d(TAG, "got token and verifier"); 
+                    Log.d(TAG, "got token and verifier");
+                    
+                    mAccessResult = RESULT_OK;
+                    
                     VerifyTokenTask vtTask = new VerifyTokenTask(this);
                     vtTask.execute();    
                 }
@@ -175,10 +180,11 @@ public class FlickrLoginActivity extends Activity
         
         try
         {
-            f.verifyToken(verifier, token);
+            f.verifyToken(mAccessVerifier, mAccessToken);
         }
         catch (FlickrException fe)
         {
+        	mAccessResult = RESULT_OK;
             Log.e(TAG, "token verification failed: " + fe.getMessage()); 
         }
     }
@@ -189,8 +195,8 @@ public class FlickrLoginActivity extends Activity
         Log.d(TAG, "finish()"); 
         
         Intent data = new Intent();
-        data.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, token); // WHAT ABOUT VERIFIER?
-        setResult(Activity.RESULT_OK, data);
+        data.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, mAccessToken); // WHAT ABOUT VERIFIER?
+        setResult(mAccessResult, data);
         
         super.finish();
     }
