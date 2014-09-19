@@ -1,7 +1,5 @@
 package io.scal.secureshareui.login;
 
-import info.guardianproject.onionkit.ui.OrbotHelper;
-import info.guardianproject.onionkit.web.WebkitProxy;
 import io.scal.secureshareui.lib.Util;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -15,6 +13,8 @@ import android.webkit.WebViewClient;
 
 public class FlickrWebActivity extends Activity {    
     private static final String TAG = "FlickrWebActivity";
+    // FIXME security: we need to override the webviews cache, cookies, formdata cache to store only in sqlcipher/iocipher, currently it hits disk and then we clear it
+    private WebView mWebview; 
     
     @SuppressLint("SetJavaScriptEnabled")
 	public void onCreate(Bundle savedInstanceState) {
@@ -32,9 +32,10 @@ public class FlickrWebActivity extends Activity {
             Log.e(TAG, "no url found");
             return;
         }
-        
-        OrbotHelper orbotHelper = new OrbotHelper(getApplicationContext());
 
+        //TODO Cannot assume user wants to login via tor simply because Tor isOn
+        /*
+        OrbotHelper orbotHelper = new OrbotHelper(getApplicationContext());
         if(orbotHelper.isOrbotRunning()) {    
             Log.d(TAG, "orbot running, setting proxy");
   
@@ -46,16 +47,15 @@ public class FlickrWebActivity extends Activity {
         }
         else {
           Log.d(TAG, "orbot not running, proxy not set");
-        }
+        }*/
                 
-        WebView webview = new WebView(this);
-		Util.clearWebviewAndCookies(webview, this);
-		webview.getSettings().setJavaScriptEnabled(true);
-		webview.setVisibility(View.VISIBLE);
+        mWebview = new WebView(this);
+        mWebview.getSettings().setJavaScriptEnabled(true);
+        mWebview.setVisibility(View.VISIBLE);
 
-		setContentView(webview);
+		setContentView(mWebview);
         
-        webview.setWebViewClient(new WebViewClient() {
+		mWebview.setWebViewClient(new WebViewClient() {
             Intent resultIntent = new Intent();
 
             @Override
@@ -75,6 +75,14 @@ public class FlickrWebActivity extends Activity {
             }
         });
         
-        webview.loadUrl(url);
+		mWebview.loadUrl(url);
     }
+    
+	@Override
+	public void finish() {
+		Log.d(TAG, "finish()"); 
+		
+		super.finish();
+		Util.clearWebviewAndCookies(mWebview, this);	
+	}
 }

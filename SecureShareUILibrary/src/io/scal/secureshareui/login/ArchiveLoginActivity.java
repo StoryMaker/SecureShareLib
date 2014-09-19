@@ -13,8 +13,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -33,6 +31,8 @@ public class ArchiveLoginActivity extends Activity {
 	private String mAccessKey = null;
     private String mSecretKey = null;
     
+    // FIXME security: we need to override the webviews cache, cookies, formdata cache to store only in sqlcipher/iocipher, currently it hits disk and then we clear it
+    private WebView mWebview;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +42,14 @@ public class ArchiveLoginActivity extends Activity {
 
 	@SuppressLint({ "SetJavaScriptEnabled" })
 	private void login(String currentURL) {
-		final WebView webview = new WebView(this);
-		Util.clearWebviewAndCookies(webview, this);
-		webview.getSettings().setJavaScriptEnabled(true);
-		webview.setVisibility(View.VISIBLE);
-		webview.addJavascriptInterface(new JSInterface(), "htmlout");
+		mWebview = new WebView(this);
+		mWebview.getSettings().setJavaScriptEnabled(true);
+		mWebview.setVisibility(View.VISIBLE);
+		mWebview.addJavascriptInterface(new JSInterface(), "htmlout");
 
-		setContentView(webview);
+		setContentView(mWebview);
 
-		webview.setWebViewClient(new WebViewClient() {
+		mWebview.setWebViewClient(new WebViewClient() {
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
 				//if logged in, hide and redirect to credentials
@@ -74,16 +73,16 @@ public class ArchiveLoginActivity extends Activity {
 		            String jsBtnClick = "javascript:(function(){$('[value=\"Generate New Keys\"]').click();})();";
 		            String jsSourceDump = "javascript:window.htmlout.processHTML('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');";
 		            
-					webview.loadUrl(jsCheckBox + jsBtnClick + jsSourceDump); 
+		            mWebview.loadUrl(jsCheckBox + jsBtnClick + jsSourceDump); 
 				} else if(url.equals(ARCHIVE_CREATE_ACCOUNT_URL)) {
 					sIsLoginScren = false;
 					String jsSourceDump = "javascript:window.htmlout.processHTML('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');";
-					webview.loadUrl(jsSourceDump);
+					mWebview.loadUrl(jsSourceDump);
 				}			
 			}
 		});
 
-		webview.loadUrl(currentURL);
+		mWebview.loadUrl(currentURL);
 	}
 	
 	private void parseArchiveCredentials(String rawHtml) {
@@ -153,13 +152,14 @@ public class ArchiveLoginActivity extends Activity {
 
 	@Override
 	public void finish() {
-		Log.d(TAG, "finish()"); 
+		Log.d(TAG, "finish()");
 		
 		Intent data = new Intent();
 		data.putExtra(SiteController.EXTRAS_KEY_USERNAME, mAccessKey);
 		data.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, mSecretKey);
 		setResult(mAccessResult, data);
 		
-		super.finish();
+		super.finish();		
+		Util.clearWebviewAndCookies(mWebview, this);
 	}
 }

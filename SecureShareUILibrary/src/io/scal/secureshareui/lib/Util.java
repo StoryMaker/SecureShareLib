@@ -89,12 +89,17 @@ public class Util {
 		return null;
 	}
 	
-	public static void clearWebviewAndCookies(WebView webview, Activity callingActivity) {
-		webview.clearHistory();
-		webview.clearCache(true);
-		
-		CookieSyncManager.createInstance(callingActivity);
+	public static void clearWebviewAndCookies(WebView webview, Activity activity) {
+		CookieSyncManager.createInstance(activity);
 		CookieManager cookieManager = CookieManager.getInstance();
-		cookieManager.removeAllCookie();
+		cookieManager.removeAllCookie();	
+		
+		if(webview != null) {
+			webview.clearHistory();
+			webview.clearCache(true);
+			webview.clearFormData();
+			webview.loadUrl("about:blank");			
+			webview.destroy();
+		}
 	}
 }

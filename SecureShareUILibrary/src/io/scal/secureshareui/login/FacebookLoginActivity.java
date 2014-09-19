@@ -2,6 +2,7 @@
 package io.scal.secureshareui.login;
 
 import io.scal.secureshareui.controller.SiteController;
+import io.scal.secureshareui.lib.Util;
 import io.scal.secureshareuilibrary.R;
 
 import java.util.Arrays;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.webkit.WebView;
 
 import com.facebook.Session;
 import com.facebook.SessionState;
@@ -158,12 +160,12 @@ public class FacebookLoginActivity extends Activity {
     public void finish() {
     	Log.d(TAG, "finish()");
     	
-    	Session.setActiveSession(null);
-    	
         Intent data = new Intent();
         data.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, mAccessToken);
         setResult(mAccessResult, data);
         
         super.finish();
+        Session.setActiveSession(null);
+        Util.clearWebviewAndCookies(new WebView(this), this);
     }
 }

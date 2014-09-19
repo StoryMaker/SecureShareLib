@@ -1,20 +1,14 @@
 
 package io.scal.secureshareui.login;
 
-import java.io.IOException;
+import io.scal.secureshareui.controller.SSHSiteController;
+import io.scal.secureshareui.controller.SiteController;
+import io.scal.secureshareuilibrary.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import io.scal.secureshareui.controller.SSHSiteController;
-import io.scal.secureshareui.controller.SiteController;
-import io.scal.secureshareui.controller.SoundCloudSiteController;
-import io.scal.secureshareui.soundcloud.ApiWrapper;
-import io.scal.secureshareui.soundcloud.Token;
-import io.scal.secureshareuilibrary.R;
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,7 +16,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class SSHLoginActivity extends Activity {
     private static final String TAG = "SFTPLoginActivity";
@@ -75,13 +68,12 @@ public class SSHLoginActivity extends Activity {
     private class CheckCredentialsAsync extends AsyncTask<String, Void, String> {
 
         @Override
-        protected String doInBackground(String... params) {
-            
+        protected String doInBackground(String... params) {       
             if (SSHSiteController.SSH.checkCredentials(params[0], params[1], params[2])) { // success
-                return "-1"; // FIXME this is ugly as sin
+                return Integer.toString(Activity.RESULT_OK);
             }
 
-            return "0";
+            return Integer.toString(Activity.RESULT_CANCELED);
         }
 
         @Override

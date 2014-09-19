@@ -52,6 +52,8 @@ public class YoutubeLoginActivity extends Activity implements Runnable {
 	
 	HttpTransport transport = new NetHttpTransport();
     private final JsonFactory jsonFactory = new GsonFactory();
+    // FIXME security: we need to override the webviews cache, cookies, formdata cache to store only in sqlcipher/iocipher, currently it hits disk and then we clear it
+    private WebView mWebview;
     
 	private String mReturnedWebCode;
 	private GoogleTokenResponse mAuthResp;
@@ -66,12 +68,11 @@ public class YoutubeLoginActivity extends Activity implements Runnable {
 
 	@SuppressLint("SetJavaScriptEnabled")
 	public void login() {
-		WebView webview = new WebView(this);
-		Util.clearWebviewAndCookies(webview, this);
-		webview.getSettings().setJavaScriptEnabled(true);
-		webview.setVisibility(View.VISIBLE);
+		mWebview = new WebView(this);
+		mWebview.getSettings().setJavaScriptEnabled(true);
+		mWebview.setVisibility(View.VISIBLE);
 
-		setContentView(webview);
+		setContentView(mWebview);
 
 		List<String> scopes = new ArrayList<String>();
 		scopes.add(YouTubeScopes.YOUTUBE_UPLOAD);
@@ -80,7 +81,7 @@ public class YoutubeLoginActivity extends Activity implements Runnable {
 		String authUrl = new GoogleAuthorizationCodeRequestUrl(CLIENT_ID, REDIRECT_URI, scopes).build();
 
 		// WebViewClient must be set BEFORE calling loadUrl!
-		webview.setWebViewClient(new WebViewClient() {
+		mWebview.setWebViewClient(new WebViewClient() {
 			@Override
 			public void onPageStarted(WebView view, String url, Bitmap bitmap) {
 			}
@@ -93,6 +94,9 @@ public class YoutubeLoginActivity extends Activity implements Runnable {
 							mReturnedWebCode = extractCodeFromUrl(url);
 							view.setVisibility(View.INVISIBLE);
 							new Thread(YoutubeLoginActivity.this).start();
+							
+							//must be done on the main thread
+							Util.clearWebviewAndCookies(mWebview, YoutubeLoginActivity.this);
 						}
 					} else if (url.indexOf("error=") != -1) {
 						view.setVisibility(View.INVISIBLE);
@@ -106,7 +110,7 @@ public class YoutubeLoginActivity extends Activity implements Runnable {
 			}
 		});
 
-		webview.loadUrl(authUrl);
+		mWebview.loadUrl(authUrl);
 	}
 
 	public void run() {
@@ -157,10 +161,11 @@ public class YoutubeLoginActivity extends Activity implements Runnable {
 	    
 	    return userEmail;
 	}
- 
+	
+	@Override
 	public void finish() {
 		Log.d(TAG, "finish()");
-		
+			
 		Intent data = new Intent();
         data.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, mAccessToken);
         setResult(mAccessResult, data);;
