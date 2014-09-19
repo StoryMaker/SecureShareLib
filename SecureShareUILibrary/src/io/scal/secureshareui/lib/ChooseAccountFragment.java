@@ -15,7 +15,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +42,8 @@ public class ChooseAccountFragment extends Fragment {
     private static boolean mAttemptingLoginRetry = false;
     public static final int ACCOUNT_REQUEST_CODE = 102;
     public static final String EXTRAS_ACCOUNT_KEYS = "accountIds";
+    public static final String TOR_PREF_KEY = "pusetor";
+    public static final String SM_UPLOAD_PREF_KEY = "psmupload";
 
     // return the ids of selected items
     ArrayList<String> mSelectedAccountIds = new ArrayList<String>();
@@ -49,9 +53,7 @@ public class ChooseAccountFragment extends Fragment {
     private static Account mAccount;
     private Button mBtnContinue;
     private Switch mSwitchTor;
-    private TextView mTextViewTor;
     private Switch mSwitchStoryMaker;
-    private TextView mTextViewStoryMaker;
     private View mDivider;
 
     @Override
@@ -60,6 +62,11 @@ public class ChooseAccountFragment extends Fragment {
         mContainerConnectedAccountsView = (ViewGroup) mView.findViewById(R.id.accounts_connected_container);
         mContainerAvailableAccountsView = (ViewGroup) mView.findViewById(R.id.accounts_available_container);
 
+        //get defualt prefs from settings
+        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        boolean pUseTor = sharedPref.getBoolean(TOR_PREF_KEY, false);
+        boolean pSMUpload = sharedPref.getBoolean(SM_UPLOAD_PREF_KEY, false);
+        
         if (getArguments() != null) {
             // if fragment is in connection or selection mode
             mInSelectionMode = getArguments().getBoolean("inSelectionMode", false);
@@ -70,6 +77,12 @@ public class ChooseAccountFragment extends Fragment {
                 mBtnContinue.setVisibility(View.VISIBLE);
                 mBtnContinue.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
+                    	//save tor pref in settings
+                    	SharedPreferences.Editor editor = sharedPref.edit();
+        		        editor.putBoolean(TOR_PREF_KEY, mSwitchTor.isChecked());
+        		        editor.putBoolean(SM_UPLOAD_PREF_KEY, mSwitchStoryMaker.isChecked());
+        		        editor.apply();
+                    	               	
                         Intent data = new Intent();
                         data.putStringArrayListExtra(EXTRAS_ACCOUNT_KEYS, mSelectedAccountIds);
                         data.putExtra(SiteController.VALUE_KEY_USE_TOR, mSwitchTor.isChecked());
@@ -81,15 +94,11 @@ public class ChooseAccountFragment extends Fragment {
 
                 mSwitchTor = (Switch) mView.findViewById(R.id.switchTor);
                 mSwitchTor.setVisibility(View.VISIBLE);
-
-//                mTextViewTor = (TextView) mView.findViewById(R.id.textViewTor);
-//                mTextViewTor.setVisibility(View.VISIBLE);
+                mSwitchTor.setChecked(pUseTor);
 
                 mSwitchStoryMaker = (Switch) mView.findViewById(R.id.switchStoryMaker);
                 mSwitchStoryMaker.setVisibility(View.VISIBLE);
-
-//                mTextViewStoryMaker = (TextView) mView.findViewById(R.id.textStoryMaker);
-//                mTextViewStoryMaker.setVisibility(View.VISIBLE);
+                mSwitchStoryMaker.setChecked(pSMUpload);
 
                 mDivider = (View) mView.findViewById(R.id.divider);
                 mDivider.setVisibility(View.VISIBLE);
