@@ -62,7 +62,7 @@ public class ChooseAccountFragment extends Fragment {
         mContainerConnectedAccountsView = (ViewGroup) mView.findViewById(R.id.accounts_connected_container);
         mContainerAvailableAccountsView = (ViewGroup) mView.findViewById(R.id.accounts_available_container);
 
-        //get defualt prefs from settings
+        //get default prefs from settings
         final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         boolean pUseTor = sharedPref.getBoolean(TOR_PREF_KEY, false);
         boolean pSMUpload = sharedPref.getBoolean(SM_UPLOAD_PREF_KEY, false);
@@ -77,7 +77,7 @@ public class ChooseAccountFragment extends Fragment {
                 mBtnContinue.setVisibility(View.VISIBLE);
                 mBtnContinue.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                    	//save tor pref in settings
+                    	//save default prefs in settings
                     	SharedPreferences.Editor editor = sharedPref.edit();
         		        editor.putBoolean(TOR_PREF_KEY, mSwitchTor.isChecked());
         		        editor.putBoolean(SM_UPLOAD_PREF_KEY, mSwitchStoryMaker.isChecked());
