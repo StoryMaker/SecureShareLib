@@ -225,9 +225,9 @@ public abstract class SiteController {
         }
         else if (site.equals(ArchiveSiteController.SITE_KEY)) {
         	if (!isConnected) {
-        		return R.drawable.ic_context_server; //TODO add archive.org assets
+        		return R.drawable.ic_context_iarchive;
         	}
-        	return areCredentialsValid ? R.drawable.ic_context_server_on : R.drawable.ic_context_server_error; //TODO add archive.org assets
+        	return areCredentialsValid ? R.drawable.ic_context_iarchive_on : R.drawable.ic_context_iarchive_error;
         }
 
         return R.drawable.ic_launcher;
