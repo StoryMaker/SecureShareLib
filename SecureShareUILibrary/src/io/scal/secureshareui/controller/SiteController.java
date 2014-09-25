@@ -45,6 +45,7 @@ public abstract class SiteController {
 	public static final String VALUE_KEY_LOCATION_NAME = "locationName";
 	public static final String VALUE_KEY_MEDIA_PATH = "mediaPath";
 	public static final String VALUE_KEY_USE_TOR = "use_tor";
+	public static final String VALUE_KEY_LICENSE_URL = "licenseUrl";
 	public static final String VALUE_KEY_PUBLISH_TO_STORYMAKER = "publish_to_storymaker"; // TODO generalize this, allow clie
     
     protected static final String ORBOT_HOST = "127.0.0.1";

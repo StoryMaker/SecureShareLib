@@ -34,7 +34,6 @@ public class ArchiveSiteController extends SiteController {
 
 	private static final String ARCHIVE_API_ENDPOINT = "http://s3.us.archive.org";
 	private static final String ARCHIVE_DETAILS_ENDPOINT = "https://archive.org/details/";
-	public static final String VALUE_KEY_LICENSE_URL = "licenseUrl";    // FIXME use correct for this
 	public static final MediaType MEDIA_TYPE = MediaType.parse("");
 	private String resultUrl = "";
 
@@ -63,11 +62,13 @@ public class ArchiveSiteController extends SiteController {
         String title = valueMap.get(VALUE_KEY_TITLE);
         boolean shareTitle = (valueMap.get(ArchiveMetadataActivity.INTENT_EXTRA_SHARE_TITLE).equals("true")) ? true : false;
         String slug = valueMap.get(VALUE_KEY_SLUG);
-		String tags = valueMap.get(VALUE_KEY_TAGS); // FIXME move these magic keys into  constants
+		String tags = valueMap.get(VALUE_KEY_TAGS);
+		//always want to include these two tags
+		tags += "presssecure,storymaker";
         boolean shareTags = (valueMap.get(ArchiveMetadataActivity.INTENT_EXTRA_SHARE_TAGS).equals("true")) ? true : false;
 		String author = valueMap.get(VALUE_KEY_AUTHOR);
         boolean shareAuthor = (valueMap.get(ArchiveMetadataActivity.INTENT_EXTRA_SHARE_AUTHOR).equals("true")) ? true : false;
-//		String profileUrl = valueMap.get(VALUE_KEY_PROFILE_URL);
+		String profileUrl = valueMap.get(VALUE_KEY_PROFILE_URL);
 		String locationName = valueMap.get(VALUE_KEY_LOCATION_NAME);
         boolean shareLocation = (valueMap.get(ArchiveMetadataActivity.INTENT_EXTRA_SHARE_LOCATION).equals("true")) ? true : false;
 		String body = valueMap.get(VALUE_KEY_BODY);
@@ -88,7 +89,7 @@ public class ArchiveSiteController extends SiteController {
 			client.setProxy(proxy);
 		}
 
-        // FIXME we are putting a random 4 cahr string in the bucket name for collision avoidance, we might want to do this differently?
+        // FIXME we are putting a random 4 char string in the bucket name for collision avoidance, we might want to do this differently?
 		String urlPath = null;
 		String url = null;
         if (shareTitle) {
@@ -110,27 +111,27 @@ public class ArchiveSiteController extends SiteController {
                 .addHeader("x-amz-auto-make-bucket", "1")
 //				.addHeader("x-archive-meta-sponsor", "Sponsor 998")
 				.addHeader("x-archive-meta-language", "eng") // FIXME pull meta language from story
-				// FIXME add all metadata from metadata as headers here
 				.addHeader("authorization", "LOW " + account.getUserName() + ":" + account.getCredentials());
 
-//		if (profileUrl != null) {
-//			builder.addHeader("x-archive-meta-authorurl", profileUrl);
-//		}
+		if(shareAuthor && author != null) {
+			builder.addHeader("x-archive-meta-author", author);		
+			if (profileUrl != null) {
+				builder.addHeader("x-archive-meta-authorurl", profileUrl);
+			}
+		}	
 		
-		//TODO x-archive-metadata-collection ALWAYS defaulting to opensource
 		if (mediaType != null) {
 			builder.addHeader("x-archive-meta-mediatype", mediaType);
 			if(mediaType.contains("audio")) {
-				builder.addHeader("x-archive-metadata-collection", "opensource_audio");
+				builder.addHeader("x-archive-meta-collection", "opensource_audio");
 			} else {
-				builder.addHeader("x-archive-metadata01-collection", "opensource_movies");
+				builder.addHeader("x-archive-meta-collection", "opensource_movies");
 			}
-			
 		} else {
-			builder.addHeader("x-archive-metadata-collection", "opensource");
+			builder.addHeader("x-archive-meta-collection", "opensource_movies");
 		}
 		
-		if (locationName != null) {
+		if (shareLocation && locationName != null) {
 			builder.addHeader("x-archive-meta-location", locationName);
 		}
         
