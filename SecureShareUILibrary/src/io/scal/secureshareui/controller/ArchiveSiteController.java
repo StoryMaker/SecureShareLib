@@ -33,9 +33,7 @@ public class ArchiveSiteController extends SiteController {
     }
 
 	private static final String ARCHIVE_API_ENDPOINT = "http://s3.us.archive.org";
-	private static final String ARCHIVE_DETAILS_ENDPOINT = "https://archive.org/details/";
 	public static final MediaType MEDIA_TYPE = MediaType.parse("");
-	private String resultUrl = "";
 
 	public ArchiveSiteController(Context context, Handler handler, String jobId) {
 		super(context, handler, jobId);
@@ -101,34 +99,26 @@ public class ArchiveSiteController extends SiteController {
             url = ARCHIVE_API_ENDPOINT  + "/" + urlPath + "/" + fileName;
         }
 		Log.d(TAG, "uploading to url: " + url);
-		
-		resultUrl = ARCHIVE_DETAILS_ENDPOINT + urlPath;
 
 		Request.Builder builder = new Request.Builder()
 				.url(url)
 				.put(RequestBody.create(MEDIA_TYPE, file))
 				.addHeader("Accept", "*/*")
                 .addHeader("x-amz-auto-make-bucket", "1")
+                .addHeader("x-archive-meta-collection", "storymaker")
 //				.addHeader("x-archive-meta-sponsor", "Sponsor 998")
 				.addHeader("x-archive-meta-language", "eng") // FIXME pull meta language from story
 				.addHeader("authorization", "LOW " + account.getUserName() + ":" + account.getCredentials());
 
+		if (mediaType != null) {
+			builder.addHeader("x-archive-meta-mediatype", mediaType);
+		}
+		
 		if(shareAuthor && author != null) {
 			builder.addHeader("x-archive-meta-author", author);		
 			if (profileUrl != null) {
 				builder.addHeader("x-archive-meta-authorurl", profileUrl);
 			}
-		}	
-		
-		if (mediaType != null) {
-			builder.addHeader("x-archive-meta-mediatype", mediaType);
-			if(mediaType.contains("audio")) {
-				builder.addHeader("x-archive-meta-collection", "opensource_audio");
-			} else {
-				builder.addHeader("x-archive-meta-collection", "opensource_movies");
-			}
-		} else {
-			builder.addHeader("x-archive-meta-collection", "opensource_movies");
 		}
 		
 		if (shareLocation && locationName != null) {
@@ -177,8 +167,8 @@ public class ArchiveSiteController extends SiteController {
                 Log.d(TAG, "response: " + response + ", body: " + response.body().string());
 				if (!response.isSuccessful()) {
 					jobFailed(4000001, "Archive upload failed: Unexpected Response Code: " + "response: " + response + ", body: " + response.body().string());
-				} else {
-				    jobSucceeded(resultUrl);
+				} else {	
+				    jobSucceeded(response.request().urlString());
 				}
 			} catch (IOException e) {
 				jobFailed(4000002, "Archive upload failed: IOException");
