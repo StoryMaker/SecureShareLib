@@ -18,9 +18,13 @@ import com.squareup.okhttp.Response;
 public class ZonkeyLoginActivity extends Activity {
 	private static final String TAG = "ArchiveLoginActivity";
 	
-	private final static String ZONKEY_API_AUTHORIZE= "www.api.endpoint/authorize";
-	private final static String ZONKEY_API_TOKEN= "www.api.endpoint/request_token";
-	private final static String ZONKEY_API_ACCESS= "www.api.endpoint/request_access";
+	private final static String ZONKEY_API_AUTHORIZE= "http://storymaker.cc/authorize";
+	private final static String ZONKEY_API_TOKEN= "http://storymaker.cc/request_token";
+	private final static String ZONKEY_API_ACCESS= "http://storymaker.cc/request_access";
+	
+	private final static String app_name = "storymaker-test";
+	private final static String client_secret = "storymaker-test";
+	private final static String client_key = "b1e7024a3302a6045cdfb768413fa6ff6e3e405f";
 
 	private int mAccessResult = Activity.RESULT_CANCELED;
 	private String mAccessKey = null;
@@ -36,7 +40,7 @@ public class ZonkeyLoginActivity extends Activity {
 		OkHttpClient client = new OkHttpClient();
 		Request.Builder builder = new Request.Builder()
 				.url(ZONKEY_API_AUTHORIZE)
-				.addHeader("client_id", "need to get the client id")
+				.addHeader("client_id", client_key)
 				.addHeader("response_type", "code")
                 .addHeader("state", "anything here?");
 		
@@ -70,9 +74,7 @@ public class ZonkeyLoginActivity extends Activity {
 		httpTask.execute();
 	}
 	
-	
-
-	class HTTPTask extends AsyncTask<String, String, String> {
+	private class HTTPTask extends AsyncTask<String, String, String> {
 		private OkHttpClient client;
 		private Request request;
 		private Response response;
