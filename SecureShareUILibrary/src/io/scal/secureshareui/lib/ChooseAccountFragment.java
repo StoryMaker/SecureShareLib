@@ -11,12 +11,15 @@ import java.util.List;
 
 import org.holoeverywhere.widget.Switch;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -26,6 +29,8 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +42,7 @@ public class ChooseAccountFragment extends Fragment {
     private ViewGroup mContainerConnectedAccountsView;
     private ViewGroup mContainerAvailableAccountsView;
     private OnEventListener mEventListener;
+    private Intent mLoginIntent = null;
     private List<Account> mAccounts = new ArrayList<Account>();
     private static boolean mInSelectionMode = false;
     private static boolean mAttemptingLoginRetry = false;
@@ -44,6 +50,7 @@ public class ChooseAccountFragment extends Fragment {
     public static final String EXTRAS_ACCOUNT_KEYS = "accountIds";
     public static final String TOR_PREF_KEY = "pusetor";
     public static final String SM_UPLOAD_PREF_KEY = "psmupload";
+    private final static int UPDATE_SM_SWITCH = 0;
 
     // return the ids of selected items
     ArrayList<String> mSelectedAccountIds = new ArrayList<String>();
@@ -70,6 +77,7 @@ public class ChooseAccountFragment extends Fragment {
         if (getArguments() != null) {
             // if fragment is in connection or selection mode
             mInSelectionMode = getArguments().getBoolean("inSelectionMode", false);
+            final boolean isUserLoggedIntoSM = getArguments().getBoolean("isUserLoggedIntoSM", false);
             if (mInSelectionMode) {
                 ((TextView) mView.findViewById(R.id.tv_choose_account_header)).setText(this.getString(R.string.select_account));
 
@@ -98,10 +106,27 @@ public class ChooseAccountFragment extends Fragment {
 
                 mSwitchStoryMaker = (Switch) mView.findViewById(R.id.switchStoryMaker);
                 mSwitchStoryMaker.setVisibility(View.VISIBLE);
-                mSwitchStoryMaker.setChecked(pSMUpload);
+                
+                //make sure the user is logged in to SM
+                if(isUserLoggedIntoSM) {
+                	mSwitchStoryMaker.setChecked(pSMUpload);
+                } else {
+                	mSwitchStoryMaker.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        	if(isChecked && !isUserLoggedIntoSM) {
+                        		showLoginDialogSM();
+                        		mSwitchHandler.postDelayed(new Runnable() {
+                        			  public void run() {
+                        				  mSwitchHandler.sendEmptyMessage(UPDATE_SM_SWITCH);
+                        			  }
+                        			}, 1);
+                        	}
+                        }
+                    });
+                }
 
                 mDivider = (View) mView.findViewById(R.id.divider);
-                mDivider.setVisibility(View.VISIBLE);
+                mDivider.setVisibility(View.VISIBLE);   
             }
         }
 
@@ -113,6 +138,10 @@ public class ChooseAccountFragment extends Fragment {
     public void setAccountsList(List<Account> accounts) {
         this.mAccounts = accounts;
         addAccounts();
+    }
+    
+    public void setLoginIntent(Intent intent) {
+        this.mLoginIntent = intent;
     }
 
     public void setOnEventListener(OnEventListener eventListener) {
@@ -166,7 +195,7 @@ public class ChooseAccountFragment extends Fragment {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setMessage(R.string.dialog_account_message)
                         .setCancelable(false)
-                        .setPositiveButton(R.string.dialog_account_answer_positive, new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.lbl_Yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 addAvailableAccount(currentAccount);
                                 mContainerConnectedAccountsView.removeView(vgConnectedAccounts);
@@ -177,7 +206,7 @@ public class ChooseAccountFragment extends Fragment {
                                 }
                             }
                         })
-                        .setNegativeButton(R.string.dialog_account_answer_negative, new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.lbl_Cancel, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
                             }
@@ -261,6 +290,39 @@ public class ChooseAccountFragment extends Fragment {
         mAccount = currentAccount;
         mVgAccounts = vgAccounts;
     }
+    
+    private void showLoginDialogSM(){
+    	AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(R.string.sign_in_storymaker)
+                .setCancelable(false)
+                .setPositiveButton(R.string.lbl_Yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    	if(mLoginIntent != null) {
+                    		getActivity().startActivity(mLoginIntent);
+                    	}
+                    }
+                })
+                .setNegativeButton(R.string.lbl_Cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    	dialog.cancel();
+                    }
+                }).show();     
+    }
+    
+    private void turnSMSwitchOff() {
+    	mSwitchStoryMaker.setChecked(false);
+    }
+    
+    @SuppressLint("HandlerLeak")
+	private Handler mSwitchHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			final int what = msg.what;
+	        switch(what) {
+	        	case UPDATE_SM_SWITCH: turnSMSwitchOff(); break;
+	        }
+		}
+	};
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == SiteController.CONTROLLER_REQUEST_CODE) {
