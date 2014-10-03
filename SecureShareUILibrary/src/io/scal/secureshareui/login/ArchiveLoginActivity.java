@@ -147,7 +147,7 @@ public class ArchiveLoginActivity extends Activity {
 		new AlertDialog.Builder(this)
 				.setTitle(getString(R.string.archive_title))
 				.setMessage(getString(R.string.archive_message))
-				.setPositiveButton(R.string.ok, positiveBtnClickListener).show();
+				.setPositiveButton(R.string.lbl_ok, positiveBtnClickListener).show();
 	}
 
 	@Override

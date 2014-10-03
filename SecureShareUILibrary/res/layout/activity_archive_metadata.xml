@@ -69,8 +69,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:textOff="@string/lbl_no"
-            android:textOn="@string/lbl_yes" />
+            android:textOff="@string/lbl_off"
+            android:textOn="@string/lbl_on" />
     </RelativeLayout>
 
     <View
@@ -115,8 +115,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:textOff="@string/lbl_no"
-            android:textOn="@string/lbl_yes" />
+            android:textOff="@string/lbl_off"
+            android:textOn="@string/lbl_on" />
     </RelativeLayout>
 
     <View
@@ -161,8 +161,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:textOff="@string/lbl_no"
-            android:textOn="@string/lbl_yes" />
+            android:textOff="@string/lbl_off"
+            android:textOn="@string/lbl_on" />
     </RelativeLayout>
 
     <View
@@ -207,8 +207,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:textOff="@string/lbl_no"
-            android:textOn="@string/lbl_yes" />
+            android:textOff="@string/lbl_off"
+            android:textOn="@string/lbl_on" />
     </RelativeLayout>
 
     <View
@@ -253,8 +253,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:textOff="@string/lbl_no"
-            android:textOn="@string/lbl_yes" />
+            android:textOff="@string/lbl_off"
+            android:textOn="@string/lbl_on" />
     </RelativeLayout>
 
     <View
