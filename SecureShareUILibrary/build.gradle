@@ -1,0 +1,52 @@
+apply plugin: 'holoeverywhere-library'
+apply plugin: 'android-library'
+
+dependencies {
+    compile 'com.android.support:support-v4:19.1.0'
+}
+
+android {
+    compileSdkVersion 17
+    buildToolsVersion "20.0.0"
+
+    defaultConfig {
+        minSdkVersion 10
+        targetSdkVersion 15
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            res.srcDirs = ['res']
+        }
+    }
+}
+
+dependencies {
+    compile files('libs/flickr.jar')
+    compile files('libs/google-api-client-1.18.0-rc.jar')
+    compile files('libs/google-api-client-android-1.18.0-rc.jar')
+    compile files('libs/google-api-services-youtube-v3-rev108-1.18.0-rc.jar')
+    compile files('libs/google-http-client-1.18.0-rc.jar')
+    compile files('libs/google-http-client-gson-1.18.0-rc.jar')
+    compile files('libs/google-oauth-client-1.18.0-rc.jar')
+    compile files('libs/google-play-services.jar')
+    compile 'com.google.code.gson:gson:2.3'
+    compile files('libs/guava-r09.jar')
+    compile files('libs/httpcore-4.3.2.jar')
+    compile files('libs/httpmime-4.3.3.jar')
+    compile files('libs/jsch-0.1.51.jar')
+    compile files('libs/okhttp-2.0.0.jar')
+    compile files('libs/okio-1.0.1.jar')
+    compile files('libs/scribe.jar')
+
+    compile project(':external:SecureShareLib:SecureShareUILibrary:external:facebook-sdk:facebook')
+
+}
+
+holoeverywhere {
+  library {
+    version = 'latest'
+  }
+}
