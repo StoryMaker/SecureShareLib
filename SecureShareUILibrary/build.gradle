@@ -28,11 +28,12 @@ dependencies {
     compile files('libs/google-api-client-1.18.0-rc.jar')
     compile files('libs/google-api-client-android-1.18.0-rc.jar')
     compile files('libs/google-api-services-youtube-v3-rev108-1.18.0-rc.jar')
-    compile files('libs/google-http-client-1.18.0-rc.jar')
-    compile files('libs/google-http-client-gson-1.18.0-rc.jar')
+    //compile 'com.google.http-client:google-http-client:1.19.0'
+    //compile files('libs/google-http-client-1.18.0-rc.jar')
+    compile 'com.google.http-client:google-http-client-gson:1.19.0'
+//    compile files('libs/google-http-client-gson-1.18.0-rc.jar')
     compile files('libs/google-oauth-client-1.18.0-rc.jar')
     compile files('libs/google-play-services.jar')
-    compile 'com.google.code.gson:gson:2.3'
     compile files('libs/guava-r09.jar')
     compile files('libs/httpcore-4.3.2.jar')
     compile files('libs/httpmime-4.3.3.jar')
