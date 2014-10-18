@@ -9,8 +9,6 @@ import io.scal.secureshareuilibrary.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.holoeverywhere.widget.Switch;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -32,6 +30,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 

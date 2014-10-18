@@ -4,10 +4,9 @@ import io.scal.secureshareui.controller.SiteController;
 import io.scal.secureshareui.lib.Util;
 import io.scal.secureshareuilibrary.R;
 
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.app.AlertDialog;
-
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
