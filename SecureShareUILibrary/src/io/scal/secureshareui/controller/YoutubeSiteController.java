@@ -2,6 +2,7 @@ package io.scal.secureshareui.controller;
 
 import io.scal.secureshareui.login.YoutubeLoginActivity;
 import io.scal.secureshareui.model.Account;
+import io.scal.secureshareuilibrary.R;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -99,7 +100,7 @@ public class YoutubeSiteController extends SiteController {
     public YouTube.Videos.Insert prepareUpload(String title, String body, File mediaFile) {
         try {
         	if(!super.isVideoFile(mediaFile)){
-        		jobFailed(1231291, "Invalid file format."); // FIXME move to strings
+        		jobFailed(1231291, mContext.getString(R.string.invalid_file_format));
         		return null;
         	}
         	
@@ -147,7 +148,7 @@ public class YoutubeSiteController extends SiteController {
                         case MEDIA_IN_PROGRESS:
                             Log.d(TAG, "YouTube Upload: Upload in progress");
                             float uploadPercent = (float) (uploader.getProgress());
-                            jobProgress(uploadPercent, "YouTube uploading..."); // FIXME move to strings
+                            jobProgress(uploadPercent, mContext.getString(R.string.youtube_uploading));
                             break;
                         case MEDIA_COMPLETE:
                             Log.d(TAG, "Upload file: Upload Completed!");
@@ -192,11 +193,11 @@ public class YoutubeSiteController extends SiteController {
 				} catch (final GooglePlayServicesAvailabilityIOException e) {
 					errorId = 1231232;
 					String msg = e.getMessage() != null ? e.getMessage() + ", " : "";
-					errorMessage = "Google Play Services not Available: " + e.getCause() + msg; // FIXME move to strings
+					errorMessage = mContext.getString(R.string.google_play_services_not_avail) + ": " + e.getCause() + msg;
 				} catch (UserRecoverableAuthIOException e) {
 					errorId = 1231233;
                     String msg = e.getMessage() != null ? e.getMessage() + ", " : "";
-					errorMessage = "Insuffiecent Permissions: " + e.getCause() + msg; // FIXME move to strings
+					errorMessage = mContext.getString(R.string.insufficient_permissions) + ": " + e.getCause() + msg;
 				} catch (GoogleAuthIOException e) {
 					errorId = 1231234;
                     String msg = e.getMessage() != null ? e.getMessage() + ", " : "";
@@ -204,7 +205,7 @@ public class YoutubeSiteController extends SiteController {
                     
                     //if bad username error, explain to user how to fix
                     if(cause.contains("BadUsername")) {
-                    	errorMessage = "Connect your Google account to this device."; // FIXME move to strings
+                    	errorMessage = mContext.getString(R.string.connect_your_google_account_to_device);
                     } else {
                     	errorMessage = "GoogleAuth IOException: " + e.getCause() + msg; // FIXME move to strings
                     }

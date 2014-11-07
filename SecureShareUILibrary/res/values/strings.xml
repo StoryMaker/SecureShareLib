@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">SecureShareUILibrary</string>
+    <string name="app_name" translatable="false">SecureShareUILibrary</string>
     <string name="connect_account">Connect Account</string>
     <string name="select_account">Select Account</string>
     <string name="accounts_connected">Connected</string>
@@ -33,18 +33,23 @@
 	<string name="lbl_on">On</string>
     <string name="lbl_ok">OK</string>
     <string name="lbl_settings">Settings</string>
-    <string name="lbl_cancelled">Cancelled</string>
+    <string name="lbl_cancelled">Canceled</string>
     <string name="lbl_success">Success</string>
     <string name="lbl_continue">Continue</string>
 	
 	<string name="archive_title">Email Confimation</string>
 	<string name="archive_message">Please confirm your email and return to connect your Archive account.</string>
-	<string name="archive_license_by"><a href="https://creativecommons.org/licenses/by/4.0/">Attribution</a></string>
-	<string name="archive_license_bysa"><a href="https://creativecommons.org/licenses/by-sa/4.0/">Attribution-ShareAlike</a></string>
-	<string name="archive_license_byncnd"><a href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Attribution-NonCommercial-NoDerivs</a></string>
+	<string name="archive_license_by" translatable="false"><a href="https://creativecommons.org/licenses/by/4.0/">Attribution</a></string>
+	<string name="archive_license_bysa" translatable="false"><a href="https://creativecommons.org/licenses/by-sa/4.0/">Attribution-ShareAlike</a></string>
+	<string name="archive_license_byncnd" translatable="false"><a href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Attribution-NonCommercial-NoDerivs</a></string>
 	<string name="upload_to_internet_archive">Upload to Internet Archive</string>
 	<string name="upload_securely_via_tor">Upload Securely via Tor</string>
 	<string name="use_tor_to_upload_securely_and_anonymously_">Use Tor to upload securely and anonymously.</string>
 	<string name="publish_to_storymaker">Publish to StoryMaker</string>
-	<string name="login_to_storymaker_cc_to_publish_">Login to StoryMaker.cc to publish.</string>
+	<string name="login_to_storymaker_cc_to_publish_">Login to StoryMaker.org to publish.</string>
+    <string name="invalid_file_format">Invalid file format.</string>
+    <string name="youtube_uploading">YouTube uploading...</string>
+    <string name="google_play_services_not_avail">"Google Play Services not Available"</string>
+    <string name="insufficient_permissions">Insuffiecent Permissions</string>
+    <string name="connect_your_google_account_to_device">Connect your Google account to this device.</string>
 </resources>
