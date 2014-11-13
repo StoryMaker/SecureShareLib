@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="connect_account">حساب الإتصال</string>
+  <string name="select_account">اختيار الحساب</string>
+  <string name="accounts_connected">متصل</string>
+  <string name="accounts_available">متاح</string>
+  <string name="account_logo_desc">شعار الحساب</string>
+  <string name="account_none_found">لم يتم العثور على الحساب</string>
+  <string name="dialog_account_message">قطع الإتصال بهذا الحساب</string>
+  <string name="permission_not_granted">تنفيذ الإجراء المحدد غير ممكن  بسبب عدم منح الترخيص.</string>
+  <string name="hello_user">مرحبا  %1$s!</string>
+  <string name="successfully_posted_post">نُشِرت بنجاح \'%1$s\'.\nPost ID: %2$s</string>
+  <string name="error">خطأ</string>
+  <string name="exception">استثناء: %1$s</string>
+  <string name="password">كلمة السر</string>
+  <string name="username">اسم المستخدم </string>
+  <string name="sign_in">تسجيل الدخول</string>
+  <string name="sign_in_storymaker">تسجيل الدخول لـــStoryMaker؟</string>
+  <string name="inavalid_credentials">* معلومات الدخول غير صالحة</string>
+  <string name="lbl_Yes">نعم</string>
+  <string name="lbl_Cancel">إلغاء</string>
+  <string name="lbl_off">غلق</string>
+  <string name="lbl_on">فتح</string>
+  <string name="lbl_ok">موافق</string>
+  <string name="lbl_settings">إعدادات</string>
+  <string name="lbl_cancelled">اُلغِيَ</string>
+  <string name="lbl_success">نجاح</string>
+  <string name="lbl_continue">متابعة</string>
+  <string name="archive_title">تأكيد الإيميل</string>
+  <string name="archive_message">الرجاء تأكيد الإيميل و الرجوع للدخول لحسابكم.</string>
+  <string name="upload_to_internet_archive">الرفع لأرشيف الأنترنات</string>
+  <string name="upload_securely_via_tor">الرفع بأمان باستخدام Tor</string>
+  <string name="use_tor_to_upload_securely_and_anonymously_">استعمال Tor لرفع بأمان و بسرية</string>
+  <string name="publish_to_storymaker">النشر على StoryMaker</string>
+  <string name="login_to_storymaker_cc_to_publish_">تسجيل الدخول لــ StoryMaker.org للنشر.</string>
+  <string name="invalid_file_format">صيغة الملف غير صالحة.</string>
+  <string name="youtube_uploading">جراي الرفع على اليوتيوب...</string>
+  <string name="google_play_services_not_avail">خدمات Google Play  غير متوفرة</string>
+  <string name="insufficient_permissions">صلاحيات غير كافية</string>
+  <string name="connect_your_google_account_to_device">إدخال حساب Google لهذا الجهاز</string>
+</resources>
