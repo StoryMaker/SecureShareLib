@@ -43,9 +43,9 @@ public class YoutubeLoginActivity extends Activity implements Runnable {
 
 	static final String TAG = "YoutubeLoginActivity";
 	
-	private static final String CLIENT_ID = "279338940292-7pqin08vmde3nhheekijn6cfetknotbs.apps.googleusercontent.com";
-	private static final String CLIENT_SECRET = "N3uZBIBjr__TPHUWUkmtBUYk";
-	
+	private String CLIENT_ID;
+	private String CLIENT_SECRET;
+
 	private static final String REDIRECT_URI = "http://localhost";
 	private static final String YOUTUBE_USER_INFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo";
 	private static final String YOUTUBE_EMAIL_SCOPE = "https://www.googleapis.com/auth/userinfo.email";
@@ -62,7 +62,8 @@ public class YoutubeLoginActivity extends Activity implements Runnable {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_youtube_login);
-
+        CLIENT_ID = getString(R.string.google_client_id);
+        CLIENT_SECRET = getString(R.string.google_client_secret);
 		login();
 	}
 

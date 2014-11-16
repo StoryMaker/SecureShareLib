@@ -21,6 +21,7 @@ import android.util.Log;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
+import com.facebook.model.GraphUser;
 
 public class FacebookSiteController extends SiteController {
     public static final String SITE_NAME = "Facebook";
@@ -131,6 +132,28 @@ public class FacebookSiteController extends SiteController {
         }
 
         request.executeAsync();
+    }
+
+    static String userId; // FIXME we should be caching this at login
+    public static String getUserId(){
+        final Session session = Session.getActiveSession();
+        if (session != null && session.isOpened()) {
+            Request request = Request.newMeRequest(session, new Request.GraphUserCallback() {
+                @Override
+                public void onCompleted(GraphUser user, Response response) {
+                    if (session == Session.getActiveSession()) {
+                        if (user != null) {
+                            userId = user.getId();
+                        }
+                    }
+                }
+            });
+            Request.executeAndWait(request);
+            return userId;
+        }else{
+            return null;
+        }
+
     }
 
     @Override

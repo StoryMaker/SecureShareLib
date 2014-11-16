@@ -7,7 +7,7 @@ This package was originally forked from the AOSP Download Provider package.  We 
 
 ###Building
 
-- You need to place your Flickr keys in res/values/flickr.xml with your own from Flickr's [create site page](https://www.flickr.com/services/apps/create/apply/)
+- Place your Flickr keys in res/values/flickr.xml with your own from Flickr's [create site page](https://www.flickr.com/services/apps/create/apply/)
 
 Example:
     
@@ -16,6 +16,17 @@ Example:
         <!-- insert your own keys from: https://www.flickr.com/services/apps/create/apply/ -->
         <string name="flickr_key">REPLACE_WITH_YOUR_KEY</string>
         <string name="flickr_secret">REPLACE_WITH_YOUR_KEY</string>
+    </resources>
+
+- Place your Google keys in res/values/google.xml with your own from the [Google Developer Console](https://console.developers.google.com/)
+
+Example:
+    
+    <?xml version="1.0" encoding="utf-8"?>
+    <resources>
+        <!-- insert your own keys from: https://www.flickr.com/services/apps/create/apply/ -->
+        <string name="google_client_id">REPLACE_WITH_YOUR_ID</string>
+        <string name="google_client_secret">REPLACE_WITH_YOUR_SECRET</string>
     </resources>
 
 

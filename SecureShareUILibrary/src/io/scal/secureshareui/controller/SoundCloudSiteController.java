@@ -71,7 +71,7 @@ public class SoundCloudSiteController extends SiteController {
         final ApiWrapper wrapper = new ApiWrapper(APP_CLIENT_ID,    // client_id
                 APP_CLIENT_SECRET,                                  // client_secret
                 null,                                               // redirect URI
-                new Token(credentials, "0"));                       // token
+                new Token(credentials, "0"));                       // token // FIXME should we be using refresh?
 
         if (torCheck(Boolean.parseBoolean(useTor), mContext)) {
             URI uri = null;

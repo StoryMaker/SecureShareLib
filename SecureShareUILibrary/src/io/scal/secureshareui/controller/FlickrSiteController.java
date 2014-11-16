@@ -33,7 +33,7 @@ public class FlickrSiteController extends SiteController {
     
     public FlickrSiteController(Context context, Handler handler, String jobId) {
         super(context, handler, jobId);
-        key = mContext.getString(R.string.flickr_key);
+        key = mContext.getString(R.string.flickr_key); // FIXME move key and secret out of FlickrSiteController
         secret = mContext.getString(R.string.flickr_secret);
     }
     
