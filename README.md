@@ -27,6 +27,7 @@ Example:
         <!-- insert your own keys from: https://www.flickr.com/services/apps/create/apply/ -->
         <string name="google_client_id">REPLACE_WITH_YOUR_ID</string>
         <string name="google_client_secret">REPLACE_WITH_YOUR_SECRET</string>
+        <string name="google_app_name">REPLACE_WITH_YOUR_APP_NAME</string>
     </resources>
 
 

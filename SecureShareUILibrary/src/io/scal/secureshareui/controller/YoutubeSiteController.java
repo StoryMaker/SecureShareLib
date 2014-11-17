@@ -88,7 +88,7 @@ public class YoutubeSiteController extends SiteController {
 		}
 		
         mYoutube = new com.google.api.services.youtube.YouTube.Builder(transport, jsonFactory, credential)
-                        .setApplicationName("StoryMaker")
+                        .setApplicationName(mContext.getString(R.string.google_app_name))
                         .setGoogleClientRequestInitializer(new YouTubeRequestInitializer(CLIENT_ID))
                         .build();
  
