@@ -52,7 +52,7 @@ public abstract class SiteController {
     protected static final int ORBOT_HTTP_PORT = 8118;
     protected static final int ORBOT_SOCKS_PORT = 9050;
     
-    public static int METADATA_REQUEST_CODE = 1022783270;
+    public static int METADATA_REQUEST_CODE = 24153;
 
     private static final String TAG = "SiteController";
 
