@@ -48,4 +48,3 @@ dependencies {
     compile project(':external:SecureShareLib:SecureShareUILibrary:external:facebook-sdk:facebook')
 
 }
-
