@@ -22,6 +22,7 @@
     <string name="exception">Exception: %1$s</string>
     <string name="password">Password</string>
     <string name="username">User Name</string>
+    <string name="email">Email</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_in_storymaker">Sign in to StoryMaker?</string>
     <string name="inavalid_credentials">*Invalid Login Credentials</string>
