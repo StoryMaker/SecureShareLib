@@ -47,12 +47,15 @@ dependencies {
 //    compile 'com.google.android.gms:play-services:4.0.30'
 
     compile files('libs/guava-r09.jar')
-    compile files('libs/httpcore-4.3.2.jar')
-    compile files('libs/httpmime-4.3.3.jar')
+    //compile files('libs/httpcore-4.3.2.jar')
+    //compile files('libs/httpmime-4.3.3.jar')
+    compile 'org.apache.httpcomponents:httpcore:4.3.2'
+    compile 'org.apache.httpcomponents:httpmime:4.3.3'
     compile files('libs/jsch-0.1.51.jar')
-    compile files('libs/okhttp-2.0.0.jar')
-    compile files('libs/okio-1.0.1.jar')
     compile files('libs/scribe.jar')
+
+    compile 'com.squareup.okhttp:okhttp:2.1.0'
+    compile 'com.squareup.okio:okio:1.1.0'
 
     compile project(':external:SecureShareLib:SecureShareUILibrary:external:facebook-sdk:facebook')
 
