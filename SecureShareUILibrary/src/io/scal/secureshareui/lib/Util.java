@@ -102,4 +102,8 @@ public class Util {
 			webview.destroy();
 		}
 	}
+
+    public static boolean isEmpty(String string) {
+        return string == null || string.trim().isEmpty();
+    }
 }

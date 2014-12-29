@@ -1,12 +1,16 @@
 
 package io.scal.secureshareui.model;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import io.scal.secureshareui.controller.ArchiveSiteController;
 import io.scal.secureshareui.controller.FacebookSiteController;
 import io.scal.secureshareui.controller.FlickrSiteController;
 import io.scal.secureshareui.controller.SSHSiteController;
 import io.scal.secureshareui.controller.SoundCloudSiteController;
 import io.scal.secureshareui.controller.YoutubeSiteController;
+import io.scal.secureshareui.lib.Util;
 
 public class Account {
 
@@ -44,6 +48,47 @@ public class Account {
         this.setData(data);
         this.setIsConnected(isConnected);
         this.setAreCredentialsValid(areCredentialsValid);
+    }
+
+    public Account(Context context, String prefsName) {
+        if (Util.isEmpty(prefsName)) {
+            prefsName = "secureshare_auth";
+        }
+
+        SharedPreferences settings = context.getSharedPreferences(prefsName, 0);
+
+        id = settings.getInt("id", 0);
+        name = settings.getString("name", null);
+        credentials = settings.getString("credentials", null);
+        isConnected = settings.getBoolean("is_connected", false);
+        data = settings.getString("data", null);
+        userName = settings.getString("user_name", null);
+    }
+
+    public void saveToSharedPrefs(Context context, String prefsName) {
+        if (Util.isEmpty(prefsName)) {
+            prefsName = "secureshare_auth";
+        }
+        SharedPreferences settings = context.getSharedPreferences(prefsName, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putInt("id", id);
+        editor.putString("name", name);
+        editor.putString("credentials", credentials);
+        editor.putBoolean("is_connected", isConnected);
+        editor.putString("data", data);
+        editor.putString("user_name", userName);
+        editor.commit();
+    }
+
+    public static void clearSharedPreferences(Context context, String prefsName) {
+        if (Util.isEmpty(prefsName)) {
+            prefsName = "secureshare_auth";
+        }
+
+        SharedPreferences settings = context.getSharedPreferences(prefsName, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.clear();
+        editor.commit();
     }
 
     public int getId() {
