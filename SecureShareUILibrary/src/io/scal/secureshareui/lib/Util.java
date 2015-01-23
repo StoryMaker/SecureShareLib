@@ -70,7 +70,7 @@ public class Util {
     public static boolean checkIsTorInstalledDialog(final Context context) {
         boolean wasTorInstalled = false;
 
-        if(!getOrbotHelper(context).isOrbotInstalled()) {
+        if(getOrbotHelper(context).isOrbotInstalled()) {
             wasTorInstalled = true;
         } else {
             new AlertDialog.Builder(context)
