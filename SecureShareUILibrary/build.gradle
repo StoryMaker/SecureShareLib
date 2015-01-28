@@ -49,22 +49,18 @@ dependencies {
 //    compile files('libs/google-http-client-gson-1.18.0-rc.jar')
     compile files('libs/google-oauth-client-1.18.0-rc.jar')
 
-    //compile files('libs/google-play-services.jar')
+    // TODO Google Play Services is now available as sub-components
+    // TODO see: http://android-developers.blogspot.com/2014/12/google-play-services-and-dex-method.html
     compile 'com.google.android.gms:play-services:6.5.87'
-//    compile 'com.google.android.gms:play-services:6.1.71'
-//    compile 'com.google.android.gms:play-services:4.0.30'
 
     compile 'com.google.guava:guava:18.0'
-    //compile files('libs/guava-r09.jar')
-//    compile 'org.apache.httpcomponents:httpmime:4.3.6'
-    compile files('libs/httpcore-4.3.2.jar')
-//    compile 'org.apache.httpcomponents:httpcore:4.3.3'
+    compile 'org.apache.httpcomponents:httpcore:4.3.2'
+    compile 'org.apache.httpcomponents:httpmime:4.3.3'
     compile files('libs/httpmime-4.3.3.jar')
     compile files('libs/jsch-0.1.51.jar')
-    //compile files('libs/okhttp-2.0.0.jar')
-    compile 'com.squareup.okhttp:okhttp:2.2.0'
-    //compile files('libs/okio-1.0.1.jar')
     compile files('libs/scribe.jar')
+
+    compile 'com.squareup.okhttp:okhttp:2.1.0'
 
     compile project(':external:SecureShareLib:SecureShareUILibrary:external:facebook-sdk:facebook')
 
