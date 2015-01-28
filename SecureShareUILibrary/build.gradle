@@ -1,16 +1,17 @@
-apply plugin: 'android-library'
+apply plugin: 'com.android.library'
 
 dependencies {
-    compile 'com.android.support:support-v4:19.1.0'
+    compile 'com.android.support:support-v4:21.0.3'
 }
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.0.0"
+    buildToolsVersion "21.1.2"
 
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 21
+        multiDexEnabled true
     }
 
     sourceSets {
@@ -20,9 +21,24 @@ android {
             res.srcDirs = ['res']
         }
     }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'LICENSE.txt'
+    }
 }
 
 dependencies {
+    compile 'com.android.support:multidex:1.0.1'
+
     compile files('libs/flickr.jar')
     compile files('libs/google-api-client-1.18.0-rc.jar')
     compile files('libs/google-api-client-android-1.18.0-rc.jar')
@@ -33,16 +49,21 @@ dependencies {
 //    compile files('libs/google-http-client-gson-1.18.0-rc.jar')
     compile files('libs/google-oauth-client-1.18.0-rc.jar')
 
-    compile files('libs/google-play-services.jar')
+    //compile files('libs/google-play-services.jar')
+    compile 'com.google.android.gms:play-services:6.5.87'
 //    compile 'com.google.android.gms:play-services:6.1.71'
 //    compile 'com.google.android.gms:play-services:4.0.30'
 
-    compile files('libs/guava-r09.jar')
+    compile 'com.google.guava:guava:18.0'
+    //compile files('libs/guava-r09.jar')
+//    compile 'org.apache.httpcomponents:httpmime:4.3.6'
     compile files('libs/httpcore-4.3.2.jar')
+//    compile 'org.apache.httpcomponents:httpcore:4.3.3'
     compile files('libs/httpmime-4.3.3.jar')
     compile files('libs/jsch-0.1.51.jar')
-    compile files('libs/okhttp-2.0.0.jar')
-    compile files('libs/okio-1.0.1.jar')
+    //compile files('libs/okhttp-2.0.0.jar')
+    compile 'com.squareup.okhttp:okhttp:2.2.0'
+    //compile files('libs/okio-1.0.1.jar')
     compile files('libs/scribe.jar')
 
     compile project(':external:SecureShareLib:SecureShareUILibrary:external:facebook-sdk:facebook')
