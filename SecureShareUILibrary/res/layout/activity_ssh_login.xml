@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="10"
-        android:hint="Hostname or IP Address" />
+        android:hint="@string/hostname_address" />
 
     <EditText
         android:id="@+id/etServerName"
@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="10"
-        android:hint="Server Nickname" />
+        android:hint="@string/server_nickname" />
 
     <EditText
         android:id="@+id/etRemotePath"
@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="10"
-        android:hint="Remote Path (optional)" />
+        android:hint="@string/remote_path" />
     
     <TextView
         android:id="@+id/tvLoginError"

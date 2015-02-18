@@ -53,4 +53,7 @@
     <string name="google_play_services_not_avail">"Google Play Services not Available"</string>
     <string name="insufficient_permissions">Insuffiecent Permissions</string>
     <string name="connect_your_google_account_to_device">Connect your Google account to this device.</string>
+    <string name="remote_path">Remote Path (optional)</string>
+    <string name="server_nickname">Server Nickname</string>
+    <string name="hostname_address">Hostname or IP Address</string>
 </resources>
