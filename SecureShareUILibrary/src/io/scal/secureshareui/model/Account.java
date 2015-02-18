@@ -23,7 +23,8 @@ public class Account {
     private boolean isConnected;
     private boolean areCredentialsValid;
     public static final String[] CONTROLLER_SITE_NAMES = {
-        	ArchiveSiteController.SITE_NAME,
+         // TEMPORARILY REMOVING UNTIL FIXED
+         // ArchiveSiteController.SITE_NAME,
             FacebookSiteController.SITE_NAME,
             YoutubeSiteController.SITE_NAME,
             SoundCloudSiteController.SITE_NAME,
@@ -31,7 +32,8 @@ public class Account {
             SSHSiteController.SITE_NAME
     };
     public static final String[] CONTROLLER_SITE_KEYS = {
-	        ArchiveSiteController.SITE_KEY,
+	     // TEMPORARILY REMOVING UNTIL FIXED
+	     // ArchiveSiteController.SITE_KEY,
 	        FacebookSiteController.SITE_KEY,
             YoutubeSiteController.SITE_KEY,
             SoundCloudSiteController.SITE_KEY,
