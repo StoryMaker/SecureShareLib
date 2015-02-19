@@ -20,6 +20,7 @@
   <string name="exception">Umwiharizo (exception): %1$s </string>
   <string name="password">Akanyegezabanga (mot de passe)</string>
   <string name="username">Izina ukoresha (Nom d\'utilisateur)</string>
+  <string name="email">Email</string>
   <string name="sign_in">Kwinjira (se connecter)</string>
   <string name="sign_in_storymaker">Kwinjira muri Storymaker?</string>
   <string name="inavalid_credentials">ibikenewe mukwinjira ntibirivyo (invalide)</string>

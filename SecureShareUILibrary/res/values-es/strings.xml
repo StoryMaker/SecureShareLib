@@ -20,6 +20,7 @@
   <string name="exception">Excepción: %1$s</string>
   <string name="password">Contraseña</string>
   <string name="username">Nombre de usuario</string>
+  <string name="email">Correo electrónico</string>
   <string name="sign_in">Abrir sesión</string>
   <string name="sign_in_storymaker">¿Abrir sesión en StoryMaker?</string>
   <string name="inavalid_credentials">*Credenciales de inicio de sesión no válidas</string>
