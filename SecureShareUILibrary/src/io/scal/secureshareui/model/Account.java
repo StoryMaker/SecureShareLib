@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import io.scal.secureshareui.controller.ArchiveSiteController;
 import io.scal.secureshareui.controller.FacebookSiteController;
 import io.scal.secureshareui.controller.FlickrSiteController;
+import io.scal.secureshareui.controller.SMSiteController;
 import io.scal.secureshareui.controller.SSHSiteController;
 import io.scal.secureshareui.controller.SoundCloudSiteController;
 import io.scal.secureshareui.controller.YoutubeSiteController;
@@ -29,7 +30,8 @@ public class Account {
             YoutubeSiteController.SITE_NAME,
             SoundCloudSiteController.SITE_NAME,
             FlickrSiteController.SITE_NAME,
-            SSHSiteController.SITE_NAME
+            SSHSiteController.SITE_NAME,
+            SMSiteController.SITE_NAME
     };
     public static final String[] CONTROLLER_SITE_KEYS = {
 	     // TEMPORARILY REMOVING UNTIL FIXED
@@ -38,7 +40,8 @@ public class Account {
             YoutubeSiteController.SITE_KEY,
             SoundCloudSiteController.SITE_KEY,
             FlickrSiteController.SITE_KEY,
-            SSHSiteController.SITE_KEY
+            SSHSiteController.SITE_KEY,
+            SMSiteController.SITE_KEY
     };
 
     public Account(int id, String name, String site, String userName, String credentials, String data, boolean isConnected, boolean areCredentialsValid) {
