@@ -105,22 +105,29 @@ public class ArchiveSiteController extends SiteController {
 				.put(RequestBody.create(MEDIA_TYPE, file))
 				.addHeader("Accept", "*/*")
                 .addHeader("x-amz-auto-make-bucket", "1")
-                .addHeader("x-archive-meta-collection", "storymaker")
+//                .addHeader("x-archive-meta-collection", "storymaker")
 //				.addHeader("x-archive-meta-sponsor", "Sponsor 998")
 				.addHeader("x-archive-meta-language", "eng") // FIXME pull meta language from story
 				.addHeader("authorization", "LOW " + account.getUserName() + ":" + account.getCredentials());
 
-		if (mediaType != null) {
-			builder.addHeader("x-archive-meta-mediatype", mediaType);
-		}
-		
 		if(shareAuthor && author != null) {
 			builder.addHeader("x-archive-meta-author", author);		
 			if (profileUrl != null) {
 				builder.addHeader("x-archive-meta-authorurl", profileUrl);
 			}
+        }
+
+        if (mediaType != null) {
+            builder.addHeader("x-archive-meta-mediatype", mediaType);
+            if(mediaType.contains("audio")) {
+                builder.addHeader("x-archive-meta-collection", "opensource_audio");
+            } else {
+                builder.addHeader("x-archive-meta-collection", "opensource_movies");
+            }
+        } else {
+            builder.addHeader("x-archive-meta-collection", "opensource_movies");
 		}
-		
+
 		if (shareLocation && locationName != null) {
 			builder.addHeader("x-archive-meta-location", locationName);
 		}
