@@ -153,20 +153,35 @@ public class ZWebActivity extends Activity {
             String token = null;
             try {
 
-                //String tokenUrl = TOKEN_URL + "?" +
+                String tokenUrl = TOKEN_URL + "?" +
                 //        "grant_type" + "=" + "authorization_code" + "&" +
                 //        "code" + "=" + code;
+                          "client_id" + "=" + mClientId + "&" +
+                          "client_secret" + "=" + mClientSecret;
 
                 HttpClient client = HttpClients.createDefault();
 
-                //HttpPost post = new HttpPost(TOKEN_URL);
-                HttpGet post = new HttpGet("http://httpbin.org/get");
+                Log.d("OAUTH", "URL: " + TOKEN_URL);
+
+                HttpPost post = new HttpPost(TOKEN_URL);
+                //HttpGet post = new HttpGet("http://httpbin.org/get");
 
                 List<NameValuePair> postParams = new ArrayList<NameValuePair>();
                 postParams.add(new BasicNameValuePair("grant_type", "authorization_code"));
                 postParams.add(new BasicNameValuePair("code", code));
+                postParams.add(new BasicNameValuePair("client_id", mClientId));
+                postParams.add(new BasicNameValuePair("client_secret", mClientSecret));
+                postParams.add(new BasicNameValuePair("redirect_uri", "http://localhost/storymaker"));
+
+                Log.d("OAUTH", "grant_type: " + "authorization_code");
+                Log.d("OAUTH", "code: " + code);
+                Log.d("OAUTH", "client_id: " + mClientId);
+                Log.d("OAUTH", "client_secret: " + mClientSecret);
+                Log.d("OAUTH", "redirect_uri: " + "http://localhost/storymaker");
 
                 String clientIdSecret = mClientId + ":" + mClientSecret;
+
+                Log.d("OAUTH", "id/secret: " + clientIdSecret);
 
                 String encodedString = Base64.encodeToString(clientIdSecret.getBytes(), Base64.DEFAULT);
 
@@ -176,17 +191,19 @@ public class ZWebActivity extends Activity {
                 // cleanup?
                 clientAuth = clientAuth.replace("\n", "");
 
+                Log.d("OAUTH", "auth: " + clientAuth);
+
                 post.addHeader("Authorization", clientAuth);
 
                 //post.addHeader("Authorization", mClientId + ":" + mClientSecret);
 
-                /*
+
                 try {
                     post.setEntity(new UrlEncodedFormEntity(postParams, "UTF-8"));
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                */
+
 
              // try {
                     HttpResponse postResponse = client.execute(post);

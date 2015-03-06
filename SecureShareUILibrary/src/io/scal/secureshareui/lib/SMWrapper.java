@@ -1,6 +1,9 @@
 package io.scal.secureshareui.lib;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -22,6 +25,9 @@ import ch.boye.httpclientandroidlib.client.methods.HttpPost;
 import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
 import ch.boye.httpclientandroidlib.impl.client.HttpClients;
 import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
+import info.guardianproject.onionkit.trust.StrongHttpsClient;
+import info.guardianproject.onionkit.ui.OrbotHelper;
+import io.scal.secureshareuilibrary.R;
 
 /**
  * Created by mnbogner on 1/30/15.
@@ -32,6 +38,8 @@ public class SMWrapper {
     private final String mClientSecret;
 
     private String mToken;
+
+    StrongHttpsClient mClient = null;
 
     private static final String AUTHORIZE_URL = "https://beta.storymaker.org/api/v0/oauth2/access_token";
     private static final String UPLOAD_URL = "https://beta.storymaker.org/api/v0/story/";
@@ -51,7 +59,15 @@ public class SMWrapper {
         mToken = token;
     }
 
-    public String login(String username, String password) throws IOException {
+    private synchronized StrongHttpsClient getHttpClientInstance(Context context) {
+        if (mClient == null) {
+            mClient = new StrongHttpsClient(context);
+        }
+
+        return mClient;
+    }
+
+    public String login(String username, String password, Context context) throws IOException {
         if (username == null && password == null) {
             throw new IllegalArgumentException("username and password are null");
         } else if (username == null) {
@@ -66,7 +82,33 @@ public class SMWrapper {
         Log.d(USERNAME, username);
         Log.d(PASSWORD, password);
 
-        HttpClient client = HttpClients.createDefault();
+        // HttpClient client = HttpClients.createDefault();
+        StrongHttpsClient client = getHttpClientInstance(context);
+
+
+
+        // check for tor
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean useTor = settings.getBoolean("pusetor", false);
+
+        if (useTor) {
+            OrbotHelper oh = new OrbotHelper(context);
+
+            if ((!oh.isOrbotInstalled()) || (!oh.isOrbotRunning())) {
+                Log.e("PUBLISH", "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
+
+                return null;
+            } else {
+                Log.e("PUBLISH", "TOR SELECTED, HOST " + context.getString(R.string.z_tor_host) + ", PORT " + context.getString(R.string.z_tor_port) + " (SETTING PROXY)");
+
+                String host = context.getString(R.string.z_tor_host);
+                int port = Integer.parseInt(context.getString(R.string.z_tor_port));
+                client.useProxy(true, "http", host, port);
+            }
+        }
+
+
+
         HttpPost post = new HttpPost(AUTHORIZE_URL);
 
         List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -126,7 +168,7 @@ public class SMWrapper {
         return mToken;
     }
 
-    public HttpResponse upload(String title, String desc, String body, String credentials) throws IOException {
+    public HttpResponse upload(String title, String desc, String body, String credentials, Context context) throws IOException {
 
         Date publishDate = new Date();
 
@@ -138,7 +180,33 @@ public class SMWrapper {
         Log.d(PUBLISH_DATE, publishDate.toString());
         Log.d("TOKEN", credentials);
 
-        HttpClient client = HttpClients.createDefault();
+        // HttpClient client = HttpClients.createDefault();
+        StrongHttpsClient client = getHttpClientInstance(context);
+
+
+
+        // check for tor
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean useTor = settings.getBoolean("pusetor", false);
+
+        if (useTor) {
+            OrbotHelper oh = new OrbotHelper(context);
+
+            if ((!oh.isOrbotInstalled()) || (!oh.isOrbotRunning())) {
+                Log.e("PUBLISH", "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
+
+                return null;
+            } else {
+                Log.e("PUBLISH", "TOR SELECTED, HOST " + context.getString(R.string.z_tor_host) + ", PORT " + context.getString(R.string.z_tor_port) + " (SETTING PROXY)");
+
+                String host = context.getString(R.string.z_tor_host);
+                int port = Integer.parseInt(context.getString(R.string.z_tor_port));
+                client.useProxy(true, "http", host, port);
+            }
+        }
+
+
+
         HttpPost post = new HttpPost(UPLOAD_URL);
 
         post.setHeader("Authorization", "Bearer " + credentials);
@@ -152,6 +220,8 @@ public class SMWrapper {
         params.add(new BasicNameValuePair(PUBLISH_DATE, publishDate.toString()));
         //params.add(new BasicNameValuePair("redirect_uri", "http://localhost/callback"));
         post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+
+        Log.d("PUBLISH", "POST? " + post.toString());
 
         return client.execute(post);
     }

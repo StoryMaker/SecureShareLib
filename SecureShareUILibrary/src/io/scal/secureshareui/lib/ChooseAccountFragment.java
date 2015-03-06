@@ -223,6 +223,11 @@ public class ChooseAccountFragment extends Fragment {
                     launchAuthentication(currentAccount, vgConnectedAccounts);
                 } else {
 
+
+                    mAttemptingLoginRetry = true;
+                    launchAuthentication(currentAccount, vgConnectedAccounts);
+
+                    /*
                     if (mInSelectionMode) {
                         if (cbToPublish.isChecked()) {
                             cbToPublish.setChecked(false);
@@ -241,6 +246,7 @@ public class ChooseAccountFragment extends Fragment {
                     else {
                         Toast.makeText(getActivity(), currentAccount.getName() + " edit click", Toast.LENGTH_SHORT).show();
                     }
+                    */
                 }
             }
         });

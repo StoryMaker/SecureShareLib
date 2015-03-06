@@ -68,7 +68,7 @@ public class SMLoginActivity extends Activity {
             final SMWrapper wrapper = new SMWrapper(mClientId, mClientSecret, null);
             String token = null;
             try {
-                token = wrapper.login(params[0], params[1]);
+                token = wrapper.login(params[0], params[1], SMLoginActivity.this);
             } catch (IOException e) {
                 e.printStackTrace();
             }

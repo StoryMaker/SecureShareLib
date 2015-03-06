@@ -43,13 +43,24 @@ public class SMSiteController extends SiteController {
     @Override
     public void startAuthentication(Account account) {
         Log.d(TAG, "startAuthentication()");
-        
-        Intent intent = new Intent(mContext, SMLoginActivity.class);
-        intent.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, account.getCredentials());
-        ((Activity)mContext).startActivityForResult(intent, SiteController.CONTROLLER_REQUEST_CODE);
 
-        // force upload to test method
+        if ((account.getCredentials() != null) && (account.getCredentials().length() > 0)) {
+            Log.d("PUBLISH", "GOT CREDENTIALS, UPLOAD <" + account.getCredentials() + ">");
 
+            // force upload to test method
+            HashMap<String, String> stuff = new HashMap<String, String>();
+            stuff.put(VALUE_KEY_TITLE, "UPLOAD TEST");
+            stuff.put(VALUE_KEY_DESC, "THIS IS A TEST");
+            stuff.put(VALUE_KEY_BODY, "TESTING...");
+            stuff.put(VALUE_KEY_USE_TOR, "false");
+            upload(account, stuff);
+        } else {
+            Log.d("PUBLISH", "NO CREDENTIALS, LOGIN");
+
+            Intent intent = new Intent(mContext, SMLoginActivity.class);
+            intent.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, account.getCredentials());
+            ((Activity)mContext).startActivityForResult(intent, SiteController.CONTROLLER_REQUEST_CODE);
+        }
     }
     
     @Override
@@ -136,7 +147,7 @@ public class SMSiteController extends SiteController {
 
         try {
 
-            HttpResponse response = wrapper.upload(title, desc, body, credentials);
+            HttpResponse response = wrapper.upload(title, desc, body, credentials, mContext);
 
             int code = response.getStatusLine().getStatusCode();
             if ((code >= 200) && (code < 300)) {
