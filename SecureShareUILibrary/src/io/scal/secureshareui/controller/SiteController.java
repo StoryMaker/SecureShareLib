@@ -47,6 +47,7 @@ public abstract class SiteController {
 	public static final String VALUE_KEY_USE_TOR = "use_tor";
 	public static final String VALUE_KEY_LICENSE_URL = "licenseUrl";
 	public static final String VALUE_KEY_PUBLISH_TO_STORYMAKER = "publish_to_storymaker"; // TODO generalize this, allow clie
+    public static final String VALUE_KEY_PUBLISH_TO_ZAMANEH = "publish_to_zamaneh";
     
     protected static final String ORBOT_HOST = "127.0.0.1";
     protected static final int ORBOT_HTTP_PORT = 8118;
@@ -117,6 +118,9 @@ public abstract class SiteController {
         }
         else if (site.equals(SMSiteController.SITE_KEY)) {
             return new SMSiteController(context, handler, jobId);
+        }
+        else if (site.equals(ZSiteController.SITE_KEY)) {
+            return new ZSiteController(context, handler, jobId);
         }
 
         return null;
@@ -234,6 +238,12 @@ public abstract class SiteController {
         	return areCredentialsValid ? R.drawable.ic_context_iarchive_on : R.drawable.ic_context_iarchive_error;
         }
         else if (site.equals(SMSiteController.SITE_KEY)) {
+            if (!isConnected) {
+                return R.drawable.ic_context_server;
+            }
+            return areCredentialsValid ? R.drawable.ic_context_server_on : R.drawable.ic_context_server_error;
+        }
+        else if (site.equals(ZSiteController.SITE_KEY)) {
             if (!isConnected) {
                 return R.drawable.ic_context_server;
             }

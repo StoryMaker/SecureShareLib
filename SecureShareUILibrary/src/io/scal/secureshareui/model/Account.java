@@ -11,6 +11,7 @@ import io.scal.secureshareui.controller.SMSiteController;
 import io.scal.secureshareui.controller.SSHSiteController;
 import io.scal.secureshareui.controller.SoundCloudSiteController;
 import io.scal.secureshareui.controller.YoutubeSiteController;
+import io.scal.secureshareui.controller.ZSiteController;
 import io.scal.secureshareui.lib.Util;
 
 public class Account {
@@ -31,7 +32,8 @@ public class Account {
             SoundCloudSiteController.SITE_NAME,
             FlickrSiteController.SITE_NAME,
             SSHSiteController.SITE_NAME,
-            SMSiteController.SITE_NAME
+            SMSiteController.SITE_NAME,
+            ZSiteController.SITE_NAME
     };
     public static final String[] CONTROLLER_SITE_KEYS = {
 	     // TEMPORARILY REMOVING UNTIL FIXED
@@ -41,7 +43,8 @@ public class Account {
             SoundCloudSiteController.SITE_KEY,
             FlickrSiteController.SITE_KEY,
             SSHSiteController.SITE_KEY,
-            SMSiteController.SITE_KEY
+            SMSiteController.SITE_KEY,
+            ZSiteController.SITE_KEY
     };
 
     public Account(int id, String name, String site, String userName, String credentials, String data, boolean isConnected, boolean areCredentialsValid) {
