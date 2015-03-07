@@ -50,6 +50,7 @@ public class Account {
         this.setAreCredentialsValid(areCredentialsValid);
     }
 
+    // FIXME move this into a clearly named static method, this is just confusing
     public Account(Context context, String prefsName) {
         if (Util.isEmpty(prefsName)) {
             prefsName = "secureshare_auth";
