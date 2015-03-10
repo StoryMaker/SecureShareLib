@@ -18,7 +18,6 @@
     <string name="you_picked">You picked:</string>
     <string name="no_friends_selected">&lt;No friends selected&gt;</string>
     <string name="no_place_selected">&lt;No place selected&gt;</string>
-    <string name="pick_seattle_place">Pick a Seattle Place</string>
     <string name="exception">Exception: %1$s</string>
     <string name="password">Password</string>
     <string name="username">User Name</string>
