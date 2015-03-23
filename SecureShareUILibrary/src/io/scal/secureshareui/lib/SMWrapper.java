@@ -53,6 +53,7 @@ public class SMWrapper {
     private String mToken;
 
     StrongHttpsClient mClient = null;
+    boolean proxySet = false;
     //HttpClient mClient = null;
 
     private static final String AUTHORIZE_URL = "https://storymaker.org/api/oauth2/access_token";
@@ -125,6 +126,15 @@ public class SMWrapper {
                 //client.useProxy(true, "http", host, port);
                 HttpHost proxy = new HttpHost(host, port, "http");
                 client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+                proxySet = true;
+            }
+        } else {
+            if (proxySet) {
+                Log.d("PUBLISH", "TOR NOT SELECTED (CLEARING PROXY)");
+
+                client.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
+            } else {
+                Log.d("PUBLISH", "TOR NOT SELECTED");
             }
         }
 
@@ -268,6 +278,15 @@ public class SMWrapper {
                 //client.useProxy(true, "http", host, port);
                 HttpHost proxy = new HttpHost(host, port, "http");
                 client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+                proxySet = true;
+            }
+        } else {
+            if (proxySet) {
+                Log.d("PUBLISH", "TOR NOT SELECTED (CLEARING PROXY)");
+
+                client.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
+            } else {
+                Log.d("PUBLISH", "TOR NOT SELECTED");
             }
         }
 
