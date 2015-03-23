@@ -4,6 +4,7 @@ SecureShareUILibrary/res/values/google.xml
 SecureShareUILibrary/res/values/soundcloud.xml
 SecureShareUILibrary/res/values/archive.xml
 SecureShareUILibrary/res/values/facebook.xml
+SecureShareUILibrary/res/values/storymaker.xml
 
 # built application files
 *.apk
