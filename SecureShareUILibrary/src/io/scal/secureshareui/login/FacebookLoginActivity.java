@@ -1,6 +1,8 @@
 
 package io.scal.secureshareui.login;
 
+import info.guardianproject.onionkit.ui.OrbotHelper;
+import info.guardianproject.onionkit.web.WebkitProxy;
 import io.scal.secureshareui.controller.SiteController;
 import io.scal.secureshareui.lib.Util;
 import io.scal.secureshareuilibrary.R;
@@ -10,7 +12,9 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -36,6 +40,31 @@ public class FacebookLoginActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // attempt to set proxy here, unsure where connection is actually initiated
+        // check for tor settings and set proxy
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        boolean useTor = settings.getBoolean("pusetor", false);
+
+        if (useTor) {
+            Log.d(TAG, "user selected \"use tor\"");
+
+            OrbotHelper orbotHelper = new OrbotHelper(getApplicationContext());
+            if ((!orbotHelper.isOrbotInstalled()) || (!orbotHelper.isOrbotRunning())) {
+                Log.e(TAG, "user selected \"use tor\" but orbot is not installed or not running");
+                return;
+            } else {
+                try {
+                    WebkitProxy.setProxy("android.app.Application", getApplicationContext(), Util.ORBOT_HOST, Util.ORBOT_HTTP_PORT);
+                } catch (Exception e) {
+                    Log.e(TAG, "user selected \"use tor\" but an exception was thrown while setting the proxy: " + e.getLocalizedMessage());
+                    return;
+                }
+            }
+        } else {
+            Log.d(TAG, "user selected \"don't use tor\"");
+        }
+
         setContentView(R.layout.activity_facebook_login);
         buttonLoginLogout = (LoginButton) findViewById(R.id.login_button);
         buttonLoginLogout.setPublishPermissions(WRITE_PERMISSIONS);
