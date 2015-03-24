@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="connect_account">اتصال حساب</string>
+  <string name="select_account">انتخاب حساب</string>
+  <string name="lbl_Yes">بله</string>
+  <string name="lbl_Cancel">انصراف</string>
+  <string name="lbl_ok">OK</string>
+  <string name="lbl_settings">تنظیم‌ها </string>
+</resources>

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- insert your own keys -->
-    <string name="sm_key"></string>
-    <string name="sm_secret"></string>
-    <string name="sm_tor_host">localhost</string>
-    <string name="sm_tor_port">8118</string>
-</resources>
