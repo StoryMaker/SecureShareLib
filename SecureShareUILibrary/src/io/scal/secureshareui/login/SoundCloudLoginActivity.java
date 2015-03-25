@@ -135,8 +135,5 @@ public class SoundCloudLoginActivity extends Activity {
 
         setResult(mAccessResult, data);
         super.finish();
-
-        // adding this here to ensure cleanup
-        Util.clearWebviewAndCookies(new WebView(this), this);
     }
 }
