@@ -10,6 +10,7 @@ import android.util.Log;
 
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.builder.api.ZTApi;
+import org.scribe.builder.api.ZTTestApi;
 import org.scribe.model.Token;
 import org.scribe.model.Verifier;
 import org.scribe.oauth.OAuthService;
@@ -69,7 +70,7 @@ public class ZTLoginActivity extends Activity {
         mClientSecret = getString(R.string.zt_secret);
 
         service = new ServiceBuilder()
-                .provider(ZTApi.class)
+                .provider(ZTTestApi.class)
                 .apiKey(mClientId)
                 .apiSecret(mClientSecret)
                 .build();

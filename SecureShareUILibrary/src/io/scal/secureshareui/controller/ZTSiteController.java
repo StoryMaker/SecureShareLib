@@ -15,6 +15,7 @@ import com.flickr.api.Flickr;
 import org.apache.http.client.ClientProtocolException;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.builder.api.ZTApi;
+import org.scribe.builder.api.ZTTestApi;
 import org.scribe.model.Token;
 import org.scribe.model.Verb;
 import org.scribe.oauth.OAuth10aServiceImpl;
@@ -140,12 +141,11 @@ public class ZTSiteController extends SiteController {
 
         HttpPost post = new HttpPost(mContext.getString(R.string.zt_post));
 
-        /*
         String clientId = mContext.getString(R.string.zt_key);
         String clientSecret = mContext.getString(R.string.zt_secret);
 
         OAuthService service = new ServiceBuilder()
-                .provider(ZTApi.class)
+                .provider(ZTTestApi.class)
                 .apiKey(clientId)
                 .apiSecret(clientSecret)
                 .build();
@@ -157,6 +157,19 @@ public class ZTSiteController extends SiteController {
 
         List<NameValuePair> params = new ArrayList<NameValuePair>();
 
+        // build header
+        String authorizationHeader = "OAuth ";
+        for (String key : parameters.keySet()) {
+            authorizationHeader = authorizationHeader + key + "=\"" + parameters.get(key) + "\", ";
+        }
+        // drop trailing comma & space
+        authorizationHeader = authorizationHeader.substring(0, authorizationHeader.length() - 2);
+
+        Log.d(TAG, "BUILT HEADER - Authorization: " + authorizationHeader);
+
+        post.setHeader("Authorization", authorizationHeader);
+
+        /*
         for (String key : parameters.keySet()) {
             params.add(new BasicNameValuePair(key, parameters.get(key)));
             Log.d(TAG, "ADDING PARAMETER: " + key + ": " + parameters.get(key));
@@ -175,7 +188,8 @@ public class ZTSiteController extends SiteController {
 
         String jsonString = "{" +
                 "\"title\": " + "\"" + title + "\", " +
-                "\"content_raw\": " + "\"" + content + "\"" +
+                "\"content_raw\": " + "\"" + content + "\", " +
+                "\"status\": " + "\"" + "publish" + "\"" +
                 "}";
 
         Log.d(TAG, "JSON: " + jsonString);
@@ -315,7 +329,7 @@ public class ZTSiteController extends SiteController {
         String clientSecret = mContext.getString(R.string.zt_secret);
 
         OAuthService service = new ServiceBuilder()
-                .provider(ZTApi.class)
+                .provider(ZTTestApi.class)
                 .apiKey(clientId)
                 .apiSecret(clientSecret)
                 .build();
@@ -416,7 +430,7 @@ public class ZTSiteController extends SiteController {
         String clientSecret = mContext.getString(R.string.zt_secret);
 
         OAuthService service = new ServiceBuilder()
-                .provider(ZTApi.class)
+                .provider(ZTTestApi.class)
                 .apiKey(clientId)
                 .apiSecret(clientSecret)
                 .build();
