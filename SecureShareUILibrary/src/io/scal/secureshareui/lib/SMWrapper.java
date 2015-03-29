@@ -133,6 +133,7 @@ public class SMWrapper {
                 Log.d("PUBLISH", "TOR NOT SELECTED (CLEARING PROXY)");
 
                 client.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
+                proxySet = false;
             } else {
                 Log.d("PUBLISH", "TOR NOT SELECTED");
             }
@@ -285,6 +286,7 @@ public class SMWrapper {
                 Log.d("PUBLISH", "TOR NOT SELECTED (CLEARING PROXY)");
 
                 client.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
+                proxySet = false;
             } else {
                 Log.d("PUBLISH", "TOR NOT SELECTED");
             }

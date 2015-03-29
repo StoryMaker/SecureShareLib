@@ -3,9 +3,7 @@ package io.scal.secureshareui.login;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -13,33 +11,6 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import org.scribe.model.Token;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import ch.boye.httpclientandroidlib.Header;
-import ch.boye.httpclientandroidlib.HttpEntity;
-import ch.boye.httpclientandroidlib.HttpResponse;
-import ch.boye.httpclientandroidlib.NameValuePair;
-import ch.boye.httpclientandroidlib.client.ClientProtocolException;
-import ch.boye.httpclientandroidlib.client.HttpClient;
-import ch.boye.httpclientandroidlib.client.ResponseHandler;
-import ch.boye.httpclientandroidlib.client.entity.UrlEncodedFormEntity;
-import ch.boye.httpclientandroidlib.client.methods.HttpGet;
-import ch.boye.httpclientandroidlib.client.methods.HttpPost;
-import ch.boye.httpclientandroidlib.impl.client.DefaultHttpClient;
-import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
-import ch.boye.httpclientandroidlib.util.EntityUtils;
-import info.guardianproject.onionkit.trust.StrongHttpsClient;
 import info.guardianproject.onionkit.ui.OrbotHelper;
 import info.guardianproject.onionkit.web.WebkitProxy;
 import io.scal.secureshareui.lib.Util;
@@ -66,7 +37,7 @@ public class ZTWebActivity extends Activity {
         }
 
         if ((authorizationUrl == null) || (authorizationUrl.length() == 0)) {
-            Log.e("ZT OAUTH", "NO AUTHORIZATION URL FOUND");
+            Log.e(TAG, "NO AUTHORIZATION URL FOUND");
             finish();
             return;
         }
@@ -108,11 +79,13 @@ public class ZTWebActivity extends Activity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
-                Log.d("ZT OAUTH", "LOADING URL: " + url);
+                Log.d(TAG, "LOADING URL: " + url);
+
+                // also break on http://www.stichtingrz.co/wp-login.php?checkemail=registered (for signups) ?
 
                 if (url.contains("oauth_token=") && url.contains("oauth_verifier=")) {
 
-                    Log.d("ZT OAUTH", "GOT TOKEN/VERIFIER");
+                    Log.d(TAG, "GOT TOKEN/VERIFIER");
 
                     Uri uri = Uri.parse(url);
                     String token = uri.getQueryParameter("oauth_token");
@@ -124,17 +97,14 @@ public class ZTWebActivity extends Activity {
                     return true;
                 } else {
 
-                    Log.d("ZT OAUTH", "NO TOKEN/VERIFIER");
+                    Log.d(TAG, "NO TOKEN/VERIFIER");
 
                     return super.shouldOverrideUrlLoading(view, url);
                 }
             }
         });
 
-        Map<String, String> headers = new HashMap<String, String>();
-        headers.put("Accept-Language", "en");
-
-        mWebview.loadUrl(authorizationUrl, headers);
+        mWebview.loadUrl(authorizationUrl);
     }
 
     @Override
