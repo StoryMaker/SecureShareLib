@@ -102,6 +102,7 @@ public class ZTLoginActivity extends Activity {
 
         Log.d(TAG, "GETTING REQUEST TOKEN...");
 
+        /*
         Map<String, String> parameters = service.getRequestParameters();
 
         StrongHttpsClient client = getHttpClientInstance();
@@ -215,6 +216,10 @@ public class ZTLoginActivity extends Activity {
             }
 
             mRequestToken = new Token(oauthToken, oauthTokenSecret, result.toString());
+            */
+
+            mRequestToken = service.getRequestToken();
+
 
             Log.d(TAG, "GOT REQUEST TOKEN: " + mRequestToken.getToken());
 
@@ -234,10 +239,12 @@ public class ZTLoginActivity extends Activity {
             Log.d(TAG, "GOT AUTH URL: " + authorizationUrl);
             return authorizationUrl;
 
+        /*
         } else {
             Log.e(TAG, "TOKEN ELEMENTS MISSING FROM RESPONSE");
             return null;
         }
+        */
     }
 
     public void startZTWebActivity(String authorizationUrl) {
@@ -313,6 +320,7 @@ public class ZTLoginActivity extends Activity {
 
         Log.d(TAG, "VERIFYING TOKEN...");
 
+        /*
         Map<String, String> parameters = service.getAccessParameters(mRequestToken, mAccessVerifier);
 
         StrongHttpsClient client = getHttpClientInstance();
@@ -426,14 +434,19 @@ public class ZTLoginActivity extends Activity {
             }
 
             mAccessToken = new Token(oauthToken, oauthTokenSecret, result.toString());
+            */
+
+            mAccessToken = service.getAccessToken(mRequestToken, mAccessVerifier);
 
             Log.d(TAG, "GOT ACCESS TOKEN: " + mAccessToken.getToken());
 
             mAccessResult = RESULT_OK;
 
+        /*
         } else {
             Log.e(TAG, "TOKEN ELEMENTS MISSING FROM RESPONSE");
         }
+        */
 
         return;
     }
@@ -457,6 +470,9 @@ public class ZTLoginActivity extends Activity {
 
         data.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, completeToken);
         setResult(mAccessResult, data);
+
+        // clear token to avoid confusion
+        mAccessToken = null;
 
         super.finish();
     }

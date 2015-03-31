@@ -109,7 +109,7 @@ public class ChooseAccountFragment extends Fragment {
                 //make sure the user is logged in to SM
                 if(isUserLoggedIntoSM) {
                 	mSwitchStoryMaker.setChecked(pSMUpload);
-                } else {
+                } else {/*
                 	mSwitchStoryMaker.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         	if(isChecked && !isUserLoggedIntoSM) {
@@ -121,7 +121,7 @@ public class ChooseAccountFragment extends Fragment {
                         			}, 1);
                         	}
                         }
-                    });
+                    });*/
                 }
 
                 mDivider = (View) mView.findViewById(R.id.divider);
