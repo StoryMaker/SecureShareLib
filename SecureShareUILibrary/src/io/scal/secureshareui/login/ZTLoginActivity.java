@@ -70,7 +70,7 @@ public class ZTLoginActivity extends Activity {
         mClientSecret = getString(R.string.zt_secret);
 
         service = new ServiceBuilder()
-                .provider(ZTTestApi.class)
+                .provider(ZTApi.class)
                 .apiKey(mClientId)
                 .apiSecret(mClientSecret)
                 .build();
@@ -102,7 +102,7 @@ public class ZTLoginActivity extends Activity {
 
         Log.d(TAG, "GETTING REQUEST TOKEN...");
 
-        /*
+        //
         Map<String, String> parameters = service.getRequestParameters();
 
         StrongHttpsClient client = getHttpClientInstance();
@@ -145,15 +145,25 @@ public class ZTLoginActivity extends Activity {
             }
         }
 
-        HttpPost post = new HttpPost(getString(R.string.zt_request));
+        //HttpPost post = new HttpPost(getString(R.string.zt_request));
+        String urlWithAuth = getString(R.string.zt_request) + "?";
 
         List<NameValuePair> params = new ArrayList<NameValuePair>();
 
         for (String key : parameters.keySet()) {
-            params.add(new BasicNameValuePair(key, parameters.get(key)));
+            //params.add(new BasicNameValuePair(key, parameters.get(key)));
+            urlWithAuth = urlWithAuth + URLEncoder.encode(key) + "=" + URLEncoder.encode(parameters.get(key)) + "&";
             Log.d(TAG, "ADDING PARAMETER: " + key + ": " + parameters.get(key));
         }
 
+        // drop trailing ampersand
+        urlWithAuth = urlWithAuth.substring(0, urlWithAuth.length() - 1);
+
+        Log.d(TAG, "CONSTRUCTED URL: " + urlWithAuth);
+
+        HttpPost post = new HttpPost(urlWithAuth);
+
+        /*
         try {
             post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
         } catch (UnsupportedEncodingException uee) {
@@ -161,6 +171,7 @@ public class ZTLoginActivity extends Activity {
             uee.printStackTrace();
             return null;
         }
+        */
 
         HttpResponse response = null;
 
@@ -216,9 +227,9 @@ public class ZTLoginActivity extends Activity {
             }
 
             mRequestToken = new Token(oauthToken, oauthTokenSecret, result.toString());
-            */
+            //
 
-            mRequestToken = service.getRequestToken();
+            //mRequestToken = service.getRequestToken();
 
 
             Log.d(TAG, "GOT REQUEST TOKEN: " + mRequestToken.getToken());
@@ -239,12 +250,12 @@ public class ZTLoginActivity extends Activity {
             Log.d(TAG, "GOT AUTH URL: " + authorizationUrl);
             return authorizationUrl;
 
-        /*
+        //
         } else {
             Log.e(TAG, "TOKEN ELEMENTS MISSING FROM RESPONSE");
             return null;
         }
-        */
+        //
     }
 
     public void startZTWebActivity(String authorizationUrl) {
@@ -320,7 +331,7 @@ public class ZTLoginActivity extends Activity {
 
         Log.d(TAG, "VERIFYING TOKEN...");
 
-        /*
+        //
         Map<String, String> parameters = service.getAccessParameters(mRequestToken, mAccessVerifier);
 
         StrongHttpsClient client = getHttpClientInstance();
@@ -363,15 +374,25 @@ public class ZTLoginActivity extends Activity {
             }
         }
 
-        HttpPost post = new HttpPost(getString(R.string.zt_access));
+        //HttpPost post = new HttpPost(getString(R.string.zt_access));
+        String urlWithAuth = getString(R.string.zt_access) + "?";
 
         List<NameValuePair> params = new ArrayList<NameValuePair>();
 
         for (String key : parameters.keySet()) {
-            params.add(new BasicNameValuePair(key, parameters.get(key)));
+            //params.add(new BasicNameValuePair(key, parameters.get(key)));
+            urlWithAuth = urlWithAuth + URLEncoder.encode(key) + "=" + URLEncoder.encode(parameters.get(key)) + "&";
             Log.d(TAG, "ADDING PARAMETER: " + key + ": " + parameters.get(key));
         }
 
+        // drop trailing ampersand
+        urlWithAuth = urlWithAuth.substring(0, urlWithAuth.length() - 1);
+
+        Log.d(TAG, "CONSTRUCTED URL: " + urlWithAuth);
+
+        HttpPost post = new HttpPost(urlWithAuth);
+
+        /*
         try {
             post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
         } catch (UnsupportedEncodingException uee) {
@@ -379,6 +400,7 @@ public class ZTLoginActivity extends Activity {
             uee.printStackTrace();
             return;
         }
+        */
 
         HttpResponse response = null;
 
@@ -434,19 +456,19 @@ public class ZTLoginActivity extends Activity {
             }
 
             mAccessToken = new Token(oauthToken, oauthTokenSecret, result.toString());
-            */
+            //
 
-            mAccessToken = service.getAccessToken(mRequestToken, mAccessVerifier);
+            //mAccessToken = service.getAccessToken(mRequestToken, mAccessVerifier);
 
             Log.d(TAG, "GOT ACCESS TOKEN: " + mAccessToken.getToken());
 
             mAccessResult = RESULT_OK;
 
-        /*
+        //
         } else {
             Log.e(TAG, "TOKEN ELEMENTS MISSING FROM RESPONSE");
         }
-        */
+        //
 
         return;
     }

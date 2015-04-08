@@ -34,6 +34,7 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -143,13 +144,14 @@ public class ZTSiteController extends SiteController {
             }
         }
 
-        HttpPost post = new HttpPost(mContext.getString(R.string.zt_post));
+        //HttpPost post = new HttpPost(mContext.getString(R.string.zt_post));
+        String urlWithAuth = mContext.getString(R.string.zt_post) + "?";
 
         String clientId = mContext.getString(R.string.zt_key);
         String clientSecret = mContext.getString(R.string.zt_secret);
 
         OAuthService service = new ServiceBuilder()
-                .provider(ZTTestApi.class)
+                .provider(ZTApi.class)
                 .apiKey(clientId)
                 .apiSecret(clientSecret)
                 .build();
@@ -162,14 +164,22 @@ public class ZTSiteController extends SiteController {
         // build header
         String authorizationHeader = "OAuth ";
         for (String key : parameters.keySet()) {
-            authorizationHeader = authorizationHeader + key + "=\"" + parameters.get(key) + "\", ";
+            //authorizationHeader = authorizationHeader + key + "=\"" + parameters.get(key) + "\", ";
+            urlWithAuth = urlWithAuth + URLEncoder.encode(key) + "=" + URLEncoder.encode(parameters.get(key)) + "&";
         }
         // drop trailing comma & space
-        authorizationHeader = authorizationHeader.substring(0, authorizationHeader.length() - 2);
+        //authorizationHeader = authorizationHeader.substring(0, authorizationHeader.length() - 2);
 
-        Log.d(TAG, "BUILT HEADER - Authorization: " + authorizationHeader);
+        //Log.d(TAG, "BUILT HEADER - Authorization: " + authorizationHeader);
 
-        post.setHeader("Authorization", authorizationHeader);
+        //post.setHeader("Authorization", authorizationHeader);
+
+        // drop trailing ampersand
+        urlWithAuth = urlWithAuth.substring(0, urlWithAuth.length() - 1);
+
+        Log.d(TAG, "CONSTRUCTED URL: " + urlWithAuth);
+
+        HttpPost post = new HttpPost(urlWithAuth);
 
         /*
         for (String key : parameters.keySet()) {
