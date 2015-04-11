@@ -10,13 +10,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-public class ArchiveLoginActivity extends Activity {
+public class ArchiveLoginActivity extends ActionBarActivity {
 
 	private static final String TAG = "ArchiveLoginActivity";
 	
@@ -36,17 +37,17 @@ public class ArchiveLoginActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_archive_login);
 		login(ARCHIVE_LOGIN_URL);
 	}
 
 	@SuppressLint({ "SetJavaScriptEnabled" })
 	private void login(String currentURL) {
-		mWebview = new WebView(this);
+		//mWebview = new WebView(this);
+        mWebview = (WebView) findViewById(R.id.webView);
 		mWebview.getSettings().setJavaScriptEnabled(true);
 		mWebview.setVisibility(View.VISIBLE);
 		mWebview.addJavascriptInterface(new JSInterface(), "htmlout");
-
-		setContentView(mWebview);
 
 		mWebview.setWebViewClient(new WebViewClient() {
 			@Override
