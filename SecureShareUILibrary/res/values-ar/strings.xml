@@ -11,6 +11,8 @@
   <string name="hello_user">مرحبا  %1$s!</string>
   <string name="successfully_posted_post">نُشِرت بنجاح \'%1$s\'.\nPost ID: %2$s</string>
   <string name="error">خطأ</string>
+  <string name="you_picked">اخترت :</string>
+  <string name="no_place_selected">&lt; لم يقع اختيار أي مكان&gt;</string>
   <string name="exception">استثناء: %1$s</string>
   <string name="password">كلمة السر</string>
   <string name="username">اسم المستخدم </string>
@@ -38,4 +40,5 @@
   <string name="google_play_services_not_avail">خدمات Google Play  غير متوفرة</string>
   <string name="insufficient_permissions">صلاحيات غير كافية</string>
   <string name="connect_your_google_account_to_device">إدخال حساب Google لهذا الجهاز</string>
+  <string name="server_nickname">اسم السيرفر</string>
 </resources>

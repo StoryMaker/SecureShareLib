@@ -16,7 +16,6 @@
   <string name="you_picked">Usted seleccionó:</string>
   <string name="no_friends_selected">&lt;No se seleccionó ningún amigo&gt;</string>
   <string name="no_place_selected">&lt;No se seleccionó ningún lugar&gt;</string>
-  <string name="pick_seattle_place">Escoger un lugar de Seattle</string>
   <string name="exception">Excepción: %1$s</string>
   <string name="password">Contraseña</string>
   <string name="username">Nombre de usuario</string>
