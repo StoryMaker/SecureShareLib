@@ -47,10 +47,6 @@ public class ArchiveLoginActivity extends ActionBarActivity {
 
 	@SuppressLint({ "SetJavaScriptEnabled" })
 	private void login(String currentURL) {
-<<<<<<< HEAD
-		//mWebview = new WebView(this);
-        mWebview = (WebView) findViewById(R.id.webView);
-=======
 
         // check for tor settings and set proxy
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -75,8 +71,7 @@ public class ArchiveLoginActivity extends ActionBarActivity {
             Log.d(TAG, "user selected \"don't use tor\"");
         }
 
-		mWebview = new WebView(this);
->>>>>>> 45d5fcad656b50fff29bd49c9e63fb4f5673dda6
+        mWebview = (WebView) findViewById(R.id.webView);
 		mWebview.getSettings().setJavaScriptEnabled(true);
 		mWebview.setVisibility(View.VISIBLE);
 		mWebview.addJavascriptInterface(new JSInterface(), "htmlout");
