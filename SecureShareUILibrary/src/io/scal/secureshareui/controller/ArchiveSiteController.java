@@ -74,7 +74,7 @@ public class ArchiveSiteController extends SiteController {
         
 		File file = new File(mediaPath);
 		if (!file.exists()) {
-			jobFailed(4000473, "Internet Archive upload failed: invalid file");
+			jobFailed(null, 4000473, "Internet Archive upload failed: invalid file");
 			return;
 		}
 		
@@ -173,12 +173,12 @@ public class ArchiveSiteController extends SiteController {
 				response = client.newCall(request).execute();
                 Log.d(TAG, "response: " + response + ", body: " + response.body().string());
 				if (!response.isSuccessful()) {
-					jobFailed(4000001, "Archive upload failed: Unexpected Response Code: " + "response: " + response + ", body: " + response.body().string());
+					jobFailed(null, 4000001, "Archive upload failed: Unexpected Response Code: " + "response: " + response + ", body: " + response.body().string());
 				} else {	
 				    jobSucceeded(response.request().urlString());
 				}
 			} catch (IOException e) {
-				jobFailed(4000002, "Archive upload failed: IOException");
+				jobFailed(null, 4000002, "Archive upload failed: IOException");
 				try {
 					Log.d(TAG, response.body().string());
 				} catch (IOException e1) {

@@ -105,7 +105,7 @@ public class FlickrSiteController extends SiteController {
                 jobSucceeded(result);
                 return "success";
             } else {
-                jobFailed(2938732, "Null or empty result from Flickr upload."); // FIXME error code?
+                jobFailed(null, 2938732, "Null or empty result from Flickr upload."); // FIXME error code?
                 return "fail";
             }
         }
@@ -124,7 +124,7 @@ public class FlickrSiteController extends SiteController {
         catch (FlickrException fe)
         {
             Log.e(TAG, "upload failed: " + fe.getMessage());
-            jobFailed(3233232, "upload failed: " + fe.getMessage()); // FIXME error code?
+            jobFailed(fe, 3233232, "upload failed: " + fe.getMessage()); // FIXME error code?
         }
         return null;
     }

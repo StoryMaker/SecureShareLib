@@ -88,7 +88,7 @@ public class SSHSiteController extends SiteController {
             String result = account.getUserName() + "@" + host + ":" + remoteFile;
             jobSucceeded(result);
         } else {
-            jobFailed(2767234, "SSH upload failed.");
+            jobFailed(null, 2767234, "SSH upload failed.");
         }
     }
 
