@@ -6,6 +6,7 @@ import io.scal.secureshareui.model.Account;
 import io.scal.secureshareuilibrary.R;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.HashMap;
 
 import android.content.Context;
@@ -32,6 +33,7 @@ public abstract class SiteController {
     public static final String MESSAGE_KEY_MESSAGE = "message";
     public static final String MESSAGE_KEY_RESULT = "result";
     public static final String MESSAGE_KEY_PROGRESS = "progress";
+    public static final String MESSAGE_KEY_EXCEPTION = "exception";
     public static final String EXTRAS_KEY_DATA = "data";
     public static final String EXTRAS_KEY_USERNAME = "username";
     public static final String EXTRAS_KEY_CREDENTIALS = "credentials";
@@ -173,13 +175,14 @@ public abstract class SiteController {
         mHandler.sendMessage(msg);
     }
 
-    public void jobFailed(int errorCode, String errorMessage) {
+    public void jobFailed(Exception exception, int errorCode, String errorMessage) {
         Message msg = new Message();
         Bundle data = new Bundle();
         data.putInt(MESSAGE_KEY_TYPE, MESSAGE_TYPE_FAILURE);
         data.putString(MESSAGE_KEY_JOB_ID, mJobId);
         data.putInt(MESSAGE_KEY_CODE, errorCode);
         data.putString(MESSAGE_KEY_MESSAGE, errorMessage);
+        data.putSerializable("exception", (Serializable) exception);
         msg.setData(data);
         mHandler.sendMessage(msg);
     }

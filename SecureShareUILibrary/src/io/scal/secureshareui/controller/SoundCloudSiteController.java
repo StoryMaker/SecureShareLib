@@ -100,11 +100,11 @@ public class SoundCloudSiteController extends SiteController {
                     jobSucceeded(responseString);
                 } else {
                     Log.d(TAG, "upload failed: " + response.getStatusLine().toString());
-                    jobFailed(response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
+                    jobFailed(null, response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
                 }
             } catch (IOException e) {
                 Log.v(TAG, "IOException: " + e.toString());
-                jobFailed(98239723, e.toString()); // FIXME error code
+                jobFailed(e, 98239723, e.toString()); // FIXME error code
             }
         }
     }

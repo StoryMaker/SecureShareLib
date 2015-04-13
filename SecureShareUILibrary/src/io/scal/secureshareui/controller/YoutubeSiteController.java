@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -100,7 +101,7 @@ public class YoutubeSiteController extends SiteController {
     public YouTube.Videos.Insert prepareUpload(String title, String body, File mediaFile) {
         try {
         	if(!super.isVideoFile(mediaFile)){
-        		jobFailed(1231291, mContext.getString(R.string.invalid_file_format));
+        		jobFailed(null, 1231291, mContext.getString(R.string.invalid_file_format));
         		return null;
         	}
         	
@@ -182,6 +183,7 @@ public class YoutubeSiteController extends SiteController {
 			String errorMessage = null;
 			String uploadedVideoId = null;
 			YouTube.Videos.Insert requestInsert = requestInserts[0];
+            Exception exception = null;
 
 			if (null == requestInsert) {
 				errorId = 1231231;
@@ -191,14 +193,20 @@ public class YoutubeSiteController extends SiteController {
 					Video uploadedVideo = requestInsert.execute();
 					uploadedVideoId = uploadedVideo.getId();
 				} catch (final GooglePlayServicesAvailabilityIOException e) {
+                    exception = e;
 					errorId = 1231232;
 					String msg = e.getMessage() != null ? e.getMessage() + ", " : "";
 					errorMessage = mContext.getString(R.string.google_play_services_not_avail) + ": " + e.getCause() + msg;
 				} catch (UserRecoverableAuthIOException e) {
+                    exception = e;
+                    Intent intent = e.getIntent();
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    ((IntentService)mContext).startActivity(intent);
 					errorId = 1231233;
                     String msg = e.getMessage() != null ? e.getMessage() + ", " : "";
 					errorMessage = mContext.getString(R.string.insufficient_permissions) + ": " + e.getCause() + msg;
 				} catch (GoogleAuthIOException e) {
+                    exception = e;
 					errorId = 1231234;
                     String msg = e.getMessage() != null ? e.getMessage() + ", " : "";
                     String cause = "" + e.getCause();
@@ -210,6 +218,7 @@ public class YoutubeSiteController extends SiteController {
                     	errorMessage = "GoogleAuth IOException: " + e.getCause() + msg; // FIXME move to strings
                     }
 				}catch (IOException e) {
+                    exception = e;
 					errorId = 1231235;
                     String msg = e.getMessage() != null ? e.getMessage() + ", " : "";
 					errorMessage = "AsyncTask IOException: " + e.getCause() + msg; // FIXME move to strings
@@ -221,7 +230,8 @@ public class YoutubeSiteController extends SiteController {
 				jobSucceeded(uploadedVideoId);
 			} else {
 				Log.e(TAG, errorId + "_" + errorMessage);
-				jobFailed(errorId, errorMessage);
+//				jobFailed(exception, errorId, errorMessage);
+				jobFailed(null, errorId, errorMessage); // because UserRecoverableAuthException's are not parcelable and cause a crash here
 			}
 
 			return null;

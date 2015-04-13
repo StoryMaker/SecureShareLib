@@ -56,8 +56,8 @@ public class SMWrapper {
     boolean proxySet = false;
     //HttpClient mClient = null;
 
-    private static final String AUTHORIZE_URL = "https://storymaker.org/api/oauth2/access_token";
-    private static final String UPLOAD_URL = "https://storymaker.org/api/story/";
+    private static final String AUTHORIZE_URL = "https://storymaker.org/api/oauth2/access_token"; // FIXME these are hard coded and not respecting the sharedpref
+    private static final String UPLOAD_URL = "https://storymaker.org/api/story/"; // FIXME these are hard coded and not respecting the sharedpref
     private static final String CLIENT_ID = "client_id";
     private static final String CLIENT_SECRET = "client_secret";
     private static final String USERNAME = "username";
@@ -71,7 +71,7 @@ public class SMWrapper {
     // public SMWrapper(String clientId, String clientSecret, String token) {
     public SMWrapper(Context context) {
         mContext = context;
-        mClientId = context.getString(R.string.sm_key);
+        mClientId = context.getString(R.string.sm_key); // FIXME obfuscate these, and when you do generate new keys
         mClientSecret = context.getString(R.string.sm_secret);
         //mClientId = clientId;
         //mClientSecret = clientSecret;
@@ -88,6 +88,13 @@ public class SMWrapper {
         return mClient;
     }
 
+    /**
+     *
+     * @param username
+     * @param password
+     * @return token, if null it was unsuccessful
+     * @throws IOException
+     */
     public String login(String username, String password) throws IOException {
         if (username == null && password == null) {
             throw new IllegalArgumentException("username and password are null");
@@ -238,9 +245,7 @@ public class SMWrapper {
         Log.d("PUBLISH", "RESPONSE: " + result.toString());
 
 
-        // need to parse post id out of response
-
-        return null;
+        return null; // FIXME need to parse post id out of response
     }
 
     public HttpResponse upload(String user, String title, String[] catstrings, String body, String embed, String credentials) throws IOException {

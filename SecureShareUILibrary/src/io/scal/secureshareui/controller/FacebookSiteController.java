@@ -58,7 +58,7 @@ public class FacebookSiteController extends SiteController {
                 // post fail
                 if (response.getError() != null) {
                     Log.d(TAG, "media upload problem. Error= " + response.getError());
-                    jobFailed(1, response.getError().toString());
+                    jobFailed(null, 1, response.getError().toString());
                     return;
                 }
 
@@ -69,7 +69,7 @@ public class FacebookSiteController extends SiteController {
                         || TextUtils.isEmpty((String) graphResponse)) {
                     Log.d(TAG, "failed media upload/no response");
 
-                    jobFailed(0, "failed media upload/no response");
+                    jobFailed(null, 0, "failed media upload/no response");
                 }
                 // upload success
                 else {
