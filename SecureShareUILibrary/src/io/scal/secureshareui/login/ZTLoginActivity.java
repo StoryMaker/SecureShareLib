@@ -43,7 +43,7 @@ import io.scal.secureshareuilibrary.R;
 /**
  * Created by mnbogner on 3/25/15.
  */
-public class ZTLoginActivity extends Activity {
+public class ZTLoginActivity extends LockableActivity {
 
     private static final String TAG = "ZTLoginActivity";
     private static final int CODE = 0; // NEED A REAL VALUE?
@@ -487,10 +487,17 @@ public class ZTLoginActivity extends Activity {
 
         Intent data = new Intent();
 
-        // need complete credentials
-        String completeToken = mAccessToken.getToken() + "," + mAccessToken.getSecret();
+        if (mCacheWordHandler.isLocked()) {
 
-        data.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, completeToken);
+            Log.d("CACHEWORD", "cacheword was locked, no result to return from finish()");
+
+        } else {
+            // need complete credentials
+            String completeToken = mAccessToken.getToken() + "," + mAccessToken.getSecret();
+
+            data.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, completeToken);
+        }
+        
         setResult(mAccessResult, data);
 
         // clear token to avoid confusion

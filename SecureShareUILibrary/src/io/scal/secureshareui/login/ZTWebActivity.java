@@ -18,7 +18,7 @@ import io.scal.secureshareui.lib.Util;
 /**
  * Created by mnbogner on 3/26/15.
  */
-public class ZTWebActivity extends Activity {
+public class ZTWebActivity extends LockableActivity {
 
     private static final String TAG = "ZTWebActivity";
 
