@@ -48,6 +48,8 @@ dependencies {
     compile 'com.google.http-client:google-http-client-gson:1.19.0'
 //    compile files('libs/google-http-client-gson-1.18.0-rc.jar')
     compile files('libs/google-oauth-client-1.18.0-rc.jar')
+    compile files('libs/aws-android-sdk-1.7.0-core-no-third-party.jar')
+    compile files('libs/aws-android-sdk-1.7.0-s3.jar')
 
     // TODO Google Play Services is now available as sub-components
     // TODO see: http://android-developers.blogspot.com/2014/12/google-play-services-and-dex-method.html

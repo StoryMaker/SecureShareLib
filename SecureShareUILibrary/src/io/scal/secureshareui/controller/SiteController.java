@@ -117,6 +117,9 @@ public abstract class SiteController {
         else if (site.equals(ArchiveSiteController.SITE_KEY)) {
             return new ArchiveSiteController(context, handler, jobId);
         }
+        else if (site.equals(S3SiteController.SITE_KEY)) {
+            return new S3SiteController(context, handler, jobId);
+        }
 
         return null;
     }
@@ -228,10 +231,16 @@ public abstract class SiteController {
         	return areCredentialsValid ? R.drawable.ic_context_server_on : R.drawable.ic_context_server_error;
         }
         else if (site.equals(ArchiveSiteController.SITE_KEY)) {
-        	if (!isConnected) {
-        		return R.drawable.ic_context_iarchive;
-        	}
-        	return areCredentialsValid ? R.drawable.ic_context_iarchive_on : R.drawable.ic_context_iarchive_error;
+            if (!isConnected) {
+                return R.drawable.ic_context_iarchive;
+            }
+            return areCredentialsValid ? R.drawable.ic_context_iarchive_on : R.drawable.ic_context_iarchive_error;
+        }
+        else if (site.equals(S3SiteController.SITE_KEY)) {
+            if (!isConnected) {
+                return R.drawable.ic_context_server; // FIXME we need a storymaker server icon
+            }
+            return areCredentialsValid ? R.drawable.ic_context_iarchive_on : R.drawable.ic_context_iarchive_error;
         }
 
         return R.drawable.ic_launcher;
