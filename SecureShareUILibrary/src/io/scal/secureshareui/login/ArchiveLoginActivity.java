@@ -21,7 +21,7 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-public class ArchiveLoginActivity extends ActionBarActivity {
+public class ArchiveLoginActivity extends LockableActionBarActivity {
 
 	private static final String TAG = "ArchiveLoginActivity";
 	

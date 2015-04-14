@@ -25,7 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class SoundCloudLoginActivity extends Activity {
+public class SoundCloudLoginActivity extends LockableActivity {
 
     private static final String TAG = "SoundCloudLoginActivity";
 

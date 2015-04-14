@@ -40,7 +40,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.youtube.YouTubeScopes;
 
-public class YoutubeLoginActivity extends Activity implements Runnable {
+public class YoutubeLoginActivity extends LockableActivity implements Runnable {
 
 	private int mAccessResult = RESULT_CANCELED;
 	private String mAccessToken = null;

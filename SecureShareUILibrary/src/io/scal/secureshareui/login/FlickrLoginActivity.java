@@ -20,7 +20,7 @@ import com.flickr.api.Flickr;
 import com.flickr.api.FlickrException;
 import com.flickr.api.FlickrProperties;
 
-public class FlickrLoginActivity extends Activity 
+public class FlickrLoginActivity extends LockableActivity
 {
     private static final String TAG = "FlickrLoginActivity";
     
