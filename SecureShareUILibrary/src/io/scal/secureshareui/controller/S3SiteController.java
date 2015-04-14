@@ -22,21 +22,21 @@ import java.util.HashMap;
 import io.scal.secureshareui.model.Account;
 import io.scal.secureshareuilibrary.R;
 
-public class ZTSiteController extends SiteController {
-    private static final String TAG = "ZTSiteController";
-    public static final String SITE_NAME = "ZT";
-    public static final String SITE_KEY = "zt";
+public class S3SiteController extends SiteController {
+    private static final String TAG = "S3SiteController";
+    public static final String SITE_NAME = "S3";
+    public static final String SITE_KEY = "s3";
 
     private ClientConfiguration s3Config = new ClientConfiguration();
 
-    public ZTSiteController(Context context, Handler handler, String jobId) {
+    public S3SiteController(Context context, Handler handler, String jobId) {
         super(context, handler, jobId);
     }
 
     @Override
     public void startAuthentication(Account account) {
         /*
-        Intent intent = new Intent(mContext, ZT.class);
+        Intent intent = new Intent(mContext, S3.class);
         intent.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, account.getCredentials());
         ((Activity) mContext).startActivityForResult(intent, SiteController.CONTROLLER_REQUEST_CODE); // FIXME not a safe cast, context might be a service
         */
@@ -59,34 +59,36 @@ public class ZTSiteController extends SiteController {
     }
 
     private class AmazonS3UploadTask extends AsyncTask<String, Integer, UploadResult> {
+        String bucket;
+        String pathPrefix;
+
         @Override
         protected UploadResult doInBackground(String... mediaPaths) {
             UploadResult result = null;
 
             if(null == mediaPaths[0]) {
-                jobFailed(null, 7000000, "ZT media path is null");
+                jobFailed(null, 7000000, "S3 media path is null");
                 return result;
             }
 
             File mediaFile = new File(mediaPaths[0]);
             if (!mediaFile.exists()) {
-                jobFailed(null, 7000001, "ZT media path invalid");
+                jobFailed(null, 7000001, "S3 media path invalid");
                 return result;
             }
 
             try {
-                final AWSCredentials credentials = new BasicAWSCredentials(mContext.getString(R.string.zt_secret), mContext.getString(R.string.zt_key));
+                final AWSCredentials credentials = new BasicAWSCredentials(mContext.getString(R.string.s3_key), mContext.getString(R.string.s3_secret));
                 Log.i(TAG, "upload file: " + mediaFile.getName());
 
                 AmazonS3Client s3Client = new AmazonS3Client(credentials, s3Config);
                 TransferManager transferManager = new TransferManager(s3Client);
-
-                Upload upload = transferManager.upload(mContext.getString(R.string.zt_bucket), mContext.getString(R.string.zt_user) + "/" + mediaFile.getName(), mediaFile);
+                Upload upload = transferManager.upload(bucket, pathPrefix + mediaFile.getName(), mediaFile);
 
                 result = upload.waitForUploadResult();
             } catch (Exception e) {
                 Log.e(TAG, "upload error: " + e.getMessage());
-                jobFailed(null, 7000002, "ZT upload failed: " + e.getMessage());
+                jobFailed(null, 7000002, "S3 upload failed: " + e.getMessage());
             }
 
             return result;
@@ -94,6 +96,8 @@ public class ZTSiteController extends SiteController {
 
         @Override
         protected void onPreExecute() {
+            bucket = mContext.getString(R.string.s3_bucket);
+            pathPrefix = mContext.getString(R.string.s3_path_prefix);
         }
 
         @Override
@@ -102,11 +106,12 @@ public class ZTSiteController extends SiteController {
 
         @Override
         protected void onPostExecute(UploadResult result) {
-            Log.i(TAG, "upload result: " + result.getKey());
             if(null != result) {
-                jobSucceeded(result.getKey());
+                Log.i(TAG, "upload result: " + result.getKey());
+                String url = "https://s3-us-west-1.amazonaws.com/" + bucket + "/" + result.getKey();
+                jobSucceeded(url);
             } else {
-                jobFailed(null, 7000002, "ZT upload failed: PostExecute");
+                jobFailed(null, 7000002, "S3 upload failed: PostExecute");
             }
         }
     }
