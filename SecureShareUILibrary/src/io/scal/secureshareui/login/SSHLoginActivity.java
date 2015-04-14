@@ -17,7 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class SSHLoginActivity extends Activity {
+public class SSHLoginActivity extends LockableActivity {
     private static final String TAG = "SFTPLoginActivity";
     
     public final static String DATA_KEY_SERVER_URL = "server_url";

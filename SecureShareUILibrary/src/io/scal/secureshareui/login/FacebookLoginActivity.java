@@ -24,7 +24,7 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.widget.LoginButton;
 
-public class FacebookLoginActivity extends Activity {
+public class FacebookLoginActivity extends LockableActivity {
 
 	private static final String TAG = "FacebookWebActivity";
 	

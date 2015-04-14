@@ -66,4 +66,5 @@ dependencies {
 
     compile project(':external:SecureShareLib:SecureShareUILibrary:external:facebook-sdk:facebook')
 
+    compile project(':external:cacheword:cachewordlib')
 }

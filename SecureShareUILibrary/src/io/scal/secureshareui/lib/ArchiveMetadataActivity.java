@@ -17,9 +17,10 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Switch;
 import android.widget.TextView;
 import io.scal.secureshareui.controller.SiteController;
+import io.scal.secureshareui.login.LockableActivity;
 import io.scal.secureshareuilibrary.R;
 
-public class ArchiveMetadataActivity extends Activity {
+public class ArchiveMetadataActivity extends LockableActivity {
     public static final String TAG = "ArchiveMetadataActivity";
     
     public static final String INTENT_EXTRA_SHARE_TITLE = "archive-share-title";

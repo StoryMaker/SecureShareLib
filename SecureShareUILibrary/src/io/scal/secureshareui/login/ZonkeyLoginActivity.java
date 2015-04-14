@@ -14,7 +14,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
-public class ZonkeyLoginActivity extends Activity {
+public class ZonkeyLoginActivity extends LockableActivity {
 	private static final String TAG = "ArchiveLoginActivity";
 	
 	private final static String ZONKEY_API_AUTHORIZE= "http://storymaker.cc/authorize";

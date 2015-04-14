@@ -15,7 +15,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-public class FlickrWebActivity extends Activity {    
+public class FlickrWebActivity extends LockableActivity {
     private static final String TAG = "FlickrWebActivity";
     // FIXME security: we need to override the webviews cache, cookies, formdata cache to store only in sqlcipher/iocipher, currently it hits disk and then we clear it
     private WebView mWebview; 
