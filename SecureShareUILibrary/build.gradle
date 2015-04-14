@@ -62,6 +62,9 @@ dependencies {
     compile files('libs/jsch-0.1.51.jar')
     compile files('libs/scribe.jar')
 
+    compile files('libs/aws-android-sdk-1.7.0-core-no-third-party.jar')
+    compile files('libs/aws-android-sdk-1.7.0-s3.jar')
+
     compile 'com.squareup.okhttp:okhttp:2.1.0'
 
     compile project(':external:SecureShareLib:SecureShareUILibrary:external:facebook-sdk:facebook')
