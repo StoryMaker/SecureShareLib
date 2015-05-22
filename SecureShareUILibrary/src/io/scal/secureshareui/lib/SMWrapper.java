@@ -17,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,6 +40,9 @@ import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
 import info.guardianproject.onionkit.trust.StrongHttpsClient;
 import info.guardianproject.onionkit.ui.OrbotHelper;
 import io.scal.secureshareuilibrary.R;
+import retrofit.RestAdapter;
+import retrofit.client.Response;
+import retrofit.mime.TypedOutput;
 
 /**
  * Created by mnbogner on 1/30/15.
@@ -185,6 +189,21 @@ public class SMWrapper {
 
         HttpResponse response = null;
 
+
+
+        // TRY NEW RETROFIT STUFF
+
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                                      .setLogLevel(RestAdapter.LogLevel.FULL)
+                                      .setEndpoint(settings.getString("pserver", "https://storymaker.org/"))
+                                      .build();
+
+        LoginInterface loginService = restAdapter.create(LoginInterface.class);
+
+        Response rResponse = loginService.getAccessToken(mClientId, mClientSecret, "password", username, password);
+
+
+
         try {
             response = client.execute(post);
         } catch (Exception e) {
@@ -192,10 +211,13 @@ public class SMWrapper {
             e.printStackTrace();
         }
 
-        Log.d("OAUTH", "RESPONSE CODE: " + response.getStatusLine().getStatusCode());
+        //Log.d("OAUTH", "RESPONSE CODE: " + response.getStatusLine().getStatusCode());
+        Log.d("OAUTH", "RESPONSE CODE: " + rResponse.getStatus());
+
 
         BufferedReader rd = new BufferedReader(
-                new InputStreamReader(response.getEntity().getContent())
+            //new InputStreamReader(response.getEntity().getContent())
+            new InputStreamReader(rResponse.getBody().in())
         );
 
         StringBuffer result = new StringBuffer();
@@ -204,10 +226,13 @@ public class SMWrapper {
             result.append(line);
         }
 
-        Header[] postHeaders = response.getAllHeaders();
+        //Header[] postHeaders = response.getAllHeaders();
+        List<retrofit.client.Header> postHeaders = rResponse.getHeaders();
 
-        for (int i = 0; i < postHeaders.length; i++) {
-            Log.d("OAUTH", "FOUND HEADER: " + postHeaders[i].getName() + ": " + postHeaders[i].getValue());
+        //for (int i = 0; i < postHeaders.length; i++) {
+        for (int i = 0; i < postHeaders.size(); i++) {
+            //Log.d("OAUTH", "FOUND HEADER: " + postHeaders[i].getName() + ": " + postHeaders[i].getValue());
+            Log.d("OAUTH", "FOUND HEADER: " + postHeaders.get(i).getName() + ": " + postHeaders.get(i).getValue());
         }
 
         Log.d("OAUTH", "RESPONSE: " + result.toString());
@@ -228,12 +253,16 @@ public class SMWrapper {
     // link this with upload method
     public String post (String user, String title, String body, String embed, String[] catstrings, String medium, String mediaService, String mediaGuid, String mimeType, File file) throws IOException {
 
-        HttpResponse postResponse = upload(user, title, catstrings, body, embed, mToken);
+        //HttpResponse postResponse = upload(user, title, catstrings, body, embed, mToken);
+        Response postResponse = upload(user, title, catstrings, body, embed, mToken);
 
-        Log.d("PUBLISH", "RESPONSE CODE: " + postResponse.getStatusLine().getStatusCode());
+        //Log.d("PUBLISH", "RESPONSE CODE: " + postResponse.getStatusLine().getStatusCode());
+        Log.d("PUBLISH", "RESPONSE CODE: " + postResponse.getStatus());
+
 
         BufferedReader rd = new BufferedReader(
-            new InputStreamReader(postResponse.getEntity().getContent())
+            //new InputStreamReader(postResponse.getEntity().getContent())
+                new InputStreamReader(postResponse.getBody().in())
         );
 
         StringBuffer result = new StringBuffer();
@@ -242,10 +271,13 @@ public class SMWrapper {
             result.append(line);
         }
 
-        Header[] postHeaders = postResponse.getAllHeaders();
+        //Header[] postHeaders = postResponse.getAllHeaders();
+        List<retrofit.client.Header> postHeaders = postResponse.getHeaders();
 
-        for (int i = 0; i < postHeaders.length; i++) {
-            Log.d("PUBLISH", "FOUND HEADER: " + postHeaders[i].getName() + ": " + postHeaders[i].getValue());
+        //for (int i = 0; i < postHeaders.length; i++) {
+        for (int i = 0; i < postHeaders.size(); i++) {
+            //Log.d("PUBLISH", "FOUND HEADER: " + postHeaders[i].getName() + ": " + postHeaders[i].getValue());
+            Log.d("PUBLISH", "FOUND HEADER: " + postHeaders.get(i).getName() + ": " + postHeaders.get(i).getValue());
         }
 
         Log.d("PUBLISH", "RESPONSE: " + result.toString());
@@ -254,7 +286,8 @@ public class SMWrapper {
         return null; // FIXME need to parse post id out of response
     }
 
-    public HttpResponse upload(String user, String title, String[] catstrings, String body, String embed, String credentials) throws IOException {
+    //public HttpResponse upload(String user, String title, String[] catstrings, String body, String embed, String credentials) throws IOException {
+    public Response upload(String user, String title, String[] catstrings, String body, String embed, String credentials) throws IOException {
 
         Date publishDate = new Date();
 
@@ -359,7 +392,24 @@ public class SMWrapper {
         jsonEntity.setContentType("application/json");
         post.setEntity(jsonEntity);
 
-        return client.execute(post);
+
+        // TRY NEW RETROFIT STUFF
+
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                                      .setLogLevel(RestAdapter.LogLevel.FULL)
+                                      .setEndpoint(settings.getString("pserver", "https://storymaker.org/"))
+                                      .build();
+
+        PostInterface postService = restAdapter.create(PostInterface.class);
+
+        EntityWrapper jsonEntityWrapper = new EntityWrapper(jsonEntity);
+
+        Response rResponse = postService.postContent("Bearer " + credentials, jsonEntityWrapper);
+
+
+
+        //return client.execute(post);
+        return rResponse;
     }
 
     // need to implement these methods
