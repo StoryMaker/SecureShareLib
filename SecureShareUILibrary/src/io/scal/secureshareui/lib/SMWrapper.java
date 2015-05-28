@@ -286,6 +286,54 @@ public class SMWrapper {
         return null; // FIXME need to parse post id out of response
     }
 
+    // NEW/TEMP
+    // DOWNLOAD AVAILABE INDEX FOR CURRENT USER AND SAVE TO TARGET FILE
+    // RETURN TRUE IF SUCCESSFUL
+    public boolean index(int version, int id, String targetPath, String targetFile) {
+
+        // TRY NEW RETROFIT STUFF
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
+
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                                      .setLogLevel(RestAdapter.LogLevel.FULL)
+                                      .setEndpoint(settings.getString("pserver", "https://storymaker.org/"))
+                                      .build();
+
+        IndexInterface indexService = restAdapter.create(IndexInterface.class);
+
+        Response response = indexService.getIndex(version, id);
+
+        Log.d("INDEX", "RESPONSE CODE: " + response.getStatus());
+
+        try {
+            BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getBody().in())
+            );
+
+            StringBuffer result = new StringBuffer();
+            String line = "";
+            while ((line = rd.readLine()) != null) {
+                result.append(line);
+            }
+
+            List<retrofit.client.Header> postHeaders = response.getHeaders();
+
+            for (int i = 0; i < postHeaders.size(); i++) {
+                Log.d("INDEX", "FOUND HEADER: " + postHeaders.get(i).getName() + ": " + postHeaders.get(i).getValue());
+            }
+
+            Log.d("INDEX", "RESPONSE: " + result.toString());
+        } catch (IOException ioe) {
+            Log.e("INDEX", "FAILED TO READ RESPONSE");
+            return false;
+        }
+
+        // WRITE FILE
+
+        return true;
+    }
+
     //public HttpResponse upload(String user, String title, String[] catstrings, String body, String embed, String credentials) throws IOException {
     public Response upload(String user, String title, String[] catstrings, String body, String embed, String credentials) throws IOException {
 
