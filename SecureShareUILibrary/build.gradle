@@ -39,7 +39,7 @@ dependencies {
     compile files('libs/google-api-client-1.18.0-rc.jar')
     compile files('libs/google-api-client-android-1.18.0-rc.jar')
     compile files('libs/google-api-services-youtube-v3-rev108-1.18.0-rc.jar')
-    compile files('libs/cachewordlib-v0.1.jar')
+    //compile files('libs/cachewordlib-v0.1.jar')
     //compile 'com.google.http-client:google-http-client:1.19.0'
     //compile files('libs/google-http-client-1.18.0-rc.jar')
     compile 'com.google.http-client:google-http-client-gson:1.19.0'
@@ -51,8 +51,8 @@ dependencies {
     // TODO Google Play Services is now available as sub-components
     // TODO see: http://android-developers.blogspot.com/2014/12/google-play-services-and-dex-method.html
     compile 'com.google.android.gms:play-services:6.5.87'
-    compile 'com.android.support:support-v4:22.1.1'
-    compile 'com.android.support:appcompat-v7:19.1.0'
+    compile 'com.android.support:support-v4:21.0.3'
+    compile 'com.android.support:appcompat-v7:21.0.3'
 
     compile 'com.google.guava:guava:18.0'
     compile 'org.apache.httpcomponents:httpcore:4.3.2'
@@ -65,5 +65,5 @@ dependencies {
 
     compile project(':external:SecureShareLib:SecureShareUILibrary:external:facebook-sdk:facebook')
 
-    //compile project(':external:cacheword:cachewordlib')
+    compile project(':external:cacheword:cachewordlib')
 }
