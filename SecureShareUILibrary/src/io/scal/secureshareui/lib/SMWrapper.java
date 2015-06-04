@@ -56,8 +56,9 @@ public class SMWrapper {
     boolean proxySet = false;
     //HttpClient mClient = null;
 
-    private static final String AUTHORIZE_URL = "https://storymaker.org/api/oauth2/access_token"; // FIXME these are hard coded and not respecting the sharedpref
-    private static final String UPLOAD_URL = "https://storymaker.org/api/story/"; // FIXME these are hard coded and not respecting the sharedpref
+    private String AUTHORIZE_URL; // previously hard coded to "https://storymaker.org/api/oauth2/access_token"
+    private String UPLOAD_URL; // previously hard coded to "https://storymaker.org/api/story/"
+
     private static final String CLIENT_ID = "client_id";
     private static final String CLIENT_SECRET = "client_secret";
     private static final String USERNAME = "username";
@@ -73,9 +74,15 @@ public class SMWrapper {
         mContext = context;
         mClientId = context.getString(R.string.sm_key); // FIXME obfuscate these, and when you do generate new keys
         mClientSecret = context.getString(R.string.sm_secret);
-        //mClientId = clientId;
-        //mClientSecret = clientSecret;
-        //mToken = token;
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String url = settings.getString("pserver", "https://storymaker.org/");
+        if (!url.endsWith("/")) {
+            url = url + "/";
+        }
+
+        AUTHORIZE_URL = url + "api/oauth2/access_token";
+        UPLOAD_URL = url + "api/story/";
     }
 
     private synchronized StrongHttpsClient getHttpClientInstance() {
