@@ -125,7 +125,7 @@ public class FlickrLoginActivity extends Activity
                 
                 if ((mAccessToken != null) && (mAccessVerifier != null))
                 {
-                    Log.d(TAG, "got token and verifier");
+                    Log.d(TAG, "got token and verifier: " + mAccessToken + "/" + mAccessVerifier);
                     
                     mAccessResult = RESULT_OK;
                     

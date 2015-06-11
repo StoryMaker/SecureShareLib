@@ -71,6 +71,9 @@ public class FlickrWebActivity extends Activity {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
+
+                Log.d("WTF_FLICKR", "URL IS " + url);
+
                 if (url.contains("oauth_token=") && url.contains("oauth_verifier=")) {
                     Uri uri = Uri.parse(url);
                     String token = uri.getQueryParameter("oauth_token");

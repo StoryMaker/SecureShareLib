@@ -7,6 +7,7 @@ import io.scal.secureshareuilibrary.R;
 import java.io.File;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.app.Activity;
@@ -15,12 +16,21 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.Contacts;
 import android.util.Log;
 
 import com.flickr.api.Flickr;
 import com.flickr.api.FlickrException;
 import com.flickr.api.FlickrProperties;
+import com.flickr.api.PhotosService;
+import com.flickr.api.PhotosetsService;
 import com.flickr.api.UploadService;
+import com.flickr.api.entities.Paginated;
+import com.flickr.api.entities.Photo;
+import com.flickr.api.entities.Photoset;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class FlickrSiteController extends SiteController {
     public static final String SITE_NAME = "Flickr"; 
@@ -61,7 +71,9 @@ public class FlickrSiteController extends SiteController {
         String path = Environment.getExternalStorageDirectory() + File.separator + "flickr.conf"; // FIXME this should probably be stored on protected internal storage... or perhaps IOCipher
         
         Log.d(TAG, "upload() path: " + path);
-        
+
+        Log.d(TAG, "upload() title: " + title);
+
         File confFile = new File(path);
         FlickrProperties fProps = new FlickrProperties(confFile); 
         f = new Flickr(key,                          // key
@@ -113,20 +125,107 @@ public class FlickrSiteController extends SiteController {
 
     public String uploadFile(String title, String body, String mediaPath, String credentials) 
     {
-        try
-        {
+        //try
+        //{
             Log.d(TAG, "uploadFile() path: " + mediaPath);
             
             File photoFile = new File(mediaPath);
-            UploadService us = f.getUploadService();
-            return us.uploadPhoto(photoFile, title, body); // IS THIS THE CORRECT USE OF "body"?
+
+            // TEMP
+            ArrayList<String> duplicates = new ArrayList<String>();
+            for (int i = 0; i < 4; i++) {
+                duplicates.add(mediaPath);
+            }
+            return uploadFiles(title, body, duplicates, credentials);
+
+            //UploadService us = f.getUploadService();
+            //return us.uploadPhoto(photoFile, title, body); // IS THIS THE CORRECT USE OF "body"?
+        //}
+        //catch (FlickrException fe)
+        //{
+        //    Log.e(TAG, "upload failed: " + fe.getMessage());
+        //    jobFailed(fe, 3233232, "upload failed: " + fe.getMessage()); // FIXME error code?
+        //}
+        //return null;
+    }
+
+    public String uploadFiles(String title, String body, ArrayList<String> mediaPaths, String credentials)
+    {
+
+        int photoCount = 0;
+        String oneResult = null;
+
+        ArrayList<String> uploadedPhotoIds = new ArrayList<String>();
+
+        // first upload everything
+        for (String mediaPath : mediaPaths) {
+            try {
+                Log.d(TAG, "uploadFiles() path: " + mediaPath);
+
+                File photoFile = new File(mediaPath);
+
+                UploadService us = f.getUploadService();
+                // how do we get a result for the whole set?
+                // or
+                // what do we need to return?
+                oneResult = us.uploadPhoto(photoFile, title + "_" + photoCount, body + "_" + photoCount);  // IS THIS THE CORRECT USE OF "body"?
+                Log.d("FLICKR MULTI-UPLOAD", "RESULT: " + oneResult);
+
+                uploadedPhotoIds.add(oneResult);
+                Log.d("FLICKR MULTI-UPLOAD", "ADDED PHOTO " + oneResult + " TO LIST");
+
+                photoCount++;
+            } catch (FlickrException fe) {
+                Log.e(TAG, "upload failed: " + fe.getMessage());
+                jobFailed(fe, 3233232, "upload failed: " + fe.getMessage()); // FIXME error code?
+                return null;
+            }
         }
-        catch (FlickrException fe)
-        {
-            Log.e(TAG, "upload failed: " + fe.getMessage());
+
+        Log.d("FLICKR MULTI-UPLOAD", "UPLOADED " + photoCount + " PHOTOS");
+
+        try {
+            // get flickr photo objects
+            //PhotosService ps = f.getPhotosService();
+            //Paginated<Photo> recentPhotos = ps.getRecentlyUpdated(photoCount + 1, 1);
+
+            // add them to a photo set
+            PhotosetsService pss = f.getPhotosetsService();
+            Photoset photoSet = null;
+
+
+            String photoSetPhotoId = null;
+
+            //for(int i = 0; i <= photoCount; i++) {
+            for(String photoId : uploadedPhotoIds) {
+
+
+                //Log.d("FLICKR MULTI-UPLOAD", "PROCESSING PHOTO " + recentPhotos.get(i).getId() + " / " + recentPhotos.get(i).getTitle());
+                Log.d("FLICKR MULTI-UPLOAD", "PROCESSING PHOTO " + photoId);
+
+
+                if (photoSetPhotoId == null) {
+                    photoSetPhotoId = photoId;
+                    photoSet = pss.createPhotoset(title + "_SET", body, photoSetPhotoId); // using "body" as "description"?
+                    Log.d("FLICKR MULTI-UPLOAD", "CREATED PHOTO SET: " + photoSet.getId());
+                }else {
+                    pss.addPhotoToSet(photoSet, photoId);
+                    //Log.d("FLICKR MULTI-UPLOAD", "ADDED PHOTO " + recentPhotos.get(i).getTitle() + " TO PHOTO SET: " + photoSet.getTitle());
+                    Log.d("FLICKR MULTI-UPLOAD", "ADDED PHOTO " + photoId);
+                }
+
+
+            }
+
+        } catch (FlickrException fe) {
+            Log.e(TAG, "failed to get create photo set: " + fe.getMessage());
+            fe.printStackTrace();
+            Log.e(TAG, "cause: " + fe.getCause().getMessage());
             jobFailed(fe, 3233232, "upload failed: " + fe.getMessage()); // FIXME error code?
+            return null;
         }
-        return null;
+
+        return oneResult;
     }
 
     @Override
