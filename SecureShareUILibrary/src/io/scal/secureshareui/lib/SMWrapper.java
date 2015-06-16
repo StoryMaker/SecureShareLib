@@ -76,7 +76,7 @@ public class SMWrapper {
         mClientSecret = context.getString(R.string.sm_secret);
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
-        String url = settings.getString("pserver", "https://storymaker.org/");
+        String url = settings.getString("pserver", "https://api.storymaker.org/");
         if (!url.endsWith("/")) {
             url = url + "/";
         }
@@ -211,6 +211,15 @@ public class SMWrapper {
         }
 
         Log.d("OAUTH", "RESPONSE: " + result.toString());
+
+        // need to attempt to deal with cloudflare captcha challenge over tor
+        if ((useTor) && result.toString().contains("chk_captcha")) {
+
+            Log.e("OAUTH", "ENCOUNTERED CAPTCHA CHALLENGE PAGE (TOR IP ADDRESSES MAY BE CONSIDERED SUSPICIOUS)");
+
+            throw new CaptchaException();
+
+        }
 
         try {
             JSONObject json = new JSONObject(result.toString());
