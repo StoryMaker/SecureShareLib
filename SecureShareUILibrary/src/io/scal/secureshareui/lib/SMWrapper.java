@@ -258,9 +258,26 @@ public class SMWrapper {
         }
 
         Log.d("PUBLISH", "RESPONSE: " + result.toString());
+        
+        // check for tor
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
+        boolean useTor = settings.getBoolean("pusetor", false);
 
+        // need to attempt to deal with cloudflare captcha challenge over tor
+        if ((useTor) && result.toString().contains("chk_captcha")) {
 
-        return null; // FIXME need to parse post id out of response
+            Log.e("PUBLISH", "ENCOUNTERED CAPTCHA CHALLENGE PAGE (TOR IP ADDRESSES MAY BE CONSIDERED SUSPICIOUS)");
+            return postResponse.getStatusLine().getStatusCode() + ":" + "Publishing to StoryMaker failed.  Try restarting TOR";
+        }
+
+        // catch other failures
+        if((postResponse.getStatusLine().getStatusCode() < 200) || (postResponse.getStatusLine().getStatusCode() > 299)) {
+
+            Log.e("PUBLISH", "PUBLICATION FAILED");
+            return postResponse.getStatusLine().getStatusCode() + ":" + "Publishing to StoryMaker failed.";
+        }
+
+        return null; // FIXME need to parse post id out of response (response currently appears to be the json object representing the post and has no id)
     }
 
     public HttpResponse upload(String user, String title, String[] catstrings, String body, String embed, String credentials) throws IOException {
