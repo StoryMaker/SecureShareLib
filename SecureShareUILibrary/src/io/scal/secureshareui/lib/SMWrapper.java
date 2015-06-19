@@ -5,11 +5,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -80,7 +82,7 @@ public class SMWrapper {
         mClientSecret = context.getString(R.string.sm_secret);
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
-        String url = settings.getString("pserver", "https://api.storymaker.org/");
+        String url = settings.getString("pserver", "https://lungcast.com/");
         if (!url.endsWith("/")) {
             url = url + "/";
         }
@@ -195,7 +197,7 @@ public class SMWrapper {
 
         RestAdapter restAdapter = new RestAdapter.Builder()
                                       .setLogLevel(RestAdapter.LogLevel.FULL)
-                                      .setEndpoint(settings.getString("pserver", "https://storymaker.org/"))
+                                      .setEndpoint(settings.getString("pserver", "https://lungcast.com/"))
                                       .build();
 
         LoginInterface loginService = restAdapter.create(LoginInterface.class);
@@ -299,14 +301,14 @@ public class SMWrapper {
         if ((useTor) && result.toString().contains("chk_captcha")) {
 
             Log.e("PUBLISH", "ENCOUNTERED CAPTCHA CHALLENGE PAGE (TOR IP ADDRESSES MAY BE CONSIDERED SUSPICIOUS)");
-            return postResponse.getStatusLine().getStatusCode() + ":" + "Publishing to StoryMaker failed.  Try restarting TOR";
+            return postResponse.getStatus() + ":" + "Publishing to StoryMaker failed.  Try restarting TOR";
         }
 
         // catch other failures
-        if((postResponse.getStatusLine().getStatusCode() < 200) || (postResponse.getStatusLine().getStatusCode() > 299)) {
+        if((postResponse.getStatus() < 200) || (postResponse.getStatus() > 299)) {
 
             Log.e("PUBLISH", "PUBLICATION FAILED");
-            return postResponse.getStatusLine().getStatusCode() + ":" + "Publishing to StoryMaker failed.";
+            return postResponse.getStatus() + ":" + "Publishing to StoryMaker failed.";
         }
 
         return null; // FIXME need to parse post id out of response (response currently appears to be the json object representing the post and has no id)
@@ -315,7 +317,8 @@ public class SMWrapper {
     // NEW/TEMP
     // DOWNLOAD AVAILABE INDEX FOR CURRENT USER AND SAVE TO TARGET FILE
     // RETURN TRUE IF SUCCESSFUL
-    public boolean index(int version, int id, String targetPath, String targetFile) {
+    // CAN'T SAVE TO FILE, CONVERSION REQUIRED AND DON'T WANT CLASS DEPENDENT ON LIGER
+    public JSONArray index(int version) {
 
         // TRY NEW RETROFIT STUFF
 
@@ -323,18 +326,18 @@ public class SMWrapper {
 
         RestAdapter restAdapter = new RestAdapter.Builder()
                                       .setLogLevel(RestAdapter.LogLevel.FULL)
-                                      .setEndpoint(settings.getString("pserver", "https://storymaker.org/"))
+                                      .setEndpoint(settings.getString("pserver", "https://lungcast.com/"))
                                       .build();
 
         IndexInterface indexService = restAdapter.create(IndexInterface.class);
 
-        Response response = indexService.getIndex(version, id);
+        Response rResponse = indexService.getIndex(version, "Bearer " + mToken);
 
-        Log.d("INDEX", "RESPONSE CODE: " + response.getStatus());
+        Log.d("INDEX", "RESPONSE CODE: " + rResponse.getStatus());
 
         try {
             BufferedReader rd = new BufferedReader(
-                    new InputStreamReader(response.getBody().in())
+                    new InputStreamReader(rResponse.getBody().in())
             );
 
             StringBuffer result = new StringBuffer();
@@ -343,21 +346,29 @@ public class SMWrapper {
                 result.append(line);
             }
 
-            List<retrofit.client.Header> postHeaders = response.getHeaders();
+            List<retrofit.client.Header> postHeaders = rResponse.getHeaders();
 
             for (int i = 0; i < postHeaders.size(); i++) {
                 Log.d("INDEX", "FOUND HEADER: " + postHeaders.get(i).getName() + ": " + postHeaders.get(i).getValue());
             }
 
             Log.d("INDEX", "RESPONSE: " + result.toString());
+
+            // response should be a collection of json objects to convert to index items
+
+            try {
+                JSONArray jArray = new JSONArray(result.toString());
+
+                return jArray;
+
+            } catch (JSONException je) {
+                Log.e("INDEX", "FAILED TO PARSE RESPONSE: " + je.getMessage());
+                return null;
+            }
         } catch (IOException ioe) {
-            Log.e("INDEX", "FAILED TO READ RESPONSE");
-            return false;
+            Log.e("INDEX", "FAILED TO READ RESPONSE: " + ioe.getMessage());
+            return null;
         }
-
-        // WRITE FILE
-
-        return true;
     }
 
     //public HttpResponse upload(String user, String title, String[] catstrings, String body, String embed, String credentials) throws IOException {
@@ -471,7 +482,7 @@ public class SMWrapper {
 
         RestAdapter restAdapter = new RestAdapter.Builder()
                                       .setLogLevel(RestAdapter.LogLevel.FULL)
-                                      .setEndpoint(settings.getString("pserver", "https://storymaker.org/"))
+                                      .setEndpoint(settings.getString("pserver", "https://lungcast.com/"))
                                       .build();
 
         PostInterface postService = restAdapter.create(PostInterface.class);

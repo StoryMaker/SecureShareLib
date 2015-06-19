@@ -12,13 +12,11 @@ import retrofit.mime.TypedOutput;
  * Created by mnbogner on 5/14/15.
  */
 
-// api/story/
-
 // how to use proxy?
 
 public interface IndexInterface {
 
-    @GET("/api/{version}/index/{id}") // need real endpoint
-    Response getIndex(@Path("version") int version,
-                      @Path("id") int id); // need return type (json string?)
+    @GET("/api/{version}/assignment/available/")
+    Response getIndex(@Path("version") int version, // currently 1
+                      @Header("Authorization") String authorization); // must be "Bearer <token>"
 }
