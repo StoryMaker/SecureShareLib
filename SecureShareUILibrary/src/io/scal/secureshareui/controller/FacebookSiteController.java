@@ -4,10 +4,14 @@ package io.scal.secureshareui.controller;
 import io.scal.secureshareui.login.FacebookLoginActivity;
 import io.scal.secureshareui.model.Account;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.app.Activity;
@@ -18,15 +22,29 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.model.GraphUser;
+import com.google.api.client.util.IOUtils;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class FacebookSiteController extends SiteController {
     public static final String SITE_NAME = "Facebook";
     public static final String SITE_KEY = "facebook";
     private static final String TAG = "FacebookSiteController";
+
+    public static final String PHOTO_SET_KEY = "PhotoSetPaths";
+
+    private String title;
+    private String album;
+    private ArrayList<String> photosToUpload = null;
+    private int pendingUploads = 0;
 
     public FacebookSiteController(Context context, Handler handler, String jobId) {
         super(context, handler, jobId);
@@ -44,9 +62,17 @@ public class FacebookSiteController extends SiteController {
     public void upload(Account account, HashMap<String, String> valueMap) {
 		Log.d(TAG, "Upload file: Entering upload");
 		
-		String title = valueMap.get(VALUE_KEY_TITLE);
+		title = valueMap.get(VALUE_KEY_TITLE);
 		String body = valueMap.get(VALUE_KEY_BODY);
-		String mediaPath = valueMap.get(VALUE_KEY_MEDIA_PATH);
+
+        // check for photo set upload paths
+        String mediaPath = "";
+        if (valueMap.keySet().contains(PHOTO_SET_KEY)) {
+            mediaPath = valueMap.get(PHOTO_SET_KEY);
+        } else {
+            mediaPath = valueMap.get(VALUE_KEY_MEDIA_PATH);
+        }
+
 		boolean useTor = (valueMap.get(VALUE_KEY_USE_TOR).equals("true")) ? true : false;
         Session session = Session.openActiveSessionFromCache(mContext);
 
@@ -85,51 +111,204 @@ public class FacebookSiteController extends SiteController {
             }
         };
 
-        // upload File
-        File mediaFile = new File(mediaPath);
-        Bundle parameters = null;    
-        Request request = null;
-        try {
-        	if(super.isVideoFile(mediaFile)) {
-        		request = Request.newUploadVideoRequest(session, mediaFile, uploadMediaRequestCallback);
-        		
-        		if (torCheck(useTor, mContext))
-        		{
-        		    Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ORBOT_HOST, ORBOT_HTTP_PORT));
-                    request.setProxy(proxy);
-        		}
-        		    
-        		
-        		parameters = request.getParameters();
-        		
-        		//video params
-        		parameters.putString("title", title);
-        		parameters.putString("description", body);
-        	}
-        	else if(super.isImageFile(mediaFile)){
-        		request = Request.newUploadPhotoRequest(session, mediaFile, uploadMediaRequestCallback);
-        		
-        		if (torCheck(useTor, mContext))
-                {
-                    Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ORBOT_HOST, ORBOT_HTTP_PORT));
-                    request.setProxy(proxy);
+        // photo album callback
+        Request.Callback uploadAlbumRequestCallback = new Request.OnProgressCallback() {
+            @Override
+            public void onCompleted(Response response) {
+
+                Log.d(TAG, "ALBUM CREATION RESPONSE: " + response.toString());
+
+                JSONObject graphResponse = response.getGraphObject().getInnerJSONObject();
+
+                try {
+
+                    album = graphResponse.getString("id");
+
+                    Log.d(TAG, "NEW ALBUM ID: " + album);
+
+                    // photo callback
+                    Request.Callback uploadPhotoRequestCallback = new Request.OnProgressCallback() {
+                        @Override
+                        public void onCompleted(Response response) {
+
+                            Log.d(TAG, "PHOTO UPLOAD RESPONSE: " + response.toString());
+
+                            JSONObject graphResponse = response.getGraphObject().getInnerJSONObject();
+
+                            try {
+
+                                Log.d(TAG, "NEW PHOTO ID: " + graphResponse.getString("id"));
+
+                                pendingUploads--;
+
+                                if (pendingUploads == 0) {
+
+                                    Log.d(TAG, "ALL UPLOADS COMPLETE");
+
+                                    jobSucceeded(album);
+
+                                } else {
+
+                                    Log.d(TAG, pendingUploads + " UPLOADS REMAINING");
+
+                                }
+
+                            } catch (JSONException je) {
+
+                                Log.e(TAG, "FAILED TO EXTRACT PHOTO ID FROM RESPONSE: " + je.getMessage());
+
+                                jobFailed(null, 0, "An error occurred while uploading the photo");
+
+                            }
+                        }
+
+                        @Override
+                        public void onProgress(long current, long max) {
+                            float percent = ((float) current) / ((float) max);
+                            jobProgress(percent, "uploading photo...");
+                        }
+                    };
+
+                    // upload photo to album
+
+                    Log.d(TAG, "PHOTO UPLOAD");
+
+                    pendingUploads = photosToUpload.size();
+
+                    int photoNumber = 1;
+
+                    for (String photoToUpload : photosToUpload) {
+
+                        try {
+                            FileInputStream inStream = new FileInputStream(photoToUpload);
+
+                            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+
+                            byte[] photoBuffer = new byte[1024];
+
+                            for (int i; (i = inStream.read(photoBuffer)) != -1; ) {
+                                outStream.write(photoBuffer, 0, i);
+                            }
+
+                            byte[] photoBytes = outStream.toByteArray();
+
+                            Session session = Session.openActiveSessionFromCache(mContext);
+                            Bundle parameters = null;
+                            Request request = new Request(session, album + "/photos", parameters, HttpMethod.POST, uploadPhotoRequestCallback);
+
+                            //Log.d(TAG, "GOT REQUEST (" + photoNumber + ")");
+
+                            parameters = request.getParameters();
+                            parameters.putByteArray("source", photoBytes);
+                            parameters.putString("name", title + "_" + photoNumber);
+
+                            //Log.d(TAG, "GOT PARAMETERS (" + photoNumber + ")");
+
+                            //Log.d(TAG, "EXECUTING REQUEST (" + photoNumber + ")...");
+
+                            request.executeAsync();
+
+                        } catch (FileNotFoundException fnfe) {
+                            // can't find photo file
+                            Log.e(TAG, "COULD NOT FIND FILE " + photoToUpload + " -> " + fnfe.getMessage());
+                        } catch (IOException ioe) {
+                            // can't read photo file
+                            Log.e(TAG, "COULD NOT READ FILE " + photoToUpload + " -> " + ioe.getMessage());
+                        }
+
+                        photoNumber++;
+
+                    }
+
+                    // TEMP
+                    // jobSucceeded(album);
+
+                } catch (JSONException je) {
+
+                    Log.e(TAG, "FAILED TO EXTRACT ALBUM ID FROM RESPONSE: " + je.getMessage());
+
+                    jobFailed(null, 0, "An error occurred while creating the album");
+
                 }
-        		
-        		parameters = request.getParameters();
-        		
-        		//image params
-        		parameters.putString("name", title);
-        	}
-        	else {
-        		Log.d(TAG, "media type not supported");
-        		return;
-        	}
-        	
-            request.setParameters(parameters);
-        } 
-        catch (FileNotFoundException e) {
-            e.printStackTrace();
+            }
+
+            @Override
+            public void onProgress(long current, long max) {
+                float percent = ((float) current) / ((float) max);
+                jobProgress(percent, "creating album...");
+            }
+        };
+
+        Bundle parameters = null;
+        Request request = null;
+
+        Log.d(TAG, "MEDIA PATH: " + mediaPath);
+
+        if (mediaPath.contains(";")) {
+            // upload multiple photos
+
+            Log.d(TAG, "MULTIPLE FILE UPLOAD");
+
+            String[] photoPaths = mediaPath.split(";");
+
+            photosToUpload = new ArrayList<String>();
+            for (int i = 0; i < photoPaths.length; i++) {
+               photosToUpload.add(photoPaths[i]);
+            }
+
+            request = new Request(session, "me/albums", parameters, HttpMethod.POST, uploadAlbumRequestCallback);
+
+            //Log.d(TAG, "GOT REQUEST");
+
+            parameters = request.getParameters();
+            parameters.putString("name", title);
+
+            //Log.d(TAG, "GOT PARAMETERS");
+
+        } else {
+            // upload single photo or video
+
+            Log.d(TAG, "SINGLE FILE UPLOAD");
+
+            File mediaFile = new File(mediaPath);
+            try {
+                if (super.isVideoFile(mediaFile)) {
+                    request = Request.newUploadVideoRequest(session, mediaFile, uploadMediaRequestCallback);
+
+                    if (torCheck(useTor, mContext)) {
+                        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ORBOT_HOST, ORBOT_HTTP_PORT));
+                        request.setProxy(proxy);
+                    }
+
+                    parameters = request.getParameters();
+
+                    //video params
+                    parameters.putString("title", title);
+                    parameters.putString("description", body);
+                } else if (super.isImageFile(mediaFile)) {
+                    request = Request.newUploadPhotoRequest(session, mediaFile, uploadMediaRequestCallback);
+
+                    if (torCheck(useTor, mContext)) {
+                        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ORBOT_HOST, ORBOT_HTTP_PORT));
+                        request.setProxy(proxy);
+                    }
+
+                    parameters = request.getParameters();
+
+                    //image params
+                    parameters.putString("name", title);
+                } else {
+                    Log.d(TAG, "media type not supported");
+                    return;
+                }
+
+                request.setParameters(parameters);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
+
+        //Log.d(TAG, "EXECUTING REQUEST...");
 
         request.executeAsync();
     }

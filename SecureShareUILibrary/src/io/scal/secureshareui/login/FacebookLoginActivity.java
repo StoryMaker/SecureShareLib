@@ -35,7 +35,7 @@ public class FacebookLoginActivity extends Activity {
     private Session.StatusCallback statusCallback = new SessionStatusCallback();
     private static final int REAUTH_ACTIVITY_CODE = 100;
     private static final List<String> READ_PERMISSIONS = Arrays.asList("public_profile");
-    private static final List<String> WRITE_PERMISSIONS = Arrays.asList("publish_actions");
+    private static final List<String> WRITE_PERMISSIONS = Arrays.asList("publish_actions", "user_photos");
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -171,6 +171,11 @@ public class FacebookLoginActivity extends Activity {
 
     private boolean hasPublishPermissions(Session session) {
     	List<String> permissions = session.getPermissions();
+
+        for (String permission : permissions) {
+            Log.d(TAG, "PERMISSION GRANTED: " + permission);
+        }
+
         if (permissions.containsAll((WRITE_PERMISSIONS))) {
             return true;
         }
