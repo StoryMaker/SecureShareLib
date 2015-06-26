@@ -82,7 +82,7 @@ public class SMWrapper {
         mClientSecret = context.getString(R.string.sm_secret);
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
-        String url = settings.getString("pserver", "https://lungcast.com/");
+        String url = settings.getString("pserver", "https://demo.storymaker.org/");
         if (!url.endsWith("/")) {
             url = url + "/";
         }
@@ -197,7 +197,7 @@ public class SMWrapper {
 
         RestAdapter restAdapter = new RestAdapter.Builder()
                                       .setLogLevel(RestAdapter.LogLevel.FULL)
-                                      .setEndpoint(settings.getString("pserver", "https://lungcast.com/"))
+                                      .setEndpoint(settings.getString("pserver", "https://demo.storymaker.org/"))
                                       .build();
 
         LoginInterface loginService = restAdapter.create(LoginInterface.class);
@@ -326,7 +326,7 @@ public class SMWrapper {
 
         RestAdapter restAdapter = new RestAdapter.Builder()
                                       .setLogLevel(RestAdapter.LogLevel.FULL)
-                                      .setEndpoint(settings.getString("pserver", "https://lungcast.com/"))
+                                      .setEndpoint(settings.getString("pserver", "https://demo.storymaker.org/"))
                                       .build();
 
         IndexInterface indexService = restAdapter.create(IndexInterface.class);
@@ -482,7 +482,7 @@ public class SMWrapper {
 
         RestAdapter restAdapter = new RestAdapter.Builder()
                                       .setLogLevel(RestAdapter.LogLevel.FULL)
-                                      .setEndpoint(settings.getString("pserver", "https://lungcast.com/"))
+                                      .setEndpoint(settings.getString("pserver", "https://demo.storymaker.org/"))
                                       .build();
 
         PostInterface postService = restAdapter.create(PostInterface.class);
