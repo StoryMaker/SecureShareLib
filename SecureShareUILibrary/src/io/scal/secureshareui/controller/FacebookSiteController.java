@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -31,6 +32,7 @@ import com.google.api.client.util.IOUtils;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -112,6 +114,38 @@ public class FacebookSiteController extends SiteController {
         };
 
         // photo album callback
+        // ckeck to see if album already exists
+        /*
+        Request.Callback checkAlbumRequestCallback = new Request.Callback() {
+            @Override
+            public void onCompleted(Response response) {
+
+                Log.d(TAG, "ALBUM CHECK RESPONSE: " + response.toString());
+
+                JSONObject graphResponse = response.getGraphObject().getInnerJSONObject();
+
+                try {
+                    JSONArray albumArray = graphResponse.getJSONArray("data");
+
+                    for (int i = 0; i < albumArray.length(); i++) {
+
+                        JSONObject albumObject = albumArray.getJSONObject(i);
+
+                        Log.d(TAG, "ALBUM CHECK, FOUND: " + albumObject.getString("name") + "/" + albumObject.getString("id"));
+                    }
+
+                } catch (JSONException je) {
+
+                    Log.e(TAG, "FAILED TO EXTRACT ALBUM LIST FROM RESPONSE: " + je.getMessage());
+
+                    jobFailed(null, 0, "An error occurred while creating the album");
+
+                }
+            }
+        };
+        */
+
+        // photo album callback
         Request.Callback uploadAlbumRequestCallback = new Request.OnProgressCallback() {
             @Override
             public void onCompleted(Response response) {
@@ -141,11 +175,58 @@ public class FacebookSiteController extends SiteController {
 
                                 pendingUploads--;
 
+                                // privacy check callback
+                                // ckeck to see if an album post is public
+                                Request.Callback privacyCheckRequestCallback = new Request.Callback() {
+                                    @Override
+                                    public void onCompleted(Response response) {
+
+                                        Log.d(TAG, "PRIVACY CHECK RESPONSE: " + response.toString());
+
+                                        JSONObject graphResponse = response.getGraphObject().getInnerJSONObject();
+
+                                        try {
+
+                                            String privacyValue = graphResponse.getString("privacy");
+
+                                            Log.d(TAG, "PRIVACY CHECK, FOUND: " + privacyValue);
+
+                                            if ((privacyValue != null) && (privacyValue.equals("everyone"))) {
+
+                                                // post is public, ok to publish
+                                                jobSucceeded(album);
+
+                                            } else {
+
+                                                // post is not public, need to handle this somehow
+                                                jobSucceeded(POST_NOT_PUBLIC);
+
+                                            }
+
+
+
+                                        } catch (JSONException je) {
+
+                                            Log.e(TAG, "FAILED TO EXTRACT PRIVACY SETTINGS FROM RESPONSE: " + je.getMessage());
+
+                                            // could not determine privacy setting, assume the worst
+                                            jobSucceeded(POST_NOT_PUBLIC);
+
+                                        }
+                                    }
+                                };
+
                                 if (pendingUploads == 0) {
 
                                     Log.d(TAG, "ALL UPLOADS COMPLETE");
 
-                                    jobSucceeded(album);
+                                    Session session = Session.openActiveSessionFromCache(mContext);
+                                    Bundle parameters = null;
+                                    Request request = new Request(session, album, parameters, HttpMethod.GET, privacyCheckRequestCallback);
+
+                                    request.executeAsync();
+
+                                    // jobSucceeded(album);
 
                                 } else {
 
@@ -255,6 +336,12 @@ public class FacebookSiteController extends SiteController {
             for (int i = 0; i < photoPaths.length; i++) {
                photosToUpload.add(photoPaths[i]);
             }
+
+            // doing this to hit the photos api
+            // may restructure to check for existing album
+            // Request requestTwo = null;
+            // requestTwo = new Request(session, "me/albums", parameters, HttpMethod.GET, checkAlbumRequestCallback);
+            // requestTwo.executeAsync();
 
             request = new Request(session, "me/albums", parameters, HttpMethod.POST, uploadAlbumRequestCallback);
 
