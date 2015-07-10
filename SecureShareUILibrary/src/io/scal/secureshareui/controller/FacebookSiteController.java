@@ -18,15 +18,23 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.model.GraphUser;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class FacebookSiteController extends SiteController {
     public static final String SITE_NAME = "Facebook";
     public static final String SITE_KEY = "facebook";
     private static final String TAG = "FacebookSiteController";
+
+    public static final String POST_NOT_PUBLIC = "PostNotPublic";
+
+    private String postId = null;
 
     public FacebookSiteController(Context context, Handler handler, String jobId) {
         super(context, handler, jobId);
@@ -55,6 +63,55 @@ public class FacebookSiteController extends SiteController {
             @Override
             public void onCompleted(Response response) {
 
+                // privacy check callback
+                // ckeck to see if a video post is public
+                Request.Callback privacyCheckRequestCallback = new Request.Callback() {
+                    @Override
+                    public void onCompleted(Response response) {
+
+                        Log.d(TAG, "PRIVACY CHECK RESPONSE: " + response.toString());
+
+                        // request will fail unless app has user_videos permission
+                        // since this feature is incomplete, just continue
+                        if (response.getError() != null) {
+
+                            Log.e(TAG, "PRIVACY CHECK, ERROR: " + response.getError() + " (IGNORED)");
+                            jobSucceeded(postId);
+                            return;
+                        }
+
+                        JSONObject graphResponse = response.getGraphObject().getInnerJSONObject();
+
+                        try {
+
+                            String privacyValue = graphResponse.getString("privacy");
+
+                            Log.d(TAG, "PRIVACY CHECK, FOUND: " + privacyValue);
+
+                            if ((privacyValue != null) && (privacyValue.equals("everyone"))) {
+
+                                // post is public, ok to publish
+                                jobSucceeded(postId);
+
+                            } else {
+
+                                // post is not public, need to handle this somehow
+                                jobSucceeded(POST_NOT_PUBLIC);
+
+                            }
+
+                        } catch (JSONException je) {
+
+                            Log.e(TAG, "FAILED TO EXTRACT PRIVACY SETTINGS FROM RESPONSE: " + je.getMessage() + " (IGNORED)");
+
+                            // currently unable to find privacy field in video responses, so i'm letting this through
+                            jobSucceeded(postId);
+
+                        }
+                    }
+                };
+
+
                 // post fail
                 if (response.getError() != null) {
                     Log.d(TAG, "media upload problem. Error= " + response.getError());
@@ -73,8 +130,16 @@ public class FacebookSiteController extends SiteController {
                 }
                 // upload success
                 else {
-                    jobSucceeded("" + graphResponse);
-                    Log.d(TAG, "successful media upload: " + graphResponse);
+
+                    postId = (String) graphResponse;
+
+                    Log.d(TAG, "LOOKING FOR POST ID " + postId);
+
+                    Session session = Session.openActiveSessionFromCache(mContext);
+                    Bundle parameters = null;
+                    Request request = new Request(session, postId, parameters, HttpMethod.GET, privacyCheckRequestCallback);
+
+                    request.executeAsync();
                 }
             }
 
