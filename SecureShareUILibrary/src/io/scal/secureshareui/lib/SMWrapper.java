@@ -158,6 +158,7 @@ public class SMWrapper {
             }
         }
 
+        /*
         HttpPost post = new HttpPost(AUTHORIZE_URL);
 
         List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -169,7 +170,6 @@ public class SMWrapper {
         //params.add(new BasicNameValuePair("redirect_uri", "http://localhost/callback"));
         post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 
-        /*
         HttpClient client = HttpClientBuilder.create().build();
         HttpPost post = new HttpPost(AUTHORIZE_URL + "?" +
                 CLIENT_ID + "=" + mClientId + "&" +
@@ -178,7 +178,6 @@ public class SMWrapper {
                 USERNAME + "=" + username + "&" +
                 PASSWORD + "=" + password);
 
-        /*
         List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
         urlParameters.add(new BasicNameValuePair(CLIENT_ID, mClientId));
         urlParameters.add(new BasicNameValuePair(CLIENT_SECRET, mClientSecret));
@@ -187,9 +186,9 @@ public class SMWrapper {
         urlParameters.add(new BasicNameValuePair(PASSWORD, password));
 
         post.setEntity(new UrlEncodedFormEntity(urlParameters));
-        */
 
         HttpResponse response = null;
+        */
 
 
 
@@ -202,59 +201,65 @@ public class SMWrapper {
 
         LoginInterface loginService = restAdapter.create(LoginInterface.class);
 
-        Response rResponse = loginService.getAccessToken(mClientId, mClientSecret, "password", username, password);
+        try {
 
+            Response rResponse = loginService.getAccessToken(mClientId, mClientSecret, "password", username, password);
 
-
+        /*
         try {
             response = client.execute(post);
         } catch (Exception e) {
             Log.e("OAUTH", e.getMessage());
             e.printStackTrace();
         }
+        */
 
-        //Log.d("OAUTH", "RESPONSE CODE: " + response.getStatusLine().getStatusCode());
-        Log.d("OAUTH", "RESPONSE CODE: " + rResponse.getStatus());
+            //Log.d("OAUTH", "RESPONSE CODE: " + response.getStatusLine().getStatusCode());
+            Log.d("OAUTH", "RESPONSE CODE: " + rResponse.getStatus());
 
 
-        BufferedReader rd = new BufferedReader(
-            //new InputStreamReader(response.getEntity().getContent())
-            new InputStreamReader(rResponse.getBody().in())
-        );
+            BufferedReader rd = new BufferedReader(
+                    //new InputStreamReader(response.getEntity().getContent())
+                    new InputStreamReader(rResponse.getBody().in())
+            );
 
-        StringBuffer result = new StringBuffer();
-        String line = "";
-        while ((line = rd.readLine()) != null) {
-            result.append(line);
-        }
+            StringBuffer result = new StringBuffer();
+            String line = "";
+            while ((line = rd.readLine()) != null) {
+                result.append(line);
+            }
 
-        //Header[] postHeaders = response.getAllHeaders();
-        List<retrofit.client.Header> postHeaders = rResponse.getHeaders();
+            //Header[] postHeaders = response.getAllHeaders();
+            List<retrofit.client.Header> postHeaders = rResponse.getHeaders();
 
-        //for (int i = 0; i < postHeaders.length; i++) {
-        for (int i = 0; i < postHeaders.size(); i++) {
-            //Log.d("OAUTH", "FOUND HEADER: " + postHeaders[i].getName() + ": " + postHeaders[i].getValue());
-            Log.d("OAUTH", "FOUND HEADER: " + postHeaders.get(i).getName() + ": " + postHeaders.get(i).getValue());
-        }
+            //for (int i = 0; i < postHeaders.length; i++) {
+            for (int i = 0; i < postHeaders.size(); i++) {
+                //Log.d("OAUTH", "FOUND HEADER: " + postHeaders[i].getName() + ": " + postHeaders[i].getValue());
+                Log.d("OAUTH", "FOUND HEADER: " + postHeaders.get(i).getName() + ": " + postHeaders.get(i).getValue());
+            }
 
-        Log.d("OAUTH", "RESPONSE: " + result.toString());
+            Log.d("OAUTH", "RESPONSE: " + result.toString());
 
-        // need to attempt to deal with cloudflare captcha challenge over tor
-        if ((useTor) && result.toString().contains("chk_captcha")) {
+            // need to attempt to deal with cloudflare captcha challenge over tor
+            if ((useTor) && result.toString().contains("chk_captcha")) {
 
-            Log.e("OAUTH", "ENCOUNTERED CAPTCHA CHALLENGE PAGE (TOR IP ADDRESSES MAY BE CONSIDERED SUSPICIOUS)");
+                Log.e("OAUTH", "ENCOUNTERED CAPTCHA CHALLENGE PAGE (TOR IP ADDRESSES MAY BE CONSIDERED SUSPICIOUS)");
 
-            throw new CaptchaException();
+                throw new CaptchaException();
 
-        }
+            }
 
-        try {
-            JSONObject json = new JSONObject(result.toString());
-            mToken = json.getString("access_token");
-            //Log.d("OAUTH", "TOKEN: " + mToken);
-        } catch (JSONException je) {
-            Log.e("OAUTH", "FAILED TO PARSE RESPONSE: " + je.getMessage());
-            throw new IOException("unexpected response received");
+            try {
+                JSONObject json = new JSONObject(result.toString());
+                mToken = json.getString("access_token");
+                //Log.d("OAUTH", "TOKEN: " + mToken);
+            } catch (JSONException je) {
+                Log.e("OAUTH", "FAILED TO PARSE RESPONSE: " + je.getMessage());
+                throw new IOException("unexpected response received");
+            }
+        } catch (retrofit.RetrofitError re) {
+            Log.e("OAUTH", "FAILED TO CONNECT: " + re.getMessage());
+            throw new IOException("no response received");
         }
 
         return mToken;
@@ -267,9 +272,15 @@ public class SMWrapper {
         //HttpResponse postResponse = upload(user, title, catstrings, body, embed, mToken);
         Response postResponse = upload(user, title, catstrings, body, embed, mToken);
 
+        // catch null (probably caused by retrofit handling of 404)
+        if(postResponse == null) {
+
+            Log.e("PUBLISH", "PUBLICATION FAILED");
+            return "No Response" + ":" + "Publishing to StoryMaker failed.";
+        }
+
         //Log.d("PUBLISH", "RESPONSE CODE: " + postResponse.getStatusLine().getStatusCode());
         Log.d("PUBLISH", "RESPONSE CODE: " + postResponse.getStatus());
-
 
         BufferedReader rd = new BufferedReader(
             //new InputStreamReader(postResponse.getEntity().getContent())
@@ -325,17 +336,18 @@ public class SMWrapper {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
 
         RestAdapter restAdapter = new RestAdapter.Builder()
-                                      .setLogLevel(RestAdapter.LogLevel.FULL)
-                                      .setEndpoint(settings.getString("pserver", "https://demo.storymaker.org/"))
-                                      .build();
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setEndpoint(settings.getString("pserver", "https://demo.storymaker.org/"))
+                .build();
 
         IndexInterface indexService = restAdapter.create(IndexInterface.class);
 
-        Response rResponse = indexService.getIndex(version, "Bearer " + mToken);
-
-        Log.d("INDEX", "RESPONSE CODE: " + rResponse.getStatus());
-
         try {
+
+            Response rResponse = indexService.getIndex(version, "Bearer " + mToken);
+
+            Log.d("INDEX", "RESPONSE CODE: " + rResponse.getStatus());
+
             BufferedReader rd = new BufferedReader(
                     new InputStreamReader(rResponse.getBody().in())
             );
@@ -365,6 +377,9 @@ public class SMWrapper {
                 Log.e("INDEX", "FAILED TO PARSE RESPONSE: " + je.getMessage());
                 return null;
             }
+        } catch (retrofit.RetrofitError re) {
+            Log.e("INDEX", "FAILED TO CONNECT: " + re.getMessage());
+            return null;
         } catch (IOException ioe) {
             Log.e("INDEX", "FAILED TO READ RESPONSE: " + ioe.getMessage());
             return null;
@@ -489,12 +504,17 @@ public class SMWrapper {
 
         EntityWrapper jsonEntityWrapper = new EntityWrapper(jsonEntity);
 
-        Response rResponse = postService.postContent("Bearer " + credentials, jsonEntityWrapper);
+        try {
 
+            Response rResponse = postService.postContent("Bearer " + credentials, jsonEntityWrapper);
 
+            //return client.execute(post);
+            return rResponse;
 
-        //return client.execute(post);
-        return rResponse;
+        } catch (retrofit.RetrofitError re) {
+            Log.e("PUBLISH", "FAILED TO CONNECT: " + re.getMessage());
+            return null;
+        }
     }
 
     // need to implement these methods
