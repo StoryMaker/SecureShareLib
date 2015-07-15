@@ -82,7 +82,7 @@ public class SMWrapper {
         mClientSecret = context.getString(R.string.sm_secret);
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
-        String url = settings.getString("pserver", "https://demo.storymaker.org/");
+        String url = settings.getString("pserver", Constants.DEFAULT_SERVER_URL);
         if (!url.endsWith("/")) {
             url = url + "/";
         }
@@ -196,7 +196,7 @@ public class SMWrapper {
 
         RestAdapter restAdapter = new RestAdapter.Builder()
                                       .setLogLevel(RestAdapter.LogLevel.FULL)
-                                      .setEndpoint(settings.getString("pserver", "https://demo.storymaker.org/"))
+                                      .setEndpoint(settings.getString("pserver", Constants.DEFAULT_SERVER_URL))
                                       .build();
 
         LoginInterface loginService = restAdapter.create(LoginInterface.class);
@@ -337,7 +337,7 @@ public class SMWrapper {
 
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setLogLevel(RestAdapter.LogLevel.FULL)
-                .setEndpoint(settings.getString("pserver", "https://demo.storymaker.org/"))
+                .setEndpoint(settings.getString("pserver", Constants.DEFAULT_SERVER_URL))
                 .build();
 
         IndexInterface indexService = restAdapter.create(IndexInterface.class);
@@ -497,7 +497,7 @@ public class SMWrapper {
 
         RestAdapter restAdapter = new RestAdapter.Builder()
                                       .setLogLevel(RestAdapter.LogLevel.FULL)
-                                      .setEndpoint(settings.getString("pserver", "https://demo.storymaker.org/"))
+                                      .setEndpoint(settings.getString("pserver", Constants.DEFAULT_SERVER_URL))
                                       .build();
 
         PostInterface postService = restAdapter.create(PostInterface.class);
