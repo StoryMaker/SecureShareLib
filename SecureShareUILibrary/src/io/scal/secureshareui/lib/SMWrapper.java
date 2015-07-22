@@ -82,7 +82,7 @@ public class SMWrapper {
         mClientSecret = context.getString(R.string.sm_secret);
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
-        String url = settings.getString("pserver", Constants.DEFAULT_SERVER_URL);
+        String url = "api." + settings.getString("pserver", Constants.DEFAULT_SERVER_URL);
         if (!url.endsWith("/")) {
             url = url + "/";
         }
@@ -193,10 +193,10 @@ public class SMWrapper {
 
 
         // TRY NEW RETROFIT STUFF
-
+        String url = "api." + settings.getString("pserver", Constants.DEFAULT_SERVER_URL);
         RestAdapter restAdapter = new RestAdapter.Builder()
                                       .setLogLevel(RestAdapter.LogLevel.FULL)
-                                      .setEndpoint(settings.getString("pserver", Constants.DEFAULT_SERVER_URL))
+                                      .setEndpoint(url)
                                       .build();
 
         LoginInterface loginService = restAdapter.create(LoginInterface.class);
@@ -335,9 +335,10 @@ public class SMWrapper {
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
 
+        String url = "api." + settings.getString("pserver", Constants.DEFAULT_SERVER_URL);
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setLogLevel(RestAdapter.LogLevel.FULL)
-                .setEndpoint(settings.getString("pserver", Constants.DEFAULT_SERVER_URL))
+                .setEndpoint(url)
                 .build();
 
         IndexInterface indexService = restAdapter.create(IndexInterface.class);
@@ -495,9 +496,10 @@ public class SMWrapper {
 
         // TRY NEW RETROFIT STUFF
 
+        String url = "api." + settings.getString("pserver", Constants.DEFAULT_SERVER_URL);
         RestAdapter restAdapter = new RestAdapter.Builder()
                                       .setLogLevel(RestAdapter.LogLevel.FULL)
-                                      .setEndpoint(settings.getString("pserver", Constants.DEFAULT_SERVER_URL))
+                                      .setEndpoint(url)
                                       .build();
 
         PostInterface postService = restAdapter.create(PostInterface.class);
