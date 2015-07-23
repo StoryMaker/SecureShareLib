@@ -81,8 +81,7 @@ public class SMWrapper {
         mClientId = context.getString(R.string.sm_key); // FIXME obfuscate these, and when you do generate new keys
         mClientSecret = context.getString(R.string.sm_secret);
 
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
-        String url = "api." + settings.getString("pserver", Constants.DEFAULT_SERVER_URL);
+        String url = getUrl();
         if (!url.endsWith("/")) {
             url = url + "/";
         }
@@ -193,10 +192,9 @@ public class SMWrapper {
 
 
         // TRY NEW RETROFIT STUFF
-        String url = "api." + settings.getString("pserver", Constants.DEFAULT_SERVER_URL);
         RestAdapter restAdapter = new RestAdapter.Builder()
                                       .setLogLevel(RestAdapter.LogLevel.FULL)
-                                      .setEndpoint(url)
+                                      .setEndpoint(getUrl())
                                       .build();
 
         LoginInterface loginService = restAdapter.create(LoginInterface.class);
@@ -333,12 +331,9 @@ public class SMWrapper {
 
         // TRY NEW RETROFIT STUFF
 
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
-
-        String url = "api." + settings.getString("pserver", Constants.DEFAULT_SERVER_URL);
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setLogLevel(RestAdapter.LogLevel.FULL)
-                .setEndpoint(url)
+                .setEndpoint(getUrl())
                 .build();
 
         IndexInterface indexService = restAdapter.create(IndexInterface.class);
@@ -496,10 +491,9 @@ public class SMWrapper {
 
         // TRY NEW RETROFIT STUFF
 
-        String url = "api." + settings.getString("pserver", Constants.DEFAULT_SERVER_URL);
         RestAdapter restAdapter = new RestAdapter.Builder()
                                       .setLogLevel(RestAdapter.LogLevel.FULL)
-                                      .setEndpoint(url)
+                                      .setEndpoint(getUrl())
                                       .build();
 
         PostInterface postService = restAdapter.create(PostInterface.class);
@@ -534,5 +528,13 @@ public class SMWrapper {
     }
     public String addMedia (String mimeType, File file) {
         return null; // wordpress class returned the url of a "MediaObject"?
+    }
+
+    // FIXME this could be more robust and needs a test
+    private String getUrl() {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String url = settings.getString("pserver", Constants.DEFAULT_SERVER_URL);
+        String[] splits = url.split("://");
+        return splits[0] + "://api." + splits[1];
     }
 }
