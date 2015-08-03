@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.squareup.okhttp.OkHttpClient;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,6 +23,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -43,6 +48,7 @@ import info.guardianproject.onionkit.trust.StrongHttpsClient;
 import info.guardianproject.onionkit.ui.OrbotHelper;
 import io.scal.secureshareuilibrary.R;
 import retrofit.RestAdapter;
+import retrofit.client.OkClient;
 import retrofit.client.Response;
 import retrofit.mime.TypedOutput;
 
@@ -129,15 +135,16 @@ public class SMWrapper {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
         boolean useTor = settings.getBoolean("pusetor", false);
 
+        /*
         if (useTor) {
             OrbotHelper oh = new OrbotHelper(mContext);
 
             if ((!oh.isOrbotInstalled()) || (!oh.isOrbotRunning())) {
-                Log.e("PUBLISH", "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
+                Log.e("OAUTH", "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
 
                 return null;
             } else {
-                Log.d("PUBLISH", "TOR SELECTED, HOST " + mContext.getString(R.string.sm_tor_host) + ", PORT " + mContext.getString(R.string.sm_tor_port) + " (SETTING PROXY)");
+                Log.d("OAUTH", "TOR SELECTED, HOST " + mContext.getString(R.string.sm_tor_host) + ", PORT " + mContext.getString(R.string.sm_tor_port) + " (SETTING PROXY)");
 
                 String host = mContext.getString(R.string.sm_tor_host);
                 int port = Integer.parseInt(mContext.getString(R.string.sm_tor_port));
@@ -149,13 +156,14 @@ public class SMWrapper {
             }
         } else {
             if (proxySet) {
-                Log.d("PUBLISH", "TOR NOT SELECTED (CLEARING PROXY)");
+                Log.d("OAUTH", "TOR NOT SELECTED (CLEARING PROXY)");
 
                 client.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
             } else {
-                Log.d("PUBLISH", "TOR NOT SELECTED");
+                Log.d("OAUTH", "TOR NOT SELECTED");
             }
         }
+        */
 
         /*
         HttpPost post = new HttpPost(AUTHORIZE_URL);
@@ -192,10 +200,49 @@ public class SMWrapper {
 
 
         // TRY NEW RETROFIT STUFF
+
+        RestAdapter.Builder builder = new RestAdapter.Builder()
+                                          .setLogLevel(RestAdapter.LogLevel.FULL)
+                                          .setEndpoint(getUrl());
+
+        // check for tor
+        if (useTor) {
+            OrbotHelper oh = new OrbotHelper(mContext);
+
+            if ((!oh.isOrbotInstalled()) || (!oh.isOrbotRunning())) {
+                Log.e("OAUTH", "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
+
+                throw new IOException("tor selected but orbot inactive");
+            } else {
+
+                // get tor parameters
+                String torHost = mContext.getString(R.string.sm_tor_host);
+                String torPort = mContext.getString(R.string.sm_tor_port);
+
+                Log.d("OAUTH", "TOR SELECTED, HOST " + torHost + ", PORT " + torPort + " (BUILDING CUSTOM CLIENT)");
+
+                // build a client with a proxy
+                OkHttpClient httpClient = new OkHttpClient();
+                SocketAddress torSocket = new InetSocketAddress(torHost, Integer.parseInt(torPort));
+                Proxy torProxy = new Proxy(Proxy.Type.HTTP, torSocket);
+                httpClient.setProxy(torProxy);
+
+                // create retrofit wrapper class
+                OkClient retrofitClient = new OkClient(httpClient);
+
+                // add to builder
+                builder.setClient(retrofitClient);
+            }
+        }
+
+        /*
         RestAdapter restAdapter = new RestAdapter.Builder()
                                       .setLogLevel(RestAdapter.LogLevel.FULL)
                                       .setEndpoint(getUrl())
                                       .build();
+        */
+
+        RestAdapter restAdapter = builder.build();
 
         LoginInterface loginService = restAdapter.create(LoginInterface.class);
 
@@ -329,12 +376,54 @@ public class SMWrapper {
     // CAN'T SAVE TO FILE, CONVERSION REQUIRED AND DON'T WANT CLASS DEPENDENT ON LIGER
     public JSONArray index(int version) {
 
+        // check for tor
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
+        boolean useTor = settings.getBoolean("pusetor", false);
+
         // TRY NEW RETROFIT STUFF
 
+        RestAdapter.Builder builder = new RestAdapter.Builder()
+                                          .setLogLevel(RestAdapter.LogLevel.FULL)
+                                          .setEndpoint(getUrl());
+
+        // check for tor
+        if (useTor) {
+            OrbotHelper oh = new OrbotHelper(mContext);
+
+            if ((!oh.isOrbotInstalled()) || (!oh.isOrbotRunning())) {
+                Log.e("INDEX", "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
+
+                return null;
+            } else {
+
+                // get tor parameters
+                String torHost = mContext.getString(R.string.sm_tor_host);
+                String torPort = mContext.getString(R.string.sm_tor_port);
+
+                Log.d("INDEX", "TOR SELECTED, HOST " + torHost + ", PORT " + torPort + " (BUILDING CUSTOM CLIENT)");
+
+                // build a client with a proxy
+                OkHttpClient httpClient = new OkHttpClient();
+                SocketAddress torSocket = new InetSocketAddress(torHost, Integer.parseInt(torPort));
+                Proxy torProxy = new Proxy(Proxy.Type.HTTP, torSocket);
+                httpClient.setProxy(torProxy);
+
+                // create retrofit wrapper class
+                OkClient retrofitClient = new OkClient(httpClient);
+
+                // add to builder
+                builder.setClient(retrofitClient);
+            }
+        }
+
+        /*
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setLogLevel(RestAdapter.LogLevel.FULL)
                 .setEndpoint(getUrl())
                 .build();
+        */
+
+        RestAdapter restAdapter = builder.build();
 
         IndexInterface indexService = restAdapter.create(IndexInterface.class);
 
@@ -403,6 +492,7 @@ public class SMWrapper {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
         boolean useTor = settings.getBoolean("pusetor", false);
 
+        /*
         if (useTor) {
             OrbotHelper oh = new OrbotHelper(mContext);
 
@@ -430,6 +520,7 @@ public class SMWrapper {
                 Log.d("PUBLISH", "TOR NOT SELECTED");
             }
         }
+        */
 
         HttpPost post = new HttpPost(UPLOAD_URL);
 
@@ -491,10 +582,48 @@ public class SMWrapper {
 
         // TRY NEW RETROFIT STUFF
 
+        RestAdapter.Builder builder = new RestAdapter.Builder()
+                                          .setLogLevel(RestAdapter.LogLevel.FULL)
+                                          .setEndpoint(getUrl());
+
+        // check for tor
+        if (useTor) {
+            OrbotHelper oh = new OrbotHelper(mContext);
+
+            if ((!oh.isOrbotInstalled()) || (!oh.isOrbotRunning())) {
+                Log.e("PUBLISH", "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
+
+                return null;
+            } else {
+
+                // get tor parameters
+                String torHost = mContext.getString(R.string.sm_tor_host);
+                String torPort = mContext.getString(R.string.sm_tor_port);
+
+                Log.d("PUBLISH", "TOR SELECTED, HOST " + torHost + ", PORT " + torPort + " (BUILDING CUSTOM CLIENT)");
+
+                // build a client with a proxy
+                OkHttpClient httpClient = new OkHttpClient();
+                SocketAddress torSocket = new InetSocketAddress(torHost, Integer.parseInt(torPort));
+                Proxy torProxy = new Proxy(Proxy.Type.HTTP, torSocket);
+                httpClient.setProxy(torProxy);
+
+                // create retrofit wrapper class
+                OkClient retrofitClient = new OkClient(httpClient);
+
+                // add to builder
+                builder.setClient(retrofitClient);
+            }
+        }
+
+        /*
         RestAdapter restAdapter = new RestAdapter.Builder()
                                       .setLogLevel(RestAdapter.LogLevel.FULL)
                                       .setEndpoint(getUrl())
                                       .build();
+        */
+
+        RestAdapter restAdapter = builder.build();
 
         PostInterface postService = restAdapter.create(PostInterface.class);
 
