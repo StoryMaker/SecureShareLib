@@ -321,7 +321,7 @@ public class SMWrapper {
         if(postResponse == null) {
 
             Log.e("PUBLISH", "PUBLICATION FAILED");
-            return "No Response" + ":" + "Publishing to StoryMaker failed.";
+            return "0" + ":" + "Publishing to StoryMaker failed.";
         }
 
         //Log.d("PUBLISH", "RESPONSE CODE: " + postResponse.getStatusLine().getStatusCode());
