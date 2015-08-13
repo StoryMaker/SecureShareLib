@@ -663,7 +663,21 @@ public class SMWrapper {
     private String getUrl() {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
         String url = settings.getString("pserver", Constants.DEFAULT_SERVER_URL);
+        // Because of the peculiarities of using cloudflare ssl certs and therefore only being allowed
+        // sub domains one deep, we need to do a bit of massaging here to figure out the right api domain
+        // if our domain is https://storymaker.org we want https://api.storymaker.org
+        // if our domain is https://demo.storymaker.org we want: https://api-demo.storymaker.org
+
+        // we want to just use api. not api-www since we have a real api. cert that goes outside of cloudflare
+        if (url.equals(Constants.DEFAULT_SERVER_URL_WWW)) {
+            url = Constants.DEFAULT_SERVER_URL;
+        }
+
+        String prefix = "api-";
+        if (url.equals(Constants.DEFAULT_SERVER_URL)) {
+            prefix = "api.";
+        }
         String[] splits = url.split("://");
-        return splits[0] + "://api." + splits[1];
+        return splits[0] + "://" + prefix + splits[1];
     }
 }
