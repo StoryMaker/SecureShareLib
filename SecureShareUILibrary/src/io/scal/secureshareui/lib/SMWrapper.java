@@ -202,7 +202,7 @@ public class SMWrapper {
         // TRY NEW RETROFIT STUFF
 
         RestAdapter.Builder builder = new RestAdapter.Builder()
-                                          .setLogLevel(RestAdapter.LogLevel.FULL)
+                                          .setLogLevel(RestAdapter.LogLevel.BASIC)
                                           .setEndpoint(getUrl());
 
         // check for tor
@@ -383,7 +383,7 @@ public class SMWrapper {
         // TRY NEW RETROFIT STUFF
 
         RestAdapter.Builder builder = new RestAdapter.Builder()
-                                          .setLogLevel(RestAdapter.LogLevel.FULL)
+                                          .setLogLevel(RestAdapter.LogLevel.BASIC)
                                           .setEndpoint(getUrl());
 
         // check for tor
@@ -583,7 +583,7 @@ public class SMWrapper {
         // TRY NEW RETROFIT STUFF
 
         RestAdapter.Builder builder = new RestAdapter.Builder()
-                                          .setLogLevel(RestAdapter.LogLevel.FULL)
+                                          .setLogLevel(RestAdapter.LogLevel.BASIC)
                                           .setEndpoint(getUrl());
 
         // check for tor
