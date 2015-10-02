@@ -45,7 +45,7 @@
 	<string name="upload_to_internet_archive">Upload to Internet Archive</string>
 	<string name="upload_securely_via_tor">Upload Securely via Tor</string>
 	<string name="use_tor_to_upload_securely_and_anonymously_">Use Tor to upload securely and anonymously.</string>
-	<string name="publish_to_storymaker">Publish to Zamaneh Tribune</string>
+	<string name="publish_to_storymaker">Publish to Tribune Zamaneh</string>
 	<string name="login_to_storymaker_cc_to_publish_">Login to StoryMaker.org to publish.</string>
     <string name="invalid_file_format">Invalid file format.</string>
     <string name="youtube_uploading">YouTube uploading...</string>

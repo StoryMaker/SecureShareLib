@@ -66,7 +66,7 @@ public class ZTSiteController extends SiteController {
 
     private static final String TAG = "ZTSiteController";
 
-    public static final String SITE_NAME = "Zamaneh Tribune";
+    public static final String SITE_NAME = "Tribune Zamaneh";
     public static final String SITE_KEY = "ZT";
 
     String key;
