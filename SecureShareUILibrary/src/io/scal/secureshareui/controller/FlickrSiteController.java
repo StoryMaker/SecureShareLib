@@ -1,14 +1,5 @@
 package io.scal.secureshareui.controller;
 
-import io.scal.secureshareui.login.FlickrLoginActivity;
-import io.scal.secureshareui.model.Account;
-import io.scal.secureshareuilibrary.R;
-
-import java.io.File;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.util.HashMap;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -20,7 +11,19 @@ import android.util.Log;
 import com.flickr.api.Flickr;
 import com.flickr.api.FlickrException;
 import com.flickr.api.FlickrProperties;
+import com.flickr.api.PhotosetsService;
 import com.flickr.api.UploadService;
+import com.flickr.api.entities.Photoset;
+
+import java.io.File;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import io.scal.secureshareui.login.FlickrLoginActivity;
+import io.scal.secureshareui.model.Account;
+import io.scal.secureshareuilibrary.R;
 
 public class FlickrSiteController extends SiteController {
     public static final String SITE_NAME = "Flickr"; 
@@ -29,7 +32,8 @@ public class FlickrSiteController extends SiteController {
     Flickr f = null;
     String key;
     String secret;
-    
+
+    public static final String PHOTO_SET_KEY = "PhotoSetPaths";
     
     public FlickrSiteController(Context context, Handler handler, String jobId) {
         super(context, handler, jobId);
@@ -55,13 +59,22 @@ public class FlickrSiteController extends SiteController {
 		
 		String title = valueMap.get(VALUE_KEY_TITLE);
 		String body = valueMap.get(VALUE_KEY_BODY);
-		String mediaPath = valueMap.get(VALUE_KEY_MEDIA_PATH);
+
+        // check for photo set upload paths
+        String mediaPath = "";
+        if (valueMap.keySet().contains(PHOTO_SET_KEY)) {
+            mediaPath = valueMap.get(PHOTO_SET_KEY);
+        } else {
+            mediaPath = valueMap.get(VALUE_KEY_MEDIA_PATH);
+        }
 		boolean useTor = (valueMap.get(VALUE_KEY_USE_TOR).equals("true")) ? true : false;
 		
         String path = Environment.getExternalStorageDirectory() + File.separator + "flickr.conf"; // FIXME this should probably be stored on protected internal storage... or perhaps IOCipher
         
         Log.d(TAG, "upload() path: " + path);
-        
+
+        Log.d(TAG, "upload() title: " + title);
+
         File confFile = new File(path);
         FlickrProperties fProps = new FlickrProperties(confFile); 
         f = new Flickr(key,                          // key
@@ -116,10 +129,38 @@ public class FlickrSiteController extends SiteController {
         try
         {
             Log.d(TAG, "uploadFile() path: " + mediaPath);
-            
-            File photoFile = new File(mediaPath);
-            UploadService us = f.getUploadService();
-            return us.uploadPhoto(photoFile, title, body); // IS THIS THE CORRECT USE OF "body"?
+
+            if (mediaPath.contains(";")) {
+
+                Log.d(TAG, "GOT SET OF MEDIA PATHS");
+
+                String[] photoPaths = mediaPath.split(";");
+
+                ArrayList<String> photos = new ArrayList<String>();
+                for (int i = 0; i < photoPaths.length; i++) {
+                    photos.add(photoPaths[i]);
+                }
+                String urlPart = uploadFiles(title, body, photos, credentials);
+
+                Log.d(TAG, "SET UPLOAD RETURN VALUE: " + urlPart);
+
+                return urlPart;
+            } else {
+
+                Log.d(TAG, "GOT SINGLE MEDIA PATH");
+
+                File photoFile = new File(mediaPath);
+
+                UploadService us = f.getUploadService();
+                String result = us.uploadPhoto(photoFile, title, body); // IS THIS THE CORRECT USE OF "body"?
+
+                // construct url part, format https://www.flickr.com/photos/{user-id}/{photo-id}
+                String urlPart = f.getUser().getId() + "/" + result;
+
+                Log.d(TAG, "SINGLE UPLOAD RETURN VALUE: " + urlPart);
+
+                return urlPart;
+            }
         }
         catch (FlickrException fe)
         {
@@ -127,6 +168,71 @@ public class FlickrSiteController extends SiteController {
             jobFailed(fe, 3233232, "upload failed: " + fe.getMessage()); // FIXME error code?
         }
         return null;
+    }
+
+    public String uploadFiles(String title, String body, ArrayList<String> mediaPaths, String credentials)
+    {
+
+        int photoCount = 0;
+        String photoId = null;
+
+        ArrayList<String> uploadedPhotoIds = new ArrayList<String>();
+
+        // first upload everything
+        for (String mediaPath : mediaPaths) {
+            try {
+
+                File photoFile = new File(mediaPath);
+
+                UploadService us = f.getUploadService();
+                photoId = us.uploadPhoto(photoFile, title + "_" + photoCount, body + "_" + photoCount);  // IS THIS THE CORRECT USE OF "body"?
+                uploadedPhotoIds.add(photoId);
+                Log.d(TAG, "ADDED PHOTO " + photoId + " TO LIST");
+
+                photoCount++;
+            } catch (FlickrException fe) {
+                Log.e(TAG, "upload failed: " + fe.getMessage());
+                jobFailed(fe, 3233232, "upload failed: " + fe.getMessage()); // FIXME error code?
+                return null;
+            }
+        }
+
+        Log.d(TAG, "UPLOADED " + photoCount + " PHOTOS");
+
+        try {
+
+            // create a photo set and add photos
+            PhotosetsService pss = f.getPhotosetsService();
+            Photoset photoSet = null;
+
+            String photoSetPhotoId = null;
+
+            for(String uploadedPhotoId : uploadedPhotoIds) {
+
+                Log.d(TAG, "PROCESSING PHOTO " + photoId);
+
+                if (photoSetPhotoId == null) {
+                    photoSetPhotoId = uploadedPhotoId;
+                    photoSet = pss.createPhotoset(title, body, photoSetPhotoId); // using "body" as "description"?
+                    Log.d(TAG, "CREATED PHOTO SET " + photoSet.getId() + " WITH PRIMARY PHOTO " + uploadedPhotoId);
+                }else {
+                    pss.addPhotoToSet(photoSet, uploadedPhotoId);
+                    Log.d(TAG, "ADDED PHOTO " + uploadedPhotoId + " TO PHOTO SET");
+                }
+
+            }
+
+            // construct url part, format https://www.flickr.com/photos/{user-id}/sets/{photoset-id}
+            String urlPart = f.getUser().getId() + "/sets/" + photoSet.getId();
+
+            return urlPart;
+        } catch (FlickrException fe) {
+            Log.e(TAG, "failed to create photo set: " + fe.getMessage());
+            fe.printStackTrace();
+            Log.e(TAG, "cause: " + fe.getCause().getMessage());
+            jobFailed(fe, 3233232, "upload failed: " + fe.getMessage()); // FIXME error code?
+            return null;
+        }
     }
 
     @Override
