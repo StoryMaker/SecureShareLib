@@ -1,6 +1,6 @@
 package io.scal.secureshareui.login;
 
-import info.guardianproject.onionkit.ui.OrbotHelper;
+import info.guardianproject.netcipher.proxy.OrbotHelper;
 import io.scal.secureshareui.controller.SiteController;
 import io.scal.secureshareui.lib.Util;
 import io.scal.secureshareuilibrary.R;
@@ -84,8 +84,7 @@ public class FlickrLoginActivity extends LockableActivity
                        "delete",                     // permissions ("delete" permission allows read/write/delete)
                        fProps);                      // properties
 
-        OrbotHelper orbotHelper = new OrbotHelper(getApplicationContext());
-        if(orbotHelper.isOrbotRunning()) 
+        if(OrbotHelper.isOrbotRunning(this))
         {    
             Log.d(TAG, "orbot running, setting proxy");
             

@@ -44,8 +44,8 @@ import ch.boye.httpclientandroidlib.entity.StringEntity;
 import ch.boye.httpclientandroidlib.impl.client.HttpClientBuilder;
 import ch.boye.httpclientandroidlib.impl.client.HttpClients;
 import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
-import info.guardianproject.onionkit.trust.StrongHttpsClient;
-import info.guardianproject.onionkit.ui.OrbotHelper;
+import info.guardianproject.netcipher.client.StrongHttpsClient;
+import info.guardianproject.netcipher.proxy.OrbotHelper;
 import io.scal.secureshareuilibrary.R;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
@@ -208,9 +208,8 @@ public class SMWrapper {
 
         // check for tor
         if (useTor) {
-            OrbotHelper oh = new OrbotHelper(mContext);
 
-            if ((!oh.isOrbotInstalled()) || (!oh.isOrbotRunning())) {
+            if ((!OrbotHelper.isOrbotInstalled(mContext)) || (!OrbotHelper.isOrbotRunning(mContext))) {
                 Log.e("OAUTH", "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
 
                 throw new IOException("tor selected but orbot inactive");
@@ -389,9 +388,9 @@ public class SMWrapper {
 
         // check for tor
         if (useTor) {
-            OrbotHelper oh = new OrbotHelper(mContext);
 
-            if ((!oh.isOrbotInstalled()) || (!oh.isOrbotRunning())) {
+            if ((!OrbotHelper.isOrbotInstalled(mContext)) || (!OrbotHelper.isOrbotRunning(mContext))) {
+
                 Log.e("INDEX", "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
 
                 return null;
@@ -590,9 +589,8 @@ public class SMWrapper {
 
         // check for tor
         if (useTor) {
-            OrbotHelper oh = new OrbotHelper(mContext);
 
-            if ((!oh.isOrbotInstalled()) || (!oh.isOrbotRunning())) {
+            if ((!OrbotHelper.isOrbotInstalled(mContext)) || (!OrbotHelper.isOrbotRunning(mContext))) {
                 Log.e("PUBLISH", "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
 
                 return null;

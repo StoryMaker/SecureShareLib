@@ -1,7 +1,7 @@
 
 package io.scal.secureshareui.controller;
 
-import info.guardianproject.onionkit.ui.OrbotHelper;
+import info.guardianproject.netcipher.proxy.OrbotHelper;
 import io.scal.secureshareui.model.Account;
 import io.scal.secureshareuilibrary.R;
 
@@ -84,9 +84,8 @@ public abstract class SiteController {
     public abstract void upload(Account account, HashMap<String, String> valueMap);
 
     public static boolean torCheck(boolean useTor, Context mContext) {
-        OrbotHelper orbotHelper = new OrbotHelper(mContext);
 
-        if(useTor && orbotHelper.isOrbotRunning()) 
+        if(useTor && OrbotHelper.isOrbotRunning(mContext))
         {    
             Log.d(TAG, "use tor");
             return true;

@@ -35,8 +35,8 @@ import ch.boye.httpclientandroidlib.client.entity.UrlEncodedFormEntity;
 import ch.boye.httpclientandroidlib.client.methods.HttpPost;
 import ch.boye.httpclientandroidlib.conn.params.ConnRoutePNames;
 import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
-import info.guardianproject.onionkit.trust.StrongHttpsClient;
-import info.guardianproject.onionkit.ui.OrbotHelper;
+import info.guardianproject.netcipher.client.StrongHttpsClient;
+import info.guardianproject.netcipher.proxy.OrbotHelper;
 import io.scal.secureshareui.controller.SiteController;
 import io.scal.secureshareuilibrary.R;
 
@@ -112,9 +112,8 @@ public class ZTLoginActivity extends LockableActivity {
         boolean useTor = settings.getBoolean("pusetor", false);
 
         if (useTor) {
-            OrbotHelper oh = new OrbotHelper(this);
 
-            if ((!oh.isOrbotInstalled()) || (!oh.isOrbotRunning())) {
+            if ((!OrbotHelper.isOrbotInstalled(this)) || (!OrbotHelper.isOrbotRunning(this))) {
                 Log.e(TAG, "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
                 return null;
             } else {
@@ -341,9 +340,8 @@ public class ZTLoginActivity extends LockableActivity {
         boolean useTor = settings.getBoolean("pusetor", false);
 
         if (useTor) {
-            OrbotHelper oh = new OrbotHelper(this);
 
-            if ((!oh.isOrbotInstalled()) || (!oh.isOrbotRunning())) {
+            if ((!OrbotHelper.isOrbotInstalled(this)) || (!OrbotHelper.isOrbotRunning(this))) {
                 Log.e(TAG, "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
                 return;
             } else {

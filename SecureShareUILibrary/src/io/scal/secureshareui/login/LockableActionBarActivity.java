@@ -65,7 +65,7 @@ public class LockableActionBarActivity extends ActionBarActivity implements ICac
         Log.d("CACHEWORD", "buildNotification (lockable)");
 
         NotificationCompat.Builder b = new NotificationCompat.Builder(c);
-        b.setSmallIcon(R.drawable.ic_menu_key);
+        b.setSmallIcon(android.R.drawable.ic_menu_info_details); //ic_menu_key was missing
         b.setContentTitle(c.getText(R.string.cacheword_notification_cached_title));
         b.setContentText(c.getText(R.string.cacheword_notification_cached_message));
         b.setTicker(c.getText(R.string.cacheword_notification_cached));

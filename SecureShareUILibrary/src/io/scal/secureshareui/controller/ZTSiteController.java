@@ -53,8 +53,8 @@ import ch.boye.httpclientandroidlib.client.methods.HttpPost;
 import ch.boye.httpclientandroidlib.conn.params.ConnRoutePNames;
 import ch.boye.httpclientandroidlib.entity.StringEntity;
 import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
-import info.guardianproject.onionkit.trust.StrongHttpsClient;
-import info.guardianproject.onionkit.ui.OrbotHelper;
+import info.guardianproject.netcipher.client.StrongHttpsClient;
+import info.guardianproject.netcipher.proxy.OrbotHelper;
 import io.scal.secureshareui.login.ZTLoginActivity;
 import io.scal.secureshareui.model.Account;
 import io.scal.secureshareuilibrary.R;
@@ -118,9 +118,7 @@ public class ZTSiteController extends SiteController {
         boolean useTor = settings.getBoolean("pusetor", false);
 
         if (useTor) {
-            OrbotHelper oh = new OrbotHelper(mContext);
-
-            if ((!oh.isOrbotInstalled()) || (!oh.isOrbotRunning())) {
+            if ((!OrbotHelper.isOrbotInstalled(mContext)) || (!OrbotHelper.isOrbotRunning(mContext))) {
                 Log.e(TAG, "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
                 return null;
             } else {
