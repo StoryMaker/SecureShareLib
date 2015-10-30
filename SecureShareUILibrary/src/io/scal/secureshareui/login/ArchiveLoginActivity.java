@@ -1,7 +1,7 @@
 package io.scal.secureshareui.login;
 
-import info.guardianproject.onionkit.ui.OrbotHelper;
-import info.guardianproject.onionkit.web.WebkitProxy;
+import info.guardianproject.netcipher.proxy.OrbotHelper;
+import info.guardianproject.netcipher.web.WebkitProxy;
 import io.scal.secureshareui.controller.SiteController;
 import io.scal.secureshareui.lib.Util;
 import io.scal.secureshareuilibrary.R;
@@ -52,16 +52,17 @@ public class ArchiveLoginActivity extends LockableActionBarActivity {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         boolean useTor = settings.getBoolean("pusetor", false);
 
+		mWebview = (WebView) findViewById(R.id.webView);
+
         if (useTor) {
             Log.d(TAG, "user selected \"use tor\"");
 
-            OrbotHelper orbotHelper = new OrbotHelper(getApplicationContext());
-            if ((!orbotHelper.isOrbotInstalled()) || (!orbotHelper.isOrbotRunning())) {
+            if ((!OrbotHelper.isOrbotInstalled(getApplicationContext())) || (!OrbotHelper.isOrbotRunning(getApplicationContext()))) {
                 Log.e(TAG, "user selected \"use tor\" but orbot is not installed or not running");
                 return;
             } else {
                 try {
-                    WebkitProxy.setProxy("android.app.Application", getApplicationContext(), Util.ORBOT_HOST, Util.ORBOT_HTTP_PORT);
+                    WebkitProxy.setProxy("android.app.Application", getApplicationContext(), mWebview, Util.ORBOT_HOST, Util.ORBOT_HTTP_PORT);
                 } catch (Exception e) {
                     Log.e(TAG, "user selected \"use tor\" but an exception was thrown while setting the proxy: " + e.getLocalizedMessage());
                     return;
@@ -71,7 +72,6 @@ public class ArchiveLoginActivity extends LockableActionBarActivity {
             Log.d(TAG, "user selected \"don't use tor\"");
         }
 
-        mWebview = (WebView) findViewById(R.id.webView);
 		mWebview.getSettings().setJavaScriptEnabled(true);
 		mWebview.setVisibility(View.VISIBLE);
 		mWebview.addJavascriptInterface(new JSInterface(), "htmlout");

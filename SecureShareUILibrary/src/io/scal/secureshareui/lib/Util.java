@@ -4,8 +4,6 @@ package io.scal.secureshareui.lib;
 import java.security.SecureRandom;
 import java.util.Random;
 
-import info.guardianproject.onionkit.ui.OrbotHelper;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,6 +22,8 @@ import android.webkit.CookieSyncManager;
 import android.webkit.MimeTypeMap;
 import android.webkit.WebView;
 
+import info.guardianproject.netcipher.proxy.OrbotHelper;
+
 public class Util {
 
     // netcipher
@@ -31,17 +31,12 @@ public class Util {
     public static final int ORBOT_HTTP_PORT = 8118;
     public static final int ORBOT_SOCKS_PORT = 9050;
 
-    private static OrbotHelper getOrbotHelper(Context mContext) {
-        OrbotHelper orbotHelper = new OrbotHelper(mContext);
-        return orbotHelper;
-    }
-
     public static boolean isOrbotInstalled(Context mContext) {
-        return getOrbotHelper(mContext).isOrbotInstalled();
+        return OrbotHelper.isOrbotInstalled(mContext);
     }
 
     public static boolean isOrbotRunning(Context mContext) {
-        return getOrbotHelper(mContext).isOrbotRunning();
+        return OrbotHelper.isOrbotRunning(mContext);
     }
 
     public static boolean isOrbotInstalledAndRunning(Context mContext) {
@@ -52,7 +47,7 @@ public class Util {
     public static boolean checkIsTorRunningAlert(final Context context) {
         boolean wasTorRunning = false;
 
-        if(getOrbotHelper(context).isOrbotRunning()) {
+        if(isOrbotRunning(context)) {
             wasTorRunning = true;
         } else {
             new AlertDialog.Builder(context)

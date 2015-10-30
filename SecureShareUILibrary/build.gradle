@@ -7,7 +7,7 @@ dependencies {
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    buildToolsVersion "22.0.1"
 
     defaultConfig {
         minSdkVersion 16
@@ -44,6 +44,8 @@ dependencies {
     compile files('libs/google-api-client-1.18.0-rc.jar')
     compile files('libs/google-api-client-android-1.18.0-rc.jar')
     compile files('libs/google-api-services-youtube-v3-rev108-1.18.0-rc.jar')
+
+    compile files('libs/httpclientandroidlib-1.2.1.jar')
     //compile files('libs/cachewordlib-v0.1.jar')
     //compile 'com.google.http-client:google-http-client:1.19.0'
     //compile files('libs/google-http-client-1.18.0-rc.jar')
@@ -70,5 +72,6 @@ dependencies {
 
     compile project(':external:SecureShareLib:SecureShareUILibrary:external:facebook-sdk:facebook')
 
-    compile project(':external:cacheword:cachewordlib')
+    compile 'info.guardianproject.cacheword:cachewordlib:0.1'
+
 }
