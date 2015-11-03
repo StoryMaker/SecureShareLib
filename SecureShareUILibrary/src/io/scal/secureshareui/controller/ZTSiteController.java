@@ -259,7 +259,13 @@ public class ZTSiteController extends SiteController {
     private synchronized StrongHttpsClient getHttpClientInstance() {
 
         if (mClient == null) {
-            mClient = new StrongHttpsClient(mContext);
+            try {
+                mClient = new StrongHttpsClient(mContext, R.raw.debiancacerts, null);
+                //mClient = HttpClients.createDefault();
+            } catch (Exception e)
+            {
+                Log.e("NetCipher","error init'd stronghttpsclient",e);
+            }
         }
 
         return mClient;
