@@ -474,7 +474,13 @@ public class ZTLoginActivity extends LockableActivity {
     private synchronized StrongHttpsClient getHttpClientInstance() {
 
         if (mClient == null) {
-            mClient = new StrongHttpsClient(this);
+            try {
+                mClient = new StrongHttpsClient(this, R.raw.debiancacerts, null);
+                //mClient = HttpClients.createDefault();
+            } catch (Exception e)
+            {
+                Log.e("NetCipher","error init'd stronghttpsclient",e);
+            }
         }
 
         return mClient;
