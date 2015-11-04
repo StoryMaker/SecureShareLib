@@ -47,7 +47,7 @@ dependencies {
     //compile files('libs/cachewordlib-v0.1.jar')
     //compile 'com.google.http-client:google-http-client:1.19.0'
     //compile files('libs/google-http-client-1.18.0-rc.jar')
-    compile 'com.google.http-client:google-http-client-gson:1.19.0'
+    compile 'com.google.http-client:google-http-client-gson:1.20.0'
 //    compile files('libs/google-http-client-gson-1.18.0-rc.jar')
     compile files('libs/google-oauth-client-1.18.0-rc.jar')
     compile files('libs/aws-android-sdk-1.7.0-core-no-third-party.jar')
