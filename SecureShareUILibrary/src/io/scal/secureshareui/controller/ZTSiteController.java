@@ -198,10 +198,23 @@ public class ZTSiteController extends SiteController {
         }
         */
 
+        // example from documentation:
+        // String jsonString = "{\"title\":\"Hello World!\",\"content_raw\":\"Content\",\"excerpt_raw\":\"Excerpt\"}";
+
+        String excerptString = content;
+
+        if (excerptString == null) {
+            excerptString = "";
+        } else if (excerptString.length() > 40) {
+            excerptString = excerptString.substring(0, 37) + "...";
+        }
+
+        // facebook posts show up as links rather than playable video
         String jsonString = "{" +
-                "\"title\": " + "\"" + title + "\", " +
-                "\"content\": { \"raw\": " + "\"" + content + " " + embed + "\"}, " +
-                "\"status\": " + "\"" + "publish" + "\"" +
+                "\"title\":\"" + title + "\"," +
+                "\"content_raw\":\"" + embed + "\"," +
+                "\"excerpt_raw\":\"" + excerptString + "\"," +
+                "\"status\":\"" + "publish" + "\"" +
                 "}";
 
         Log.d(TAG, "JSON: " + jsonString);
