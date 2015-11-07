@@ -398,14 +398,9 @@ public class SMWrapper {
         // check for tor
         if (useTor) {
 
-<<<<<<< HEAD
             if ((!OrbotHelper.isOrbotInstalled(mContext)) || (!OrbotHelper.isOrbotRunning(mContext))) {
 
-                Log.e("INDEX", "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
-=======
-            if ((!oh.isOrbotInstalled()) || (!oh.isOrbotRunning())) {
-                Timber.e("TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
->>>>>>> dev
+                Timber.e("INDEX", "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
 
                 return null;
             } else {
@@ -604,13 +599,8 @@ public class SMWrapper {
         // check for tor
         if (useTor) {
 
-<<<<<<< HEAD
             if ((!OrbotHelper.isOrbotInstalled(mContext)) || (!OrbotHelper.isOrbotRunning(mContext))) {
-                Log.e("PUBLISH", "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
-=======
-            if ((!oh.isOrbotInstalled()) || (!oh.isOrbotRunning())) {
                 Timber.e("TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
->>>>>>> dev
 
                 return null;
             } else {
