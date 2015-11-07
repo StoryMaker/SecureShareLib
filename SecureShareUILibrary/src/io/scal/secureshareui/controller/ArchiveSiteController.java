@@ -1,5 +1,9 @@
 package io.scal.secureshareui.controller;
 
+import timber.log.Timber;
+
+import timber.log.Timber;
+
 import io.scal.secureshareui.lib.ArchiveMetadataActivity;
 import io.scal.secureshareui.lib.Util;
 import io.scal.secureshareui.login.ArchiveLoginActivity;
@@ -49,7 +53,7 @@ public class ArchiveSiteController extends SiteController {
 
 	@Override
 	public void upload(Account account, HashMap<String, String> valueMap) {
-		Log.d(TAG, "Upload file: Entering upload");
+		Timber.d("Upload file: Entering upload");
         
 		String mediaPath = valueMap.get(VALUE_KEY_MEDIA_PATH);
         boolean useTor = (valueMap.get(VALUE_KEY_USE_TOR).equals("true")) ? true : false;
@@ -98,7 +102,7 @@ public class ArchiveSiteController extends SiteController {
             urlPath = new Util.RandomString(16).nextString(); // FIXME need to use real GUIDs
             url = ARCHIVE_API_ENDPOINT  + "/" + urlPath + "/" + fileName;
         }
-		Log.d(TAG, "uploading to url: " + url);
+		Timber.d("uploading to url: " + url);
 
 		Request.Builder builder = new Request.Builder()
 				.url(url)
@@ -167,11 +171,11 @@ public class ArchiveSiteController extends SiteController {
 
 		@Override
 		protected String doInBackground(String... params) {
-			Log.d(TAG, "Begin Upload");
+			Timber.d("Begin Upload");
 
 			try {
 				response = client.newCall(request).execute();
-                Log.d(TAG, "response: " + response + ", body: " + response.body().string());
+                Timber.d("response: " + response + ", body: " + response.body().string());
 				if (!response.isSuccessful()) {
 					jobFailed(null, 4000001, "Archive upload failed: Unexpected Response Code: " + "response: " + response + ", body: " + response.body().string());
 				} else {	
@@ -180,9 +184,9 @@ public class ArchiveSiteController extends SiteController {
 			} catch (IOException e) {
 				jobFailed(null, 4000002, "Archive upload failed: IOException");
 				try {
-					Log.d(TAG, response.body().string());
+					Timber.d(response.body().string());
 				} catch (IOException e1) {
-				    Log.d(TAG, "exception: " + e1.getLocalizedMessage() + ", stacktrace: " + e1.getStackTrace());
+				    Timber.d("exception: " + e1.getLocalizedMessage() + ", stacktrace: " + e1.getStackTrace());
 				}
 			}
 

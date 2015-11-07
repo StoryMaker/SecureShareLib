@@ -1,5 +1,7 @@
 package io.scal.secureshareui.soundcloud;
 
+import timber.log.Timber;
+
 import org.apache.http.HttpHost;
 
 import java.net.URI;

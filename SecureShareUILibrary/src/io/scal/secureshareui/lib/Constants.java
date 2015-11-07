@@ -1,5 +1,7 @@
 package io.scal.secureshareui.lib;
 
+import timber.log.Timber;
+
 /**
  * Created by josh on 7/15/15.
  */

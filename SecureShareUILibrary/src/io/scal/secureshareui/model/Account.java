@@ -1,6 +1,8 @@
 
 package io.scal.secureshareui.model;
 
+import timber.log.Timber;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 

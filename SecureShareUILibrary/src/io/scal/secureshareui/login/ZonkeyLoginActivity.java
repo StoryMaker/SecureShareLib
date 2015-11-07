@@ -1,5 +1,7 @@
 package io.scal.secureshareui.login;
 
+import timber.log.Timber;
+
 import io.scal.secureshareui.controller.SiteController;
 
 import java.io.IOException;
@@ -85,11 +87,11 @@ public class ZonkeyLoginActivity extends Activity {
 
 		@Override
 		protected String doInBackground(String... params) {
-			Log.d(TAG, "Begin Authentication");
+			Timber.d("Begin Authentication");
 
 			try {
 				response = client.newCall(request).execute();
-                Log.d(TAG, "response: " + response + ", body: " + response.body().string());
+                Timber.d("response: " + response + ", body: " + response.body().string());
 				if (!response.isSuccessful()) {
 					
 				} else {
@@ -97,9 +99,9 @@ public class ZonkeyLoginActivity extends Activity {
 				}
 			} catch (IOException e) {
 				try {
-					Log.d(TAG, response.body().string());
+					Timber.d(response.body().string());
 				} catch (IOException e1) {
-				    Log.d(TAG, "exception: " + e1.getLocalizedMessage() + ", stacktrace: " + e1.getStackTrace());
+				    Timber.d("exception: " + e1.getLocalizedMessage() + ", stacktrace: " + e1.getStackTrace());
 				}
 			}
 
@@ -109,7 +111,7 @@ public class ZonkeyLoginActivity extends Activity {
 
 	@Override
 	public void finish() {
-		Log.d(TAG, "finish()");
+		Timber.d("finish()");
 		
 		Intent data = new Intent();
 		data.putExtra(SiteController.EXTRAS_KEY_USERNAME, mAccessKey);

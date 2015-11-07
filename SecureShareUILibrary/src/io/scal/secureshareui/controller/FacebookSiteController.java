@@ -1,6 +1,8 @@
 
 package io.scal.secureshareui.controller;
 
+import timber.log.Timber;
+
 import io.scal.secureshareui.login.FacebookLoginActivity;
 import io.scal.secureshareui.model.Account;
 
@@ -67,7 +69,7 @@ public class FacebookSiteController extends SiteController {
 
     @Override
     public void upload(Account account, HashMap<String, String> valueMap) {
-		Log.d(TAG, "Upload file: Entering upload");
+		Timber.d("Upload file: Entering upload");
 		
 		title = valueMap.get(VALUE_KEY_TITLE);
 		String body = valueMap.get(VALUE_KEY_BODY);
@@ -94,13 +96,13 @@ public class FacebookSiteController extends SiteController {
                     @Override
                     public void onCompleted(Response response) {
 
-                        Log.d(TAG, "PRIVACY CHECK RESPONSE: " + response.toString());
+                        Timber.d("PRIVACY CHECK RESPONSE: " + response.toString());
 
                         // request will fail unless app has user_videos permission
                         // since this feature is incomplete, just continue
                         if (response.getError() != null) {
 
-                            Log.e(TAG, "PRIVACY CHECK, ERROR: " + response.getError() + " (IGNORED)");
+                            Timber.e("PRIVACY CHECK, ERROR: " + response.getError() + " (IGNORED)");
                             jobSucceeded(postId);
                             return;
                         }
@@ -111,7 +113,7 @@ public class FacebookSiteController extends SiteController {
 
                             String privacyValue = graphResponse.getString("privacy");
 
-                            Log.d(TAG, "PRIVACY CHECK, FOUND: " + privacyValue);
+                            Timber.d("PRIVACY CHECK, FOUND: " + privacyValue);
 
                             if ((privacyValue != null) && (privacyValue.equals("everyone"))) {
 
@@ -127,7 +129,7 @@ public class FacebookSiteController extends SiteController {
 
                         } catch (JSONException je) {
 
-                            Log.e(TAG, "FAILED TO EXTRACT PRIVACY SETTINGS FROM RESPONSE: " + je.getMessage() + " (IGNORED)");
+                            Timber.e("FAILED TO EXTRACT PRIVACY SETTINGS FROM RESPONSE: " + je.getMessage() + " (IGNORED)");
 
                             // currently unable to find privacy field in video responses, so i'm letting this through
                             jobSucceeded(postId);
@@ -139,7 +141,7 @@ public class FacebookSiteController extends SiteController {
 
                 // post fail
                 if (response.getError() != null) {
-                    Log.d(TAG, "media upload problem. Error= " + response.getError());
+                    Timber.d("media upload problem. Error= " + response.getError());
                     jobFailed(null, 1, response.getError().toString());
                     return;
                 }
@@ -149,7 +151,7 @@ public class FacebookSiteController extends SiteController {
                 // upload fail
                 if (graphResponse == null || !(graphResponse instanceof String)
                         || TextUtils.isEmpty((String) graphResponse)) {
-                    Log.d(TAG, "failed media upload/no response");
+                    Timber.d("failed media upload/no response");
 
                     jobFailed(null, 0, "failed media upload/no response");
                 }
@@ -158,7 +160,7 @@ public class FacebookSiteController extends SiteController {
 
                     postId = (String) graphResponse;
 
-                    Log.d(TAG, "LOOKING FOR POST ID " + postId);
+                    Timber.d("LOOKING FOR POST ID " + postId);
 
                     Session session = Session.openActiveSessionFromCache(mContext);
                     Bundle parameters = null;
@@ -182,7 +184,7 @@ public class FacebookSiteController extends SiteController {
             @Override
             public void onCompleted(Response response) {
 
-                Log.d(TAG, "ALBUM CHECK RESPONSE: " + response.toString());
+                Timber.d("ALBUM CHECK RESPONSE: " + response.toString());
 
                 JSONObject graphResponse = response.getGraphObject().getInnerJSONObject();
 
@@ -193,12 +195,12 @@ public class FacebookSiteController extends SiteController {
 
                         JSONObject albumObject = albumArray.getJSONObject(i);
 
-                        Log.d(TAG, "ALBUM CHECK, FOUND: " + albumObject.getString("name") + "/" + albumObject.getString("id"));
+                        Timber.d("ALBUM CHECK, FOUND: " + albumObject.getString("name") + "/" + albumObject.getString("id"));
                     }
 
                 } catch (JSONException je) {
 
-                    Log.e(TAG, "FAILED TO EXTRACT ALBUM LIST FROM RESPONSE: " + je.getMessage());
+                    Timber.e("FAILED TO EXTRACT ALBUM LIST FROM RESPONSE: " + je.getMessage());
 
                     jobFailed(null, 0, "An error occurred while creating the album");
 
@@ -212,7 +214,7 @@ public class FacebookSiteController extends SiteController {
             @Override
             public void onCompleted(Response response) {
 
-                Log.d(TAG, "ALBUM CREATION RESPONSE: " + response.toString());
+                Timber.d("ALBUM CREATION RESPONSE: " + response.toString());
 
                 JSONObject graphResponse = response.getGraphObject().getInnerJSONObject();
 
@@ -220,20 +222,20 @@ public class FacebookSiteController extends SiteController {
 
                     album = graphResponse.getString("id");
 
-                    Log.d(TAG, "NEW ALBUM ID: " + album);
+                    Timber.d("NEW ALBUM ID: " + album);
 
                     // photo callback
                     Request.Callback uploadPhotoRequestCallback = new Request.OnProgressCallback() {
                         @Override
                         public void onCompleted(Response response) {
 
-                            Log.d(TAG, "PHOTO UPLOAD RESPONSE: " + response.toString());
+                            Timber.d("PHOTO UPLOAD RESPONSE: " + response.toString());
 
                             JSONObject graphResponse = response.getGraphObject().getInnerJSONObject();
 
                             try {
 
-                                Log.d(TAG, "NEW PHOTO ID: " + graphResponse.getString("id"));
+                                Timber.d("NEW PHOTO ID: " + graphResponse.getString("id"));
 
                                 pendingUploads--;
 
@@ -243,7 +245,7 @@ public class FacebookSiteController extends SiteController {
                                     @Override
                                     public void onCompleted(Response response) {
 
-                                        Log.d(TAG, "PRIVACY CHECK RESPONSE: " + response.toString());
+                                        Timber.d("PRIVACY CHECK RESPONSE: " + response.toString());
 
                                         JSONObject graphResponse = response.getGraphObject().getInnerJSONObject();
 
@@ -251,7 +253,7 @@ public class FacebookSiteController extends SiteController {
 
                                             String privacyValue = graphResponse.getString("privacy");
 
-                                            Log.d(TAG, "PRIVACY CHECK, FOUND: " + privacyValue);
+                                            Timber.d("PRIVACY CHECK, FOUND: " + privacyValue);
 
                                             if ((privacyValue != null) && (privacyValue.equals("everyone"))) {
 
@@ -269,7 +271,7 @@ public class FacebookSiteController extends SiteController {
 
                                         } catch (JSONException je) {
 
-                                            Log.e(TAG, "FAILED TO EXTRACT PRIVACY SETTINGS FROM RESPONSE: " + je.getMessage());
+                                            Timber.e("FAILED TO EXTRACT PRIVACY SETTINGS FROM RESPONSE: " + je.getMessage());
 
                                             // could not determine privacy setting, assume the worst
                                             jobSucceeded(POST_NOT_PUBLIC);
@@ -280,7 +282,7 @@ public class FacebookSiteController extends SiteController {
 
                                 if (pendingUploads == 0) {
 
-                                    Log.d(TAG, "ALL UPLOADS COMPLETE");
+                                    Timber.d("ALL UPLOADS COMPLETE");
 
                                     Session session = Session.openActiveSessionFromCache(mContext);
                                     Bundle parameters = null;
@@ -292,13 +294,13 @@ public class FacebookSiteController extends SiteController {
 
                                 } else {
 
-                                    Log.d(TAG, pendingUploads + " UPLOADS REMAINING");
+                                    Timber.d(pendingUploads + " UPLOADS REMAINING");
 
                                 }
 
                             } catch (JSONException je) {
 
-                                Log.e(TAG, "FAILED TO EXTRACT PHOTO ID FROM RESPONSE: " + je.getMessage());
+                                Timber.e("FAILED TO EXTRACT PHOTO ID FROM RESPONSE: " + je.getMessage());
 
                                 jobFailed(null, 0, "An error occurred while uploading the photo");
 
@@ -314,7 +316,7 @@ public class FacebookSiteController extends SiteController {
 
                     // upload photo to album
 
-                    Log.d(TAG, "PHOTO UPLOAD");
+                    Timber.d("PHOTO UPLOAD");
 
                     pendingUploads = photosToUpload.size();
 
@@ -339,24 +341,24 @@ public class FacebookSiteController extends SiteController {
                             Bundle parameters = null;
                             Request request = new Request(session, album + "/photos", parameters, HttpMethod.POST, uploadPhotoRequestCallback);
 
-                            //Log.d(TAG, "GOT REQUEST (" + photoNumber + ")");
+                            //Timber.d("GOT REQUEST (" + photoNumber + ")");
 
                             parameters = request.getParameters();
                             parameters.putByteArray("source", photoBytes);
                             parameters.putString("name", title + "_" + photoNumber);
 
-                            //Log.d(TAG, "GOT PARAMETERS (" + photoNumber + ")");
+                            //Timber.d("GOT PARAMETERS (" + photoNumber + ")");
 
-                            //Log.d(TAG, "EXECUTING REQUEST (" + photoNumber + ")...");
+                            //Timber.d("EXECUTING REQUEST (" + photoNumber + ")...");
 
                             request.executeAsync();
 
                         } catch (FileNotFoundException fnfe) {
                             // can't find photo file
-                            Log.e(TAG, "COULD NOT FIND FILE " + photoToUpload + " -> " + fnfe.getMessage());
+                            Timber.e("COULD NOT FIND FILE " + photoToUpload + " -> " + fnfe.getMessage());
                         } catch (IOException ioe) {
                             // can't read photo file
-                            Log.e(TAG, "COULD NOT READ FILE " + photoToUpload + " -> " + ioe.getMessage());
+                            Timber.e("COULD NOT READ FILE " + photoToUpload + " -> " + ioe.getMessage());
                         }
 
                         photoNumber++;
@@ -368,7 +370,7 @@ public class FacebookSiteController extends SiteController {
 
                 } catch (JSONException je) {
 
-                    Log.e(TAG, "FAILED TO EXTRACT ALBUM ID FROM RESPONSE: " + je.getMessage());
+                    Timber.e("FAILED TO EXTRACT ALBUM ID FROM RESPONSE: " + je.getMessage());
 
                     jobFailed(null, 0, "An error occurred while creating the album");
 
@@ -385,12 +387,12 @@ public class FacebookSiteController extends SiteController {
         Bundle parameters = null;
         Request request = null;
 
-        Log.d(TAG, "MEDIA PATH: " + mediaPath);
+        Timber.d("MEDIA PATH: " + mediaPath);
 
         if (mediaPath.contains(";")) {
             // upload multiple photos
 
-            Log.d(TAG, "MULTIPLE FILE UPLOAD");
+            Timber.d("MULTIPLE FILE UPLOAD");
 
             String[] photoPaths = mediaPath.split(";");
 
@@ -407,17 +409,17 @@ public class FacebookSiteController extends SiteController {
 
             request = new Request(session, "me/albums", parameters, HttpMethod.POST, uploadAlbumRequestCallback);
 
-            //Log.d(TAG, "GOT REQUEST");
+            //Timber.d("GOT REQUEST");
 
             parameters = request.getParameters();
             parameters.putString("name", title);
 
-            //Log.d(TAG, "GOT PARAMETERS");
+            //Timber.d("GOT PARAMETERS");
 
         } else {
             // upload single photo or video
 
-            Log.d(TAG, "SINGLE FILE UPLOAD");
+            Timber.d("SINGLE FILE UPLOAD");
 
             File mediaFile = new File(mediaPath);
             try {
@@ -447,7 +449,7 @@ public class FacebookSiteController extends SiteController {
                     //image params
                     parameters.putString("name", title);
                 } else {
-                    Log.d(TAG, "media type not supported");
+                    Timber.d("media type not supported");
                     return;
                 }
 
@@ -457,7 +459,7 @@ public class FacebookSiteController extends SiteController {
             }
         }
 
-        //Log.d(TAG, "EXECUTING REQUEST...");
+        //Timber.d("EXECUTING REQUEST...");
 
         request.executeAsync();
     }

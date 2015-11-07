@@ -1,5 +1,7 @@
 package io.scal.secureshareui.soundcloud;
 
+import timber.log.Timber;
+
 /**
  * Various SoundCloud API endpoints.
  * See <a href="http://developers.soundcloud.com/docs/api/">the API docs</a> for the most

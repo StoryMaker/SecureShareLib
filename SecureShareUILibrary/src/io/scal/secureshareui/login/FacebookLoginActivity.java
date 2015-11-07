@@ -1,6 +1,8 @@
 
 package io.scal.secureshareui.login;
 
+import timber.log.Timber;
+
 import info.guardianproject.onionkit.ui.OrbotHelper;
 import info.guardianproject.onionkit.web.WebkitProxy;
 import io.scal.secureshareui.controller.SiteController;
@@ -48,22 +50,22 @@ public class FacebookLoginActivity extends Activity {
         boolean useTor = settings.getBoolean("pusetor", false);
 
         if (useTor) {
-            Log.d(TAG, "user selected \"use tor\"");
+            Timber.d("user selected \"use tor\"");
 
             OrbotHelper orbotHelper = new OrbotHelper(getApplicationContext());
             if ((!orbotHelper.isOrbotInstalled()) || (!orbotHelper.isOrbotRunning())) {
-                Log.e(TAG, "user selected \"use tor\" but orbot is not installed or not running");
+                Timber.e("user selected \"use tor\" but orbot is not installed or not running");
                 return;
             } else {
                 try {
                     WebkitProxy.setProxy("android.app.Application", getApplicationContext(), Util.ORBOT_HOST, Util.ORBOT_HTTP_PORT);
                 } catch (Exception e) {
-                    Log.e(TAG, "user selected \"use tor\" but an exception was thrown while setting the proxy: " + e.getLocalizedMessage());
+                    Timber.e("user selected \"use tor\" but an exception was thrown while setting the proxy: " + e.getLocalizedMessage());
                     return;
                 }
             }
         } else {
-            Log.d(TAG, "user selected \"don't use tor\"");
+            Timber.d("user selected \"don't use tor\"");
         }
 
         setContentView(R.layout.activity_facebook_login);
@@ -174,7 +176,7 @@ public class FacebookLoginActivity extends Activity {
     	List<String> permissions = session.getPermissions();
 
         for (String permission : permissions) {
-            Log.d(TAG, "PERMISSION GRANTED: " + permission);
+            Timber.d("PERMISSION GRANTED: " + permission);
         }
 
         if (permissions.containsAll((REQUIRED_PERMISSIONS))) {
@@ -193,7 +195,7 @@ public class FacebookLoginActivity extends Activity {
 
     @Override
     public void finish() {
-    	Log.d(TAG, "finish()");
+    	Timber.d("finish()");
     	
         Intent data = new Intent();
         data.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, mAccessToken);

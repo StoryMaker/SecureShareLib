@@ -1,5 +1,7 @@
 package io.scal.secureshareui.soundcloud;
 
+import timber.log.Timber;
+
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;

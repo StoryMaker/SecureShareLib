@@ -1,5 +1,7 @@
 package io.scal.secureshareui.lib;
 
+import timber.log.Timber;
+
 
 import android.app.Activity;
 import android.content.Context;
@@ -122,11 +124,11 @@ public class SMWrapper {
             throw new IllegalArgumentException("password is null");
         }
 
-        //Log.d(CLIENT_ID, mClientId);
-        //Log.d(CLIENT_SECRET, mClientSecret);
-        //Log.d(GRANT_TYPE, "password");
-        //Log.d(USERNAME, username);
-        //Log.d(PASSWORD, password);
+        //Timber.d(mClientId);
+        //Timber.d(mClientSecret);
+        //Timber.d("password");
+        //Timber.d(username);
+        //Timber.d(password);
 
         StrongHttpsClient client = getHttpClientInstance();
         //HttpClient client = getHttpClientInstance();
@@ -140,11 +142,11 @@ public class SMWrapper {
             OrbotHelper oh = new OrbotHelper(mContext);
 
             if ((!oh.isOrbotInstalled()) || (!oh.isOrbotRunning())) {
-                Log.e("OAUTH", "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
+                Timber.e("TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
 
                 return null;
             } else {
-                Log.d("OAUTH", "TOR SELECTED, HOST " + mContext.getString(R.string.sm_tor_host) + ", PORT " + mContext.getString(R.string.sm_tor_port) + " (SETTING PROXY)");
+                Timber.d("TOR SELECTED, HOST " + mContext.getString(R.string.sm_tor_host) + ", PORT " + mContext.getString(R.string.sm_tor_port) + " (SETTING PROXY)");
 
                 String host = mContext.getString(R.string.sm_tor_host);
                 int port = Integer.parseInt(mContext.getString(R.string.sm_tor_port));
@@ -156,11 +158,11 @@ public class SMWrapper {
             }
         } else {
             if (proxySet) {
-                Log.d("OAUTH", "TOR NOT SELECTED (CLEARING PROXY)");
+                Timber.d("TOR NOT SELECTED (CLEARING PROXY)");
 
                 client.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
             } else {
-                Log.d("OAUTH", "TOR NOT SELECTED");
+                Timber.d("TOR NOT SELECTED");
             }
         }
         */
@@ -210,7 +212,7 @@ public class SMWrapper {
             OrbotHelper oh = new OrbotHelper(mContext);
 
             if ((!oh.isOrbotInstalled()) || (!oh.isOrbotRunning())) {
-                Log.e("OAUTH", "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
+                Timber.e("TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
 
                 throw new IOException("tor selected but orbot inactive");
             } else {
@@ -219,7 +221,7 @@ public class SMWrapper {
                 String torHost = mContext.getString(R.string.sm_tor_host);
                 String torPort = mContext.getString(R.string.sm_tor_port);
 
-                Log.d("OAUTH", "TOR SELECTED, HOST " + torHost + ", PORT " + torPort + " (BUILDING CUSTOM CLIENT)");
+                Timber.d("TOR SELECTED, HOST " + torHost + ", PORT " + torPort + " (BUILDING CUSTOM CLIENT)");
 
                 // build a client with a proxy
                 OkHttpClient httpClient = new OkHttpClient();
@@ -254,13 +256,13 @@ public class SMWrapper {
         try {
             response = client.execute(post);
         } catch (Exception e) {
-            Log.e("OAUTH", e.getMessage());
+            Timber.e(e.getMessage());
             e.printStackTrace();
         }
         */
 
-            //Log.d("OAUTH", "RESPONSE CODE: " + response.getStatusLine().getStatusCode());
-            Log.d("OAUTH", "RESPONSE CODE: " + rResponse.getStatus());
+            //Timber.d("RESPONSE CODE: " + response.getStatusLine().getStatusCode());
+            Timber.d("RESPONSE CODE: " + rResponse.getStatus());
 
 
             BufferedReader rd = new BufferedReader(
@@ -279,16 +281,16 @@ public class SMWrapper {
 
             //for (int i = 0; i < postHeaders.length; i++) {
             for (int i = 0; i < postHeaders.size(); i++) {
-                //Log.d("OAUTH", "FOUND HEADER: " + postHeaders[i].getName() + ": " + postHeaders[i].getValue());
-                Log.d("OAUTH", "FOUND HEADER: " + postHeaders.get(i).getName() + ": " + postHeaders.get(i).getValue());
+                //Timber.d("FOUND HEADER: " + postHeaders[i].getName() + ": " + postHeaders[i].getValue());
+                Timber.d("FOUND HEADER: " + postHeaders.get(i).getName() + ": " + postHeaders.get(i).getValue());
             }
 
-            Log.d("OAUTH", "RESPONSE: " + result.toString());
+            Timber.d("RESPONSE: " + result.toString());
 
             // need to attempt to deal with cloudflare captcha challenge over tor
             if ((useTor) && result.toString().contains("chk_captcha")) {
 
-                Log.e("OAUTH", "ENCOUNTERED CAPTCHA CHALLENGE PAGE (TOR IP ADDRESSES MAY BE CONSIDERED SUSPICIOUS)");
+                Timber.e("ENCOUNTERED CAPTCHA CHALLENGE PAGE (TOR IP ADDRESSES MAY BE CONSIDERED SUSPICIOUS)");
 
                 throw new CaptchaException();
 
@@ -297,13 +299,13 @@ public class SMWrapper {
             try {
                 JSONObject json = new JSONObject(result.toString());
                 mToken = json.getString("access_token");
-                //Log.d("OAUTH", "TOKEN: " + mToken);
+                //Timber.d("TOKEN: " + mToken);
             } catch (JSONException je) {
-                Log.e("OAUTH", "FAILED TO PARSE RESPONSE: " + je.getMessage());
+                Timber.e("FAILED TO PARSE RESPONSE: " + je.getMessage());
                 throw new IOException("unexpected response received");
             }
         } catch (retrofit.RetrofitError re) {
-            Log.e("OAUTH", "FAILED TO CONNECT: " + re.getMessage());
+            Timber.e("FAILED TO CONNECT: " + re.getMessage());
             throw new IOException("no response received");
         }
 
@@ -320,12 +322,12 @@ public class SMWrapper {
         // catch null (probably caused by retrofit handling of 404)
         if(postResponse == null) {
 
-            Log.e("PUBLISH", "PUBLICATION FAILED");
+            Timber.e("PUBLICATION FAILED");
             return "0" + ":" + "Publishing to StoryMaker failed.";
         }
 
-        //Log.d("PUBLISH", "RESPONSE CODE: " + postResponse.getStatusLine().getStatusCode());
-        Log.d("PUBLISH", "RESPONSE CODE: " + postResponse.getStatus());
+        //Timber.d("RESPONSE CODE: " + postResponse.getStatusLine().getStatusCode());
+        Timber.d("RESPONSE CODE: " + postResponse.getStatus());
 
         BufferedReader rd = new BufferedReader(
             //new InputStreamReader(postResponse.getEntity().getContent())
@@ -343,11 +345,11 @@ public class SMWrapper {
 
         //for (int i = 0; i < postHeaders.length; i++) {
         for (int i = 0; i < postHeaders.size(); i++) {
-            //Log.d("PUBLISH", "FOUND HEADER: " + postHeaders[i].getName() + ": " + postHeaders[i].getValue());
-            Log.d("PUBLISH", "FOUND HEADER: " + postHeaders.get(i).getName() + ": " + postHeaders.get(i).getValue());
+            //Timber.d("FOUND HEADER: " + postHeaders[i].getName() + ": " + postHeaders[i].getValue());
+            Timber.d("FOUND HEADER: " + postHeaders.get(i).getName() + ": " + postHeaders.get(i).getValue());
         }
 
-        Log.d("PUBLISH", "RESPONSE: " + result.toString());
+        Timber.d("RESPONSE: " + result.toString());
         
         // check for tor
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
@@ -356,14 +358,14 @@ public class SMWrapper {
         // need to attempt to deal with cloudflare captcha challenge over tor
         if ((useTor) && result.toString().contains("chk_captcha")) {
 
-            Log.e("PUBLISH", "ENCOUNTERED CAPTCHA CHALLENGE PAGE (TOR IP ADDRESSES MAY BE CONSIDERED SUSPICIOUS)");
+            Timber.e("ENCOUNTERED CAPTCHA CHALLENGE PAGE (TOR IP ADDRESSES MAY BE CONSIDERED SUSPICIOUS)");
             return postResponse.getStatus() + ":" + "Publishing to StoryMaker failed.  Try restarting TOR";
         }
 
         // catch other failures
         if((postResponse.getStatus() < 200) || (postResponse.getStatus() > 299)) {
 
-            Log.e("PUBLISH", "PUBLICATION FAILED");
+            Timber.e("PUBLICATION FAILED");
             return postResponse.getStatus() + ":" + "Publishing to StoryMaker failed.";
         }
 
@@ -391,7 +393,7 @@ public class SMWrapper {
             OrbotHelper oh = new OrbotHelper(mContext);
 
             if ((!oh.isOrbotInstalled()) || (!oh.isOrbotRunning())) {
-                Log.e("INDEX", "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
+                Timber.e("TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
 
                 return null;
             } else {
@@ -400,7 +402,7 @@ public class SMWrapper {
                 String torHost = mContext.getString(R.string.sm_tor_host);
                 String torPort = mContext.getString(R.string.sm_tor_port);
 
-                Log.d("INDEX", "TOR SELECTED, HOST " + torHost + ", PORT " + torPort + " (BUILDING CUSTOM CLIENT)");
+                Timber.d("TOR SELECTED, HOST " + torHost + ", PORT " + torPort + " (BUILDING CUSTOM CLIENT)");
 
                 // build a client with a proxy
                 OkHttpClient httpClient = new OkHttpClient();
@@ -431,7 +433,7 @@ public class SMWrapper {
 
             Response rResponse = indexService.getIndex(version, "Bearer " + mToken);
 
-            Log.d("INDEX", "RESPONSE CODE: " + rResponse.getStatus());
+            Timber.d("RESPONSE CODE: " + rResponse.getStatus());
 
             BufferedReader rd = new BufferedReader(
                     new InputStreamReader(rResponse.getBody().in())
@@ -446,10 +448,10 @@ public class SMWrapper {
             List<retrofit.client.Header> postHeaders = rResponse.getHeaders();
 
             for (int i = 0; i < postHeaders.size(); i++) {
-                Log.d("INDEX", "FOUND HEADER: " + postHeaders.get(i).getName() + ": " + postHeaders.get(i).getValue());
+                Timber.d("FOUND HEADER: " + postHeaders.get(i).getName() + ": " + postHeaders.get(i).getValue());
             }
 
-            Log.d("INDEX", "RESPONSE: " + result.toString());
+            Timber.d("RESPONSE: " + result.toString());
 
             // response should be a collection of json objects to convert to index items
 
@@ -459,14 +461,14 @@ public class SMWrapper {
                 return jArray;
 
             } catch (JSONException je) {
-                Log.e("INDEX", "FAILED TO PARSE RESPONSE: " + je.getMessage());
+                Timber.e("FAILED TO PARSE RESPONSE: " + je.getMessage());
                 return null;
             }
         } catch (retrofit.RetrofitError re) {
-            Log.e("INDEX", "FAILED TO CONNECT: " + re.getMessage());
+            Timber.e("FAILED TO CONNECT: " + re.getMessage());
             return null;
         } catch (IOException ioe) {
-            Log.e("INDEX", "FAILED TO READ RESPONSE: " + ioe.getMessage());
+            Timber.e("FAILED TO READ RESPONSE: " + ioe.getMessage());
             return null;
         }
     }
@@ -476,14 +478,14 @@ public class SMWrapper {
 
         Date publishDate = new Date();
 
-        //Log.d(CLIENT_ID, mClientId);
-        //Log.d(CLIENT_SECRET, mClientSecret);
-        //Log.d(TITLE, title);
-        //Log.d(DESCRIPTION, desc);
-        //Log.d(CONTENT, body);
-        //Log.d(PUBLISH_DATE, publishDate.toString());
-        //Log.d("group_ids", user + "_public");
-        //Log.d("TOKEN", credentials);
+        //Timber.d(mClientId);
+        //Timber.d(mClientSecret);
+        //Timber.d(title);
+        //Timber.d(desc);
+        //Timber.d(body);
+        //Timber.d(publishDate.toString());
+        //Timber.d(user + "_public");
+        //Timber.d(credentials);
 
         StrongHttpsClient client = getHttpClientInstance();
         //HttpClient client = getHttpClientInstance();
@@ -497,11 +499,11 @@ public class SMWrapper {
             OrbotHelper oh = new OrbotHelper(mContext);
 
             if ((!oh.isOrbotInstalled()) || (!oh.isOrbotRunning())) {
-                Log.e("PUBLISH", "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
+                Timber.e("TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
 
                 return null;
             } else {
-                Log.e("PUBLISH", "TOR SELECTED, HOST " + mContext.getString(R.string.sm_tor_host) + ", PORT " + mContext.getString(R.string.sm_tor_port) + " (SETTING PROXY)");
+                Timber.e("TOR SELECTED, HOST " + mContext.getString(R.string.sm_tor_host) + ", PORT " + mContext.getString(R.string.sm_tor_port) + " (SETTING PROXY)");
 
                 String host = mContext.getString(R.string.sm_tor_host);
                 int port = Integer.parseInt(mContext.getString(R.string.sm_tor_port));
@@ -513,11 +515,11 @@ public class SMWrapper {
             }
         } else {
             if (proxySet) {
-                Log.d("PUBLISH", "TOR NOT SELECTED (CLEARING PROXY)");
+                Timber.d("TOR NOT SELECTED (CLEARING PROXY)");
 
                 client.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
             } else {
-                Log.d("PUBLISH", "TOR NOT SELECTED");
+                Timber.d("TOR NOT SELECTED");
             }
         }
         */
@@ -573,7 +575,7 @@ public class SMWrapper {
         }
         */
 
-        Log.d("PUBLISH", "JSON: " + jsonString);
+        Timber.d("JSON: " + jsonString);
 
         StringEntity jsonEntity = new StringEntity(jsonString, "UTF-8");
         jsonEntity.setContentType("application/json");
@@ -591,7 +593,7 @@ public class SMWrapper {
             OrbotHelper oh = new OrbotHelper(mContext);
 
             if ((!oh.isOrbotInstalled()) || (!oh.isOrbotRunning())) {
-                Log.e("PUBLISH", "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
+                Timber.e("TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
 
                 return null;
             } else {
@@ -600,7 +602,7 @@ public class SMWrapper {
                 String torHost = mContext.getString(R.string.sm_tor_host);
                 String torPort = mContext.getString(R.string.sm_tor_port);
 
-                Log.d("PUBLISH", "TOR SELECTED, HOST " + torHost + ", PORT " + torPort + " (BUILDING CUSTOM CLIENT)");
+                Timber.d("TOR SELECTED, HOST " + torHost + ", PORT " + torPort + " (BUILDING CUSTOM CLIENT)");
 
                 // build a client with a proxy
                 OkHttpClient httpClient = new OkHttpClient();
@@ -637,7 +639,7 @@ public class SMWrapper {
             return rResponse;
 
         } catch (retrofit.RetrofitError re) {
-            Log.e("PUBLISH", "FAILED TO CONNECT: " + re.getMessage());
+            Timber.e("FAILED TO CONNECT: " + re.getMessage());
             return null;
         }
     }

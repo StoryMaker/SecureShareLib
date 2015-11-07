@@ -1,6 +1,8 @@
 
 package io.scal.secureshareui.controller;
 
+import timber.log.Timber;
+
 import info.guardianproject.onionkit.ui.OrbotHelper;
 import io.scal.secureshareui.model.Account;
 import io.scal.secureshareuilibrary.R;
@@ -88,12 +90,12 @@ public abstract class SiteController {
 
         if(useTor && orbotHelper.isOrbotRunning()) 
         {    
-            Log.d(TAG, "use tor");
+            Timber.d("use tor");
             return true;
         }
         else
         {            
-            Log.d(TAG, "don't use tor");
+            Timber.d("don't use tor");
             return false;
         }
     }   

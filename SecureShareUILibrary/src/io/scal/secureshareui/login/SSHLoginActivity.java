@@ -1,6 +1,8 @@
 
 package io.scal.secureshareui.login;
 
+import timber.log.Timber;
+
 import io.scal.secureshareui.controller.SSHSiteController;
 import io.scal.secureshareui.controller.SiteController;
 import io.scal.secureshareuilibrary.R;

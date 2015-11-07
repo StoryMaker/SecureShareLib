@@ -1,5 +1,7 @@
 package io.scal.secureshareui.lib;
 
+import timber.log.Timber;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;

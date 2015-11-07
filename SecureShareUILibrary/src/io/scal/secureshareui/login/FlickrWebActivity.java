@@ -1,5 +1,7 @@
 package io.scal.secureshareui.login;
 
+import timber.log.Timber;
+
 import info.guardianproject.onionkit.ui.OrbotHelper;
 import info.guardianproject.onionkit.web.WebkitProxy;
 import io.scal.secureshareui.lib.Util;
@@ -24,7 +26,7 @@ public class FlickrWebActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        Log.d(TAG, "onCreate()");
+        Timber.d("onCreate()");
                 
         String url = null;
         Bundle extras = getIntent().getExtras();
@@ -33,7 +35,7 @@ public class FlickrWebActivity extends Activity {
         }
         
         if ((url == null) || (url.length() == 0)) {
-            Log.e(TAG, "no url found");
+            Timber.e("no url found");
             return;
         }
 
@@ -42,22 +44,22 @@ public class FlickrWebActivity extends Activity {
         boolean useTor = settings.getBoolean("pusetor", false);
 
         if (useTor) {
-            Log.d(TAG, "user selected \"use tor\"");
+            Timber.d("user selected \"use tor\"");
 
             OrbotHelper orbotHelper = new OrbotHelper(getApplicationContext());
             if ((!orbotHelper.isOrbotInstalled()) || (!orbotHelper.isOrbotRunning())) {
-                Log.e(TAG, "user selected \"use tor\" but orbot is not installed or not running");
+                Timber.e("user selected \"use tor\" but orbot is not installed or not running");
                 return;
             } else {
                 try {
                     WebkitProxy.setProxy("android.app.Application", getApplicationContext(), Util.ORBOT_HOST, Util.ORBOT_HTTP_PORT);
                 } catch (Exception e) {
-                    Log.e(TAG, "user selected \"use tor\" but an exception was thrown while setting the proxy: " + e.getLocalizedMessage());
+                    Timber.e("user selected \"use tor\" but an exception was thrown while setting the proxy: " + e.getLocalizedMessage());
                     return;
                 }
             }
         } else {
-            Log.d(TAG, "user selected \"don't use tor\"");
+            Timber.d("user selected \"don't use tor\"");
         }
                 
         mWebview = new WebView(this);
@@ -91,7 +93,7 @@ public class FlickrWebActivity extends Activity {
     
 	@Override
 	public void finish() {
-		Log.d(TAG, "finish()"); 
+		Timber.d("finish()");
 		
 		super.finish();
 		Util.clearWebviewAndCookies(mWebview, this);	

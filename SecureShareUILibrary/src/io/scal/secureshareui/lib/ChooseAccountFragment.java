@@ -1,6 +1,8 @@
 
 package io.scal.secureshareui.lib;
 
+import timber.log.Timber;
+
 import io.scal.secureshareui.controller.SiteController;
 import io.scal.secureshareui.controller.SiteController.OnEventListener;
 import io.scal.secureshareui.model.Account;
