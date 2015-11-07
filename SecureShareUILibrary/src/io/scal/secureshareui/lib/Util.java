@@ -1,6 +1,8 @@
 
 package io.scal.secureshareui.lib;
 
+import timber.log.Timber;
+
 import java.security.SecureRandom;
 import java.util.Random;
 

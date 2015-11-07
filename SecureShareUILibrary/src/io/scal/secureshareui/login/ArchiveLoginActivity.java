@@ -2,6 +2,8 @@ package io.scal.secureshareui.login;
 
 import info.guardianproject.netcipher.proxy.OrbotHelper;
 import info.guardianproject.netcipher.web.WebkitProxy;
+import timber.log.Timber;
+
 import io.scal.secureshareui.controller.SiteController;
 import io.scal.secureshareui.lib.Util;
 import io.scal.secureshareuilibrary.R;
@@ -55,21 +57,21 @@ public class ArchiveLoginActivity extends LockableActionBarActivity {
 		mWebview = (WebView) findViewById(R.id.webView);
 
         if (useTor) {
-            Log.d(TAG, "user selected \"use tor\"");
+            Timber.d("user selected \"use tor\"");
 
             if ((!OrbotHelper.isOrbotInstalled(getApplicationContext())) || (!OrbotHelper.isOrbotRunning(getApplicationContext()))) {
-                Log.e(TAG, "user selected \"use tor\" but orbot is not installed or not running");
+                Timber.e("user selected \"use tor\" but orbot is not installed or not running");
                 return;
             } else {
                 try {
                     WebkitProxy.setProxy("android.app.Application", getApplicationContext(), mWebview, Util.ORBOT_HOST, Util.ORBOT_HTTP_PORT);
                 } catch (Exception e) {
-                    Log.e(TAG, "user selected \"use tor\" but an exception was thrown while setting the proxy: " + e.getLocalizedMessage());
+                    Timber.e("user selected \"use tor\" but an exception was thrown while setting the proxy: " + e.getLocalizedMessage());
                     return;
                 }
             }
         } else {
-            Log.d(TAG, "user selected \"don't use tor\"");
+            Timber.d("user selected \"don't use tor\"");
         }
 
 		mWebview.getSettings().setJavaScriptEnabled(true);
@@ -179,7 +181,7 @@ public class ArchiveLoginActivity extends LockableActionBarActivity {
 
 	@Override
 	public void finish() {
-		Log.d(TAG, "finish()");
+		Timber.d("finish()");
 		
 		Intent data = new Intent();
 		data.putExtra(SiteController.EXTRAS_KEY_USERNAME, mAccessKey);

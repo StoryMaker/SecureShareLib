@@ -1,5 +1,7 @@
 package io.scal.secureshareui.controller;
 
+import timber.log.Timber;
+
 import io.scal.secureshareui.login.YoutubeLoginActivity;
 import io.scal.secureshareui.model.Account;
 import io.scal.secureshareuilibrary.R;
@@ -67,7 +69,7 @@ public class YoutubeSiteController extends SiteController {
     
 	@Override
 	public void upload(Account account, HashMap<String, String> valueMap) {
-		Log.d(TAG, "Upload file: Entering upload");
+		Timber.d("Upload file: Entering upload");
 		
 		String title = valueMap.get(VALUE_KEY_TITLE);
 		String body = valueMap.get(VALUE_KEY_BODY);
@@ -141,21 +143,21 @@ public class YoutubeSiteController extends SiteController {
                 public void progressChanged(MediaHttpUploader uploader) throws IOException {
                     switch (uploader.getUploadState()) {
                         case INITIATION_STARTED:
-                            Log.d(TAG, "Upload file: Initiation Started");
+                            Timber.d("Upload file: Initiation Started");
                             break;
                         case INITIATION_COMPLETE:
-                            Log.d(TAG, "Upload file: Initiation Completed");
+                            Timber.d("Upload file: Initiation Completed");
                             break;
                         case MEDIA_IN_PROGRESS:
-                            Log.d(TAG, "YouTube Upload: Upload in progress");
+                            Timber.d("YouTube Upload: Upload in progress");
                             float uploadPercent = (float) (uploader.getProgress());
                             jobProgress(uploadPercent, mContext.getString(R.string.youtube_uploading));
                             break;
                         case MEDIA_COMPLETE:
-                            Log.d(TAG, "Upload file: Upload Completed!");
+                            Timber.d("Upload file: Upload Completed!");
                             break;
                         case NOT_STARTED:
-                            Log.d(TAG, "Upload file: Upload Not Started!");
+                            Timber.d("Upload file: Upload Not Started!");
                             break;
                     }
                 }
@@ -166,12 +168,12 @@ public class YoutubeSiteController extends SiteController {
         } catch (FileNotFoundException e) {
             String msg = e.getMessage() != null ? e.getMessage() + ", " : "";
             String errorMessage = e.getCause() + msg;
-            Log.e(TAG, "File not found: " + errorMessage);
+            Timber.e("File not found: " + errorMessage);
             return null;
         } catch (IOException e) {
             String msg = e.getMessage() != null ? e.getMessage() + ", " : "";
             String errorMessage = e.getCause() + msg;
-            Log.e(TAG, "Progress IOException: " + errorMessage);
+            Timber.e("Progress IOException: " + errorMessage);
             return null;
         }
     }
@@ -229,7 +231,7 @@ public class YoutubeSiteController extends SiteController {
 			if (errorId == -1) {
 				jobSucceeded(uploadedVideoId);
 			} else {
-				Log.e(TAG, errorId + "_" + errorMessage);
+				Timber.e(errorId + "_" + errorMessage);
 //				jobFailed(exception, errorId, errorMessage);
 				jobFailed(null, errorId, errorMessage); // because UserRecoverableAuthException's are not parcelable and cause a crash here
 			}

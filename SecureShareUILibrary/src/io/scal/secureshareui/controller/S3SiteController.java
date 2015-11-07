@@ -1,5 +1,7 @@
 package io.scal.secureshareui.controller;
 
+import timber.log.Timber;
+
 
 import android.content.Context;
 import android.content.Intent;
@@ -87,7 +89,7 @@ public class S3SiteController extends SiteController {
 
                 result = upload.waitForUploadResult();
             } catch (Exception e) {
-                Log.e(TAG, "upload error: " + e.getMessage());
+                Timber.e("upload error: " + e.getMessage());
                 jobFailed(null, 7000002, "S3 upload failed: " + e.getMessage());
             }
 

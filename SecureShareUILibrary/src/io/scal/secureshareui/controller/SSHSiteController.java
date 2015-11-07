@@ -1,5 +1,7 @@
 package io.scal.secureshareui.controller;
 
+import timber.log.Timber;
+
 import io.scal.secureshareui.login.SSHLoginActivity;
 import io.scal.secureshareui.model.Account;
 import io.scal.secureshareuilibrary.R;
@@ -48,7 +50,7 @@ public class SSHSiteController extends SiteController {
 
     @Override
     public void upload(Account account, HashMap<String, String> valueMap) {
-		Log.d(TAG, "Upload file: Entering upload");
+		Timber.d("Upload file: Entering upload");
 		
 		String title = valueMap.get("title");
 		String body = valueMap.get("body");

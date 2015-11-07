@@ -1,5 +1,7 @@
 package io.scal.secureshareui.controller;
 
+import timber.log.Timber;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -46,7 +48,7 @@ public class FlickrSiteController extends SiteController {
     {   
         Context currentContext = mContext;
         
-        Log.d(TAG, "startAuthentication()");
+        Timber.d("startAuthentication()");
         
         Intent intent = new Intent(currentContext, FlickrLoginActivity.class);
         intent.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, account.getCredentials());
@@ -55,7 +57,7 @@ public class FlickrSiteController extends SiteController {
     
     @Override
     public void upload(Account account, HashMap<String, String> valueMap) {
-		Log.d(TAG, "Upload file: Entering upload");
+		Timber.d("Upload file: Entering upload");
 		
 		String title = valueMap.get(VALUE_KEY_TITLE);
 		String body = valueMap.get(VALUE_KEY_BODY);
@@ -71,9 +73,9 @@ public class FlickrSiteController extends SiteController {
 		
         String path = Environment.getExternalStorageDirectory() + File.separator + "flickr.conf"; // FIXME this should probably be stored on protected internal storage... or perhaps IOCipher
         
-        Log.d(TAG, "upload() path: " + path);
+        Timber.d("upload() path: " + path);
 
-        Log.d(TAG, "upload() title: " + title);
+        Timber.d("upload() title: " + title);
 
         File confFile = new File(path);
         FlickrProperties fProps = new FlickrProperties(confFile); 
@@ -85,14 +87,14 @@ public class FlickrSiteController extends SiteController {
 
         if(torCheck(useTor, mContext))
         {    
-            Log.d(TAG, "setting proxy");
+            Timber.d("setting proxy");
             
             Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ORBOT_HOST, ORBOT_HTTP_PORT));
             f.setProxy(proxy);
         }
         else
         {
-            Log.d(TAG, "proxy not set");
+            Timber.d("proxy not set");
         }
         
         // token stored in properties?  let's assume so for now...
@@ -128,11 +130,11 @@ public class FlickrSiteController extends SiteController {
     {
         try
         {
-            Log.d(TAG, "uploadFile() path: " + mediaPath);
+            Timber.d("uploadFile() path: " + mediaPath);
 
             if (mediaPath.contains(";")) {
 
-                Log.d(TAG, "GOT SET OF MEDIA PATHS");
+                Timber.d("GOT SET OF MEDIA PATHS");
 
                 String[] photoPaths = mediaPath.split(";");
 
@@ -142,12 +144,12 @@ public class FlickrSiteController extends SiteController {
                 }
                 String urlPart = uploadFiles(title, body, photos, credentials);
 
-                Log.d(TAG, "SET UPLOAD RETURN VALUE: " + urlPart);
+                Timber.d("SET UPLOAD RETURN VALUE: " + urlPart);
 
                 return urlPart;
             } else {
 
-                Log.d(TAG, "GOT SINGLE MEDIA PATH");
+                Timber.d("GOT SINGLE MEDIA PATH");
 
                 File photoFile = new File(mediaPath);
 
@@ -157,14 +159,14 @@ public class FlickrSiteController extends SiteController {
                 // construct url part, format https://www.flickr.com/photos/{user-id}/{photo-id}
                 String urlPart = f.getUser().getId() + "/" + result;
 
-                Log.d(TAG, "SINGLE UPLOAD RETURN VALUE: " + urlPart);
+                Timber.d("SINGLE UPLOAD RETURN VALUE: " + urlPart);
 
                 return urlPart;
             }
         }
         catch (FlickrException fe)
         {
-            Log.e(TAG, "upload failed: " + fe.getMessage());
+            Timber.e("upload failed: " + fe.getMessage());
             jobFailed(fe, 3233232, "upload failed: " + fe.getMessage()); // FIXME error code?
         }
         return null;
@@ -187,17 +189,17 @@ public class FlickrSiteController extends SiteController {
                 UploadService us = f.getUploadService();
                 photoId = us.uploadPhoto(photoFile, title + "_" + photoCount, body + "_" + photoCount);  // IS THIS THE CORRECT USE OF "body"?
                 uploadedPhotoIds.add(photoId);
-                Log.d(TAG, "ADDED PHOTO " + photoId + " TO LIST");
+                Timber.d("ADDED PHOTO " + photoId + " TO LIST");
 
                 photoCount++;
             } catch (FlickrException fe) {
-                Log.e(TAG, "upload failed: " + fe.getMessage());
+                Timber.e("upload failed: " + fe.getMessage());
                 jobFailed(fe, 3233232, "upload failed: " + fe.getMessage()); // FIXME error code?
                 return null;
             }
         }
 
-        Log.d(TAG, "UPLOADED " + photoCount + " PHOTOS");
+        Timber.d("UPLOADED " + photoCount + " PHOTOS");
 
         try {
 
@@ -209,15 +211,15 @@ public class FlickrSiteController extends SiteController {
 
             for(String uploadedPhotoId : uploadedPhotoIds) {
 
-                Log.d(TAG, "PROCESSING PHOTO " + photoId);
+                Timber.d("PROCESSING PHOTO " + photoId);
 
                 if (photoSetPhotoId == null) {
                     photoSetPhotoId = uploadedPhotoId;
                     photoSet = pss.createPhotoset(title, body, photoSetPhotoId); // using "body" as "description"?
-                    Log.d(TAG, "CREATED PHOTO SET " + photoSet.getId() + " WITH PRIMARY PHOTO " + uploadedPhotoId);
+                    Timber.d("CREATED PHOTO SET " + photoSet.getId() + " WITH PRIMARY PHOTO " + uploadedPhotoId);
                 }else {
                     pss.addPhotoToSet(photoSet, uploadedPhotoId);
-                    Log.d(TAG, "ADDED PHOTO " + uploadedPhotoId + " TO PHOTO SET");
+                    Timber.d("ADDED PHOTO " + uploadedPhotoId + " TO PHOTO SET");
                 }
 
             }
@@ -227,9 +229,9 @@ public class FlickrSiteController extends SiteController {
 
             return urlPart;
         } catch (FlickrException fe) {
-            Log.e(TAG, "failed to create photo set: " + fe.getMessage());
+            Timber.e("failed to create photo set: " + fe.getMessage());
             fe.printStackTrace();
-            Log.e(TAG, "cause: " + fe.getCause().getMessage());
+            Timber.e("cause: " + fe.getCause().getMessage());
             jobFailed(fe, 3233232, "upload failed: " + fe.getMessage()); // FIXME error code?
             return null;
         }

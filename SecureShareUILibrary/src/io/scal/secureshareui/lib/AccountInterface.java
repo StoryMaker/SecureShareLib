@@ -1,5 +1,7 @@
 package io.scal.secureshareui.lib;
 
+import timber.log.Timber;
+
 import retrofit.http.Body;
 import retrofit.http.POST;
 import retrofit.http.Path;

@@ -1,6 +1,8 @@
 
 package io.scal.secureshareui.controller;
 
+import timber.log.Timber;
+
 import io.scal.secureshareui.login.SoundCloudLoginActivity;
 import io.scal.secureshareui.model.Account;
 import io.scal.secureshareui.soundcloud.ApiWrapper;
@@ -49,7 +51,7 @@ public class SoundCloudSiteController extends SiteController {
 
     @Override
     public void upload(Account account, HashMap<String, String> valueMap) {
-		Log.d(TAG, "Upload file: Entering upload");
+		Timber.d("Upload file: Entering upload");
 		
 		String title = valueMap.get(VALUE_KEY_TITLE);
 		String body = valueMap.get(VALUE_KEY_BODY);
@@ -99,7 +101,7 @@ public class SoundCloudSiteController extends SiteController {
                     String responseString = EntityUtils.toString(entity, "UTF-8");
                     jobSucceeded(responseString);
                 } else {
-                    Log.d(TAG, "upload failed: " + response.getStatusLine().toString());
+                    Timber.d("upload failed: " + response.getStatusLine().toString());
                     jobFailed(null, response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
                 }
             } catch (IOException e) {

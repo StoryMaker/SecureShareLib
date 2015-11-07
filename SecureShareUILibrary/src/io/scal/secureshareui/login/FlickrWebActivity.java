@@ -2,6 +2,8 @@ package io.scal.secureshareui.login;
 
 import info.guardianproject.netcipher.proxy.OrbotHelper;
 import info.guardianproject.netcipher.web.WebkitProxy;
+import timber.log.Timber;
+
 import io.scal.secureshareui.lib.Util;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -24,7 +26,7 @@ public class FlickrWebActivity extends LockableActivity {
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        Log.d(TAG, "onCreate()");
+        Timber.d("onCreate()");
                 
         String url = null;
         Bundle extras = getIntent().getExtras();
@@ -33,7 +35,7 @@ public class FlickrWebActivity extends LockableActivity {
         }
         
         if ((url == null) || (url.length() == 0)) {
-            Log.e(TAG, "no url found");
+            Timber.e("no url found");
             return;
         }
 
@@ -44,21 +46,21 @@ public class FlickrWebActivity extends LockableActivity {
         mWebview = new WebView(this);
 
         if (useTor) {
-            Log.d(TAG, "user selected \"use tor\"");
+            Timber.d("user selected \"use tor\"");
 
             if ((!OrbotHelper.isOrbotInstalled(getApplicationContext())) || (!OrbotHelper.isOrbotRunning(getApplicationContext()))) {
-                Log.e(TAG, "user selected \"use tor\" but orbot is not installed or not running");
+                Timber.e("user selected \"use tor\" but orbot is not installed or not running");
                 return;
             } else {
                 try {
                     WebkitProxy.setProxy("android.app.Application", getApplicationContext(), mWebview, Util.ORBOT_HOST, Util.ORBOT_HTTP_PORT);
                 } catch (Exception e) {
-                    Log.e(TAG, "user selected \"use tor\" but an exception was thrown while setting the proxy: " + e.getLocalizedMessage());
+                    Timber.e("user selected \"use tor\" but an exception was thrown while setting the proxy: " + e.getLocalizedMessage());
                     return;
                 }
             }
         } else {
-            Log.d(TAG, "user selected \"don't use tor\"");
+            Timber.d("user selected \"don't use tor\"");
         }
                 
         mWebview.getSettings().setJavaScriptEnabled(true);
@@ -91,7 +93,7 @@ public class FlickrWebActivity extends LockableActivity {
     
 	@Override
 	public void finish() {
-		Log.d(TAG, "finish()"); 
+		Timber.d("finish()");
 		
 		super.finish();
 		Util.clearWebviewAndCookies(mWebview, this);	

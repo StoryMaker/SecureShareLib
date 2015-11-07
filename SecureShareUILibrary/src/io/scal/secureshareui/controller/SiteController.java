@@ -2,6 +2,8 @@
 package io.scal.secureshareui.controller;
 
 import info.guardianproject.netcipher.proxy.OrbotHelper;
+import timber.log.Timber;
+
 import io.scal.secureshareui.model.Account;
 import io.scal.secureshareuilibrary.R;
 
@@ -87,12 +89,12 @@ public abstract class SiteController {
 
         if(useTor && OrbotHelper.isOrbotRunning(mContext))
         {    
-            Log.d(TAG, "use tor");
+            Timber.d("use tor");
             return true;
         }
         else
         {            
-            Log.d(TAG, "don't use tor");
+            Timber.d("don't use tor");
             return false;
         }
     }   

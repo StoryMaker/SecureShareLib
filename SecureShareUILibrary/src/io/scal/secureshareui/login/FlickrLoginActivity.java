@@ -1,6 +1,8 @@
 package io.scal.secureshareui.login;
 
 import info.guardianproject.netcipher.proxy.OrbotHelper;
+import timber.log.Timber;
+
 import io.scal.secureshareui.controller.SiteController;
 import io.scal.secureshareui.lib.Util;
 import io.scal.secureshareuilibrary.R;
@@ -40,7 +42,7 @@ public class FlickrLoginActivity extends LockableActivity
     {
         super.onCreate(savedInstanceState);
         
-        Log.d(TAG, "onCreate()");
+        Timber.d("onCreate()");
         key = getString(R.string.flickr_key);
         secret = getString(R.string.flickr_secret);
         setContentView(R.layout.activity_flickr_login);
@@ -74,7 +76,7 @@ public class FlickrLoginActivity extends LockableActivity
     {
         String path = Environment.getExternalStorageDirectory() + File.separator + "flickr.conf";
         
-        Log.d(TAG, "getAuthorizationUrl() path: " + path);
+        Timber.d("getAuthorizationUrl() path: " + path);
         
         File confFile = new File(path);
         FlickrProperties fProps = new FlickrProperties(confFile); 
@@ -86,14 +88,14 @@ public class FlickrLoginActivity extends LockableActivity
 
         if(OrbotHelper.isOrbotRunning(this))
         {    
-            Log.d(TAG, "orbot running, setting proxy");
+            Timber.d("orbot running, setting proxy");
             
             Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(Util.ORBOT_HOST, Util.ORBOT_HTTP_PORT));
             f.setProxy(proxy);
         }
         else
         {
-            Log.d(TAG, "orbot not running, proxy not set");
+            Timber.d("orbot not running, proxy not set");
         }
 
         url = f.getAuthorizationUrl(); 
@@ -102,7 +104,7 @@ public class FlickrLoginActivity extends LockableActivity
     
     public void startFlickrWebActivity()
     {
-        Log.d(TAG, "startFlickrWebActivity() url: " + url);
+        Timber.d("startFlickrWebActivity() url: " + url);
         
         Intent i = new Intent(this, FlickrWebActivity.class);
         i.putExtra("authURL", url);
@@ -112,7 +114,7 @@ public class FlickrLoginActivity extends LockableActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) 
     {
-        Log.d(TAG, "onActivityResult()");
+        Timber.d("onActivityResult()");
         
         if (requestCode == CODE)
         {
@@ -124,7 +126,7 @@ public class FlickrLoginActivity extends LockableActivity
                 
                 if ((mAccessToken != null) && (mAccessVerifier != null))
                 {
-                    Log.d(TAG, "got token and verifier");
+                    Timber.d("got token and verifier");
                     
                     mAccessResult = RESULT_OK;
                     
@@ -133,21 +135,21 @@ public class FlickrLoginActivity extends LockableActivity
                 }
                 else
                 {
-                    Log.e(TAG, "failed to get token and verifier"); 
+                    Timber.e("failed to get token and verifier");
                 }
             }
             else if (resultCode == Activity.RESULT_CANCELED)
             {
-                Log.e(TAG, "activity cancelled"); 
+                Timber.e("activity cancelled");
             }
             else
             {
-                Log.e(TAG, "unexpected result"); 
+                Timber.e("unexpected result");
             }
         }
         else 
         {
-            Log.e(TAG, "unexpected request"); 
+            Timber.e("unexpected request");
         }
     }
 
@@ -175,7 +177,7 @@ public class FlickrLoginActivity extends LockableActivity
     
     public void verifyToken()
     {
-        Log.d(TAG, "verifyToken()"); 
+        Timber.d("verifyToken()");
         
         try
         {
@@ -184,14 +186,14 @@ public class FlickrLoginActivity extends LockableActivity
         catch (FlickrException fe)
         {
         	mAccessResult = RESULT_OK;
-            Log.e(TAG, "token verification failed: " + fe.getMessage()); 
+            Timber.e("token verification failed: " + fe.getMessage());
         }
     }
     
     @Override
     public void finish() 
     {  
-        Log.d(TAG, "finish()"); 
+        Timber.d("finish()");
         
         Intent data = new Intent();
         data.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, mAccessToken); // WHAT ABOUT VERIFIER?
