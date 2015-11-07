@@ -1,5 +1,7 @@
 package io.scal.secureshareui.controller;
 
+import timber.log.Timber;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -95,14 +97,14 @@ public class ZTSiteController extends SiteController {
     @Override
     public void startMetadataActivity(Intent intent) {
 
-        Log.d(TAG, "startMetadataActivity() NOT YET IMPLEMENTED");
+        Timber.d("startMetadataActivity() NOT YET IMPLEMENTED");
 
     }
 
     @Override
     public void upload(Account account, HashMap<String, String> valueMap) {
 
-        Log.d(TAG, "upload() NOT YET IMPLEMENTED");
+        Timber.d("upload() NOT YET IMPLEMENTED");
 
     }
 
@@ -119,10 +121,10 @@ public class ZTSiteController extends SiteController {
 
         if (useTor) {
             if ((!OrbotHelper.isOrbotInstalled(mContext)) || (!OrbotHelper.isOrbotRunning(mContext))) {
-                Log.e(TAG, "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
+                Timber.e("TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
                 return null;
             } else {
-                Log.e(TAG, "TOR SELECTED, HOST " + mContext.getString(R.string.zt_tor_host) + ", PORT " + mContext.getString(R.string.zt_tor_port) + " (SETTING PROXY)");
+                Timber.e("TOR SELECTED, HOST " + mContext.getString(R.string.zt_tor_host) + ", PORT " + mContext.getString(R.string.zt_tor_port) + " (SETTING PROXY)");
 
                 String host = mContext.getString(R.string.zt_tor_host);
                 int port = Integer.parseInt(mContext.getString(R.string.zt_tor_port));
@@ -133,12 +135,12 @@ public class ZTSiteController extends SiteController {
             }
         } else {
             if (proxySet) {
-                Log.d(TAG, "TOR NOT SELECTED (CLEARING PROXY)");
+                Timber.d("TOR NOT SELECTED (CLEARING PROXY)");
 
                 client.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
                 proxySet = false;
             } else {
-                Log.d(TAG, "TOR NOT SELECTED");
+                Timber.d("TOR NOT SELECTED");
             }
         }
 
@@ -168,29 +170,29 @@ public class ZTSiteController extends SiteController {
         // drop trailing comma & space
         //authorizationHeader = authorizationHeader.substring(0, authorizationHeader.length() - 2);
 
-        //Log.d(TAG, "BUILT HEADER - Authorization: " + authorizationHeader);
+        //Timber.d("BUILT HEADER - Authorization: " + authorizationHeader);
 
         //post.setHeader("Authorization", authorizationHeader);
 
         // drop trailing ampersand
         urlWithAuth = urlWithAuth.substring(0, urlWithAuth.length() - 1);
 
-        Log.d(TAG, "CONSTRUCTED URL: " + urlWithAuth);
+        Timber.d("CONSTRUCTED URL: " + urlWithAuth);
 
         HttpPost post = new HttpPost(urlWithAuth);
 
         /*
         for (String key : parameters.keySet()) {
             params.add(new BasicNameValuePair(key, parameters.get(key)));
-            Log.d(TAG, "ADDING PARAMETER: " + key + ": " + parameters.get(key));
+            Timber.d("ADDING PARAMETER: " + key + ": " + parameters.get(key));
         }
 
         try {
             UrlEncodedFormEntity foo = new UrlEncodedFormEntity(params, "UTF-8");
-            Log.d(TAG, "ENTITY: " + foo.toString());
+            Timber.d("ENTITY: " + foo.toString());
             post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
         } catch (UnsupportedEncodingException uee) {
-            Log.d("ZT OAUTH", "FAILED TO ENCODE ENTITY");
+            Timber.d("FAILED TO ENCODE ENTITY");
             uee.printStackTrace();
             return null;
         }
@@ -202,7 +204,7 @@ public class ZTSiteController extends SiteController {
                 "\"status\": " + "\"" + "publish" + "\"" +
                 "}";
 
-        Log.d(TAG, "JSON: " + jsonString);
+        Timber.d("JSON: " + jsonString);
 
         StringEntity jsonEntity = new StringEntity(jsonString, "UTF-8");
         jsonEntity.setContentType("application/json");
@@ -212,7 +214,7 @@ public class ZTSiteController extends SiteController {
         try {
             HttpResponse postResponse = client.execute(post);
 
-            Log.d(TAG, "RESPONSE CODE: " + postResponse.getStatusLine().getStatusCode());
+            Timber.d("RESPONSE CODE: " + postResponse.getStatusLine().getStatusCode());
 
             BufferedReader rd = new BufferedReader(
                 new InputStreamReader(postResponse.getEntity().getContent())
@@ -224,12 +226,12 @@ public class ZTSiteController extends SiteController {
                 result.append(line);
             }
 
-            Log.d(TAG, "RESPONSE: " + result.toString());
+            Timber.d("RESPONSE: " + result.toString());
 
             Header[] postHeaders = postResponse.getAllHeaders();
 
             for (int i = 0; i < postHeaders.length; i++) {
-                Log.d(TAG, "FOUND HEADER: " + postHeaders[i].getName() + ": " + postHeaders[i].getValue());
+                Timber.d("FOUND HEADER: " + postHeaders[i].getName() + ": " + postHeaders[i].getValue());
             }
 
             // need to parse post id out of response
@@ -237,19 +239,19 @@ public class ZTSiteController extends SiteController {
             JSONObject obj = new JSONObject(result.toString());
             String link = obj.getString("link");
             if ((link != null) && (link.length() > 0)) {
-                Log.d(TAG, "GOT LINK: " + link);
+                Timber.d("GOT LINK: " + link);
                 return link;
             } else {
-                Log.d(TAG, "NO LINK");
+                Timber.d("NO LINK");
             }
         } catch (JSONException je) {
-            Log.e(TAG, "FAILED TO PARSE RESPONSE");
+            Timber.e("FAILED TO PARSE RESPONSE");
             je.printStackTrace();
         } catch (ClientProtocolException cpe) {
-            Log.e(TAG, "FAILED TO EXECUTE REQUEST");
+            Timber.e("FAILED TO EXECUTE REQUEST");
             cpe.printStackTrace();
         } catch (IOException ioe) {
-            Log.e(TAG, "FAILED TO READ RESPONSE");
+            Timber.e("FAILED TO READ RESPONSE");
             ioe.printStackTrace();
         }
 

@@ -1,5 +1,7 @@
 package io.scal.secureshareui.login;
 
+import timber.log.Timber;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -100,7 +102,7 @@ public class ZTLoginActivity extends LockableActivity {
 
     public String getAuthorizationUrl() {
 
-        Log.d(TAG, "GETTING REQUEST TOKEN...");
+        Timber.d("GETTING REQUEST TOKEN...");
 
         //
         Map<String, String> parameters = service.getRequestParameters();
@@ -114,10 +116,10 @@ public class ZTLoginActivity extends LockableActivity {
         if (useTor) {
 
             if ((!OrbotHelper.isOrbotInstalled(this)) || (!OrbotHelper.isOrbotRunning(this))) {
-                Log.e(TAG, "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
+                Timber.e("TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
                 return null;
             } else {
-                Log.e(TAG, "TOR SELECTED, HOST " + getString(R.string.zt_tor_host) + ", PORT " + getString(R.string.zt_tor_port) + " (SETTING PROXY)");
+                Timber.e("TOR SELECTED, HOST " + getString(R.string.zt_tor_host) + ", PORT " + getString(R.string.zt_tor_port) + " (SETTING PROXY)");
 
                 String host = getString(R.string.zt_tor_host);
                 int port = Integer.parseInt(getString(R.string.zt_tor_port));
@@ -132,7 +134,7 @@ public class ZTLoginActivity extends LockableActivity {
             }
         } else {
             if (proxySet) {
-                Log.d(TAG, "TOR NOT SELECTED (CLEARING PROXY)");
+                Timber.d("TOR NOT SELECTED (CLEARING PROXY)");
 
                 client.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
                 proxySet = false;
@@ -140,7 +142,7 @@ public class ZTLoginActivity extends LockableActivity {
                 // un-set proxy for scribe oauth service
                 service.setProxy(null);
             } else {
-                Log.d(TAG, "TOR NOT SELECTED");
+                Timber.d("TOR NOT SELECTED");
             }
         }
 
@@ -152,13 +154,13 @@ public class ZTLoginActivity extends LockableActivity {
         for (String key : parameters.keySet()) {
             //params.add(new BasicNameValuePair(key, parameters.get(key)));
             urlWithAuth = urlWithAuth + URLEncoder.encode(key) + "=" + URLEncoder.encode(parameters.get(key)) + "&";
-            Log.d(TAG, "ADDING PARAMETER: " + key + ": " + parameters.get(key));
+            Timber.d("ADDING PARAMETER: " + key + ": " + parameters.get(key));
         }
 
         // drop trailing ampersand
         urlWithAuth = urlWithAuth.substring(0, urlWithAuth.length() - 1);
 
-        Log.d(TAG, "CONSTRUCTED URL: " + urlWithAuth);
+        Timber.d("CONSTRUCTED URL: " + urlWithAuth);
 
         HttpPost post = new HttpPost(urlWithAuth);
 
@@ -166,7 +168,7 @@ public class ZTLoginActivity extends LockableActivity {
         try {
             post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
         } catch (UnsupportedEncodingException uee) {
-            Log.e(TAG, "FAILED TO ENCODE ENTITY");
+            Timber.e("FAILED TO ENCODE ENTITY");
             uee.printStackTrace();
             return null;
         }
@@ -177,16 +179,16 @@ public class ZTLoginActivity extends LockableActivity {
         try {
             response = client.execute(post);
         } catch (ClientProtocolException cpe) {
-            Log.e(TAG, "FAILED TO EXECUTE REQUEST (CPE)");
+            Timber.e("FAILED TO EXECUTE REQUEST (CPE)");
             cpe.printStackTrace();
             return null;
         } catch (IOException ioe) {
-            Log.e(TAG, "FAILED TO EXECUTE REQUEST (IOE)");
+            Timber.e("FAILED TO EXECUTE REQUEST (IOE)");
             ioe.printStackTrace();
             return null;
         }
 
-        Log.d(TAG, "RESPONSE CODE: " + response.getStatusLine().getStatusCode());
+        Timber.d("RESPONSE CODE: " + response.getStatusLine().getStatusCode());
 
         StringBuffer result = new StringBuffer();
 
@@ -197,17 +199,17 @@ public class ZTLoginActivity extends LockableActivity {
                 result.append(line);
             }
         } catch (IOException ioe) {
-            Log.e(TAG, "FAILED TO READ RESPONSE");
+            Timber.e("FAILED TO READ RESPONSE");
             ioe.printStackTrace();
             return null;
         }
 
-        Log.d(TAG, "RESPONSE: " + result.toString());
+        Timber.d("RESPONSE: " + result.toString());
 
         Header[] postHeaders = response.getAllHeaders();
 
         for (int i = 0; i < postHeaders.length; i++) {
-            Log.d(TAG, "FOUND HEADER: " + postHeaders[i].getName() + ": " + postHeaders[i].getValue());
+            Timber.d("FOUND HEADER: " + postHeaders[i].getName() + ": " + postHeaders[i].getValue());
         }
 
         if (result.toString().contains("oauth_token=") && result.toString().contains("oauth_token_secret=")) {
@@ -231,9 +233,9 @@ public class ZTLoginActivity extends LockableActivity {
             //mRequestToken = service.getRequestToken();
 
 
-            Log.d(TAG, "GOT REQUEST TOKEN: " + mRequestToken.getToken());
+            Timber.d("GOT REQUEST TOKEN: " + mRequestToken.getToken());
 
-            Log.d(TAG, "GETTING AUTH URL...");
+            Timber.d("GETTING AUTH URL...");
 
             String authorizationUrl = service.getAuthorizationUrl(mRequestToken);
 
@@ -241,17 +243,17 @@ public class ZTLoginActivity extends LockableActivity {
             try {
                 authorizationUrl = authorizationUrl + "&oauth_callback=" + URLEncoder.encode(getString(R.string.zt_callback), "UTF-8");
             } catch (UnsupportedEncodingException uee) {
-                Log.e(TAG, "ENCODING CALLBACK FAILED");
+                Timber.e("ENCODING CALLBACK FAILED");
                 uee.printStackTrace();
                 return null;
             }
 
-            Log.d(TAG, "GOT AUTH URL: " + authorizationUrl);
+            Timber.d("GOT AUTH URL: " + authorizationUrl);
             return authorizationUrl;
 
         //
         } else {
-            Log.e(TAG, "TOKEN ELEMENTS MISSING FROM RESPONSE");
+            Timber.e("TOKEN ELEMENTS MISSING FROM RESPONSE");
             return null;
         }
         //
@@ -259,7 +261,7 @@ public class ZTLoginActivity extends LockableActivity {
 
     public void startZTWebActivity(String authorizationUrl) {
 
-        Log.d(TAG, "STARTING WEB ACTIVITY FOR " + authorizationUrl);
+        Timber.d("STARTING WEB ACTIVITY FOR " + authorizationUrl);
 
         Intent i = new Intent(this, ZTWebActivity.class);
         i.putExtra("authorizationUrl", authorizationUrl);
@@ -269,7 +271,7 @@ public class ZTLoginActivity extends LockableActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        Log.d(TAG, "GOT ACTIVITY RESULT");
+        Timber.d("GOT ACTIVITY RESULT");
 
         if (requestCode == CODE) {
 
@@ -281,28 +283,28 @@ public class ZTLoginActivity extends LockableActivity {
 
                 if ((mRequestToken != null) && (mAccessVerifier != null)) {
 
-                    Log.d(TAG, "GOT TOKEN " + mRequestToken.getToken() + ", GOT VERIFIER " + mAccessVerifier.getValue());
+                    Timber.d("GOT TOKEN " + mRequestToken.getToken() + ", GOT VERIFIER " + mAccessVerifier.getValue());
 
                     VerifyTokenTask vtTask = new VerifyTokenTask(this);
                     vtTask.execute();
 
                 } else {
 
-                    Log.e(TAG, "MISSING TOKEN AND/OR VERIFIER");
+                    Timber.e("MISSING TOKEN AND/OR VERIFIER");
 
                 }
             } else if (resultCode == Activity.RESULT_CANCELED) {
 
-                Log.e(TAG, "ACTIVITY CANCELLED");
+                Timber.e("ACTIVITY CANCELLED");
 
             } else {
 
-                Log.e(TAG, "UNEXPECTED RESULT");
+                Timber.e("UNEXPECTED RESULT");
 
             }
         } else {
 
-            Log.e(TAG, "UNEXPECTED REQUEST");
+            Timber.e("UNEXPECTED REQUEST");
 
         }
     }
@@ -328,7 +330,7 @@ public class ZTLoginActivity extends LockableActivity {
 
     public void verifyToken() {
 
-        Log.d(TAG, "VERIFYING TOKEN...");
+        Timber.d("VERIFYING TOKEN...");
 
         //
         Map<String, String> parameters = service.getAccessParameters(mRequestToken, mAccessVerifier);
@@ -342,10 +344,10 @@ public class ZTLoginActivity extends LockableActivity {
         if (useTor) {
 
             if ((!OrbotHelper.isOrbotInstalled(this)) || (!OrbotHelper.isOrbotRunning(this))) {
-                Log.e(TAG, "TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
+                Timber.e("TOR SELECTED BUT ORBOT IS INACTIVE (ABORTING)");
                 return;
             } else {
-                Log.e(TAG, "TOR SELECTED, HOST " + getString(R.string.zt_tor_host) + ", PORT " + getString(R.string.zt_tor_port) + " (SETTING PROXY)");
+                Timber.e("TOR SELECTED, HOST " + getString(R.string.zt_tor_host) + ", PORT " + getString(R.string.zt_tor_port) + " (SETTING PROXY)");
 
                 String host = getString(R.string.zt_tor_host);
                 int port = Integer.parseInt(getString(R.string.zt_tor_port));
@@ -360,7 +362,7 @@ public class ZTLoginActivity extends LockableActivity {
             }
         } else {
             if (proxySet) {
-                Log.d(TAG, "TOR NOT SELECTED (CLEARING PROXY)");
+                Timber.d("TOR NOT SELECTED (CLEARING PROXY)");
 
                 client.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
                 proxySet = false;
@@ -368,7 +370,7 @@ public class ZTLoginActivity extends LockableActivity {
                 // un-set proxy for scribe oauth service
                 service.setProxy(null);
             } else {
-                Log.d(TAG, "TOR NOT SELECTED");
+                Timber.d("TOR NOT SELECTED");
             }
         }
 
@@ -380,13 +382,13 @@ public class ZTLoginActivity extends LockableActivity {
         for (String key : parameters.keySet()) {
             //params.add(new BasicNameValuePair(key, parameters.get(key)));
             urlWithAuth = urlWithAuth + URLEncoder.encode(key) + "=" + URLEncoder.encode(parameters.get(key)) + "&";
-            Log.d(TAG, "ADDING PARAMETER: " + key + ": " + parameters.get(key));
+            Timber.d("ADDING PARAMETER: " + key + ": " + parameters.get(key));
         }
 
         // drop trailing ampersand
         urlWithAuth = urlWithAuth.substring(0, urlWithAuth.length() - 1);
 
-        Log.d(TAG, "CONSTRUCTED URL: " + urlWithAuth);
+        Timber.d("CONSTRUCTED URL: " + urlWithAuth);
 
         HttpPost post = new HttpPost(urlWithAuth);
 
@@ -394,7 +396,7 @@ public class ZTLoginActivity extends LockableActivity {
         try {
             post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
         } catch (UnsupportedEncodingException uee) {
-            Log.e(TAG, "FAILED TO ENCODE ENTITY");
+            Timber.e("FAILED TO ENCODE ENTITY");
             uee.printStackTrace();
             return;
         }
@@ -405,16 +407,16 @@ public class ZTLoginActivity extends LockableActivity {
         try {
             response = client.execute(post);
         } catch (ClientProtocolException cpe) {
-            Log.e(TAG, "FAILED TO EXECUTE REQUEST (CPE)");
+            Timber.e("FAILED TO EXECUTE REQUEST (CPE)");
             cpe.printStackTrace();
             return;
         } catch (IOException ioe) {
-            Log.e(TAG, "FAILED TO EXECUTE REQUEST (IOE)");
+            Timber.e("FAILED TO EXECUTE REQUEST (IOE)");
             ioe.printStackTrace();
             return;
         }
 
-        Log.d(TAG, "RESPONSE CODE: " + response.getStatusLine().getStatusCode());
+        Timber.d("RESPONSE CODE: " + response.getStatusLine().getStatusCode());
 
         StringBuffer result = new StringBuffer();
 
@@ -425,17 +427,17 @@ public class ZTLoginActivity extends LockableActivity {
                 result.append(line);
             }
         } catch (IOException ioe) {
-            Log.e(TAG, "FAILED TO READ RESPONSE");
+            Timber.e("FAILED TO READ RESPONSE");
             ioe.printStackTrace();
             return;
         }
 
-        Log.d(TAG, "RESPONSE: " + result.toString());
+        Timber.d("RESPONSE: " + result.toString());
 
         Header[] postHeaders = response.getAllHeaders();
 
         for (int i = 0; i < postHeaders.length; i++) {
-            Log.d(TAG, "FOUND HEADER: " + postHeaders[i].getName() + ": " + postHeaders[i].getValue());
+            Timber.d("FOUND HEADER: " + postHeaders[i].getName() + ": " + postHeaders[i].getValue());
         }
 
         if (result.toString().contains("oauth_token=") && result.toString().contains("oauth_token_secret=")) {
@@ -458,13 +460,13 @@ public class ZTLoginActivity extends LockableActivity {
 
             //mAccessToken = service.getAccessToken(mRequestToken, mAccessVerifier);
 
-            Log.d(TAG, "GOT ACCESS TOKEN: " + mAccessToken.getToken());
+            Timber.d("GOT ACCESS TOKEN: " + mAccessToken.getToken());
 
             mAccessResult = RESULT_OK;
 
         //
         } else {
-            Log.e(TAG, "TOKEN ELEMENTS MISSING FROM RESPONSE");
+            Timber.e("TOKEN ELEMENTS MISSING FROM RESPONSE");
         }
         //
 
@@ -493,7 +495,7 @@ public class ZTLoginActivity extends LockableActivity {
 
         if (mCacheWordHandler.isLocked()) {
 
-            Log.d("CACHEWORD", "cacheword was locked, no result to return from finish()");
+            Timber.d("cacheword was locked, no result to return from finish()");
 
         } else {
             // need complete credentials

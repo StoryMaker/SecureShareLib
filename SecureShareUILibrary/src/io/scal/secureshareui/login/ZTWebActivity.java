@@ -1,5 +1,7 @@
 package io.scal.secureshareui.login;
 
+import timber.log.Timber;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,7 +39,7 @@ public class ZTWebActivity extends LockableActivity {
         }
 
         if ((authorizationUrl == null) || (authorizationUrl.length() == 0)) {
-            Log.e(TAG, "NO AUTHORIZATION URL FOUND");
+            Timber.e("NO AUTHORIZATION URL FOUND");
             finish();
             return;
         }
@@ -48,23 +50,23 @@ public class ZTWebActivity extends LockableActivity {
         mWebview = new WebView(this);
 
         if (useTor) {
-            Log.d(TAG, "user selected \"use tor\"");
+            Timber.d("user selected \"use tor\"");
 
             if ((!OrbotHelper.isOrbotInstalled(getApplicationContext())) || (!OrbotHelper.isOrbotRunning(getApplicationContext()))) {
-                Log.e(TAG, "user selected \"use tor\" but orbot is not installed or not running");
+                Timber.e("user selected \"use tor\" but orbot is not installed or not running");
                 finish();
                 return;
             } else {
                 try {
                     WebkitProxy.setProxy("android.app.Application", getApplicationContext(), mWebview, Util.ORBOT_HOST, Util.ORBOT_HTTP_PORT);
                 } catch (Exception e) {
-                    Log.e(TAG, "user selected \"use tor\" but an exception was thrown while setting the proxy: " + e.getLocalizedMessage());
+                    Timber.e("user selected \"use tor\" but an exception was thrown while setting the proxy: " + e.getLocalizedMessage());
                     finish();
                     return;
                 }
             }
         } else {
-            Log.d(TAG, "user selected \"don't use tor\"");
+            Timber.d("user selected \"don't use tor\"");
         }
 
         mWebview.getSettings().setJavaScriptEnabled(true);
@@ -78,13 +80,13 @@ public class ZTWebActivity extends LockableActivity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
-                Log.d(TAG, "LOADING URL: " + url);
+                Timber.d("LOADING URL: " + url);
 
                 // also break on http://www.stichtingrz.co/wp-login.php?checkemail=registered (for signups) ?
 
                 if (url.contains("oauth_token=") && url.contains("oauth_verifier=")) {
 
-                    Log.d(TAG, "GOT TOKEN/VERIFIER");
+                    Timber.d("GOT TOKEN/VERIFIER");
 
                     Uri uri = Uri.parse(url);
                     String token = uri.getQueryParameter("oauth_token");
@@ -96,7 +98,7 @@ public class ZTWebActivity extends LockableActivity {
                     return true;
                 } else {
 
-                    Log.d(TAG, "NO TOKEN/VERIFIER");
+                    Timber.d("NO TOKEN/VERIFIER");
 
                     return super.shouldOverrideUrlLoading(view, url);
                 }
