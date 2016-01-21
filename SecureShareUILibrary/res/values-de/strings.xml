@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="error">Fehler</string>
+  <string name="lbl_Yes">Ja</string>
+  <string name="lbl_Cancel">Abbrechen</string>
+  <string name="lbl_ok">OK</string>
+  <string name="lbl_settings">Einstellungen</string>
+</resources>

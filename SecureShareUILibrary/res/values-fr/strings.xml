@@ -19,6 +19,7 @@
   <string name="exception">Exception: %1$s</string>
   <string name="password">Mot de passe</string>
   <string name="username">Nom d\'utilisateur</string>
+  <string name="email">Courrier electronique</string>
   <string name="sign_in">Se Connecter</string>
   <string name="sign_in_storymaker">Se connecter à StoryMaker?</string>
   <string name="inavalid_credentials">*Données de connexion invalides</string>
@@ -44,4 +45,8 @@
   <string name="google_play_services_not_avail">Les Services Google Play non disponibles</string>
   <string name="insufficient_permissions">autorisations insuffisantes</string>
   <string name="connect_your_google_account_to_device">Connectez votre compte Google à cet appareil.</string>
+  <string name="remote_path">Chemin distant (optionnel)</string>
+  <string name="server_nickname">Pseudo du serveur
+</string>
+  <string name="hostname_address">Nom de domaine ou adresse IP</string>
 </resources>

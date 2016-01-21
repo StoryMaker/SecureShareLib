@@ -11,14 +11,19 @@
   <string name="hello_user">مرحبا  %1$s!</string>
   <string name="successfully_posted_post">نُشِرت بنجاح \'%1$s\'.\nPost ID: %2$s</string>
   <string name="error">خطأ</string>
+  <string name="status_update">حالة التحديث لـ %1$s عند %2$s</string>
+  <string name="photo_post">نشر صور</string>
   <string name="you_picked">اخترت :</string>
+  <string name="no_friends_selected">&lt; لم يقع اختيار أصدقاء&gt;</string>
   <string name="no_place_selected">&lt; لم يقع اختيار أي مكان&gt;</string>
   <string name="exception">استثناء: %1$s</string>
   <string name="password">كلمة السر</string>
   <string name="username">اسم المستخدم </string>
+  <string name="email">الإيميل</string>
   <string name="sign_in">تسجيل الدخول</string>
   <string name="sign_in_storymaker">تسجيل الدخول لـــStoryMaker؟</string>
   <string name="inavalid_credentials">* معلومات الدخول غير صالحة</string>
+  <string name="ssh_upload_in_progress">جاري الرفع بالـSSH...</string>
   <string name="lbl_Yes">نعم</string>
   <string name="lbl_Cancel">إلغاء</string>
   <string name="lbl_off">غلق</string>
@@ -40,5 +45,7 @@
   <string name="google_play_services_not_avail">خدمات Google Play  غير متوفرة</string>
   <string name="insufficient_permissions">صلاحيات غير كافية</string>
   <string name="connect_your_google_account_to_device">إدخال حساب Google لهذا الجهاز</string>
+  <string name="remote_path">المسار عن بعد (اختياري)</string>
   <string name="server_nickname">اسم السيرفر</string>
+  <string name="hostname_address">إسم المضيف أو عنوان الآي بي</string>
 </resources>
